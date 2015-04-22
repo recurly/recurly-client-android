@@ -5,7 +5,7 @@ apply plugin: 'signing'
 
 
 // NOTE: update RecurlyApi#VERSION as well
-version = "0.5.0"
+version = "0.5.1"
 group = "com.recurly"
 archivesBaseName = "android-sdk"
 
