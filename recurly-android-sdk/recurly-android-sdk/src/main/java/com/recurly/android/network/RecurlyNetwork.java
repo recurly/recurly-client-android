@@ -89,14 +89,14 @@ public class RecurlyNetwork {
     } catch (Exception ex) {
     }
 
-    if (mCarrierName == null) {
-      mCarrierName = "";
+    if (mCarrierName == null || mCarrierName.isEmpty()) {
+      mCarrierName = "unknown";
     }
-    if (mCarrierCountry == null) {
-      mCarrierCountry = "";
+    if (mCarrierCountry == null || mCarrierCountry.isEmpty()) {
+      mCarrierCountry = "unknown";
     }
-    if (mCarrierOperator == null) {
-      mCarrierOperator = "";
+    if (mCarrierOperator == null || mCarrierOperator.isEmpty()) {
+      mCarrierOperator = "unknown";
     }
 
     setStaticHeader("Accept", "application/xml");
@@ -129,8 +129,12 @@ public class RecurlyNetwork {
 
     if (request instanceof RecurlyRequest) {
       updateHeaders();
-
       ((RecurlyRequest) request).setHeaders(sHeaders);
+    }
+
+    if (request instanceof RecurlyListRequest) {
+      updateHeaders();
+      ((RecurlyListRequest) request).setHeaders(sHeaders);
     }
     mRequestQueue.add(request);
   }

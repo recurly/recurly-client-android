@@ -48,17 +48,17 @@ import java.util.List;
 /**
  * Main interface to access Recurly services.
  *
- * Create an instance of RecurlyApi using the API key provided in your account setup instructions.
+ * Create an instance of RecurlyApi using the API key provided in your account setup instructions.<br>
+ *
+ * Methods currently available:<br><br>
+ *
+ * - {@link RecurlyApi#getPaymentToken(CardPaymentRequest, TokenResponseHandler)}<br>
+ * - {@link RecurlyApi#getPlan(PlanRequest, PlanResponseHandler)}<br>
+ * - {@link RecurlyApi#getCoupon(CouponRequest, CouponResponseHandler)}<br>
+ * - {@link RecurlyApi#getPostalTax(TaxRequest, TaxResponseHandler)}<br>
+ * - {@link RecurlyApi#getPricing(PricingRequest, PricingResponseHandler)}<br>
  *
  * @see RecurlyApi#getInstance(Context, String)
- *
- * Methods currently available:
- *
- * @see RecurlyApi#getPaymentToken(CardPaymentRequest, TokenResponseHandler)
- * @see RecurlyApi#getPlan(PlanRequest, PlanResponseHandler)
- * @see RecurlyApi#getCoupon(CouponRequest, CouponResponseHandler)
- * @see RecurlyApi#getPostalTax(TaxRequest, TaxResponseHandler)
- * @see RecurlyApi#getPricing(PricingRequest, PricingResponseHandler)
  */
 public class RecurlyApi {
 
