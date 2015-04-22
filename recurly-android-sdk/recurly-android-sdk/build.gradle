@@ -3,11 +3,17 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-Properties properties = new Properties()
-properties.load(project.file('sonatype_local.properties').newDataInputStream())
 
-def sonatypeUsername = properties.getProperty('sonatypeUsername')
-def sonatypePassword = properties.getProperty('sonatypePassword')
+def sonatypeUsername = ""
+def sonatypePassword = ""
+try {
+    Properties properties = new Properties()
+    properties.load(project.file('sonatype_local.properties').newDataInputStream())
+
+    sonatypeUsername = properties.getProperty('sonatypeUsername')
+    sonatypePassword = properties.getProperty('sonatypePassword')
+} catch (Exception ex) {
+}
 
 // NOTE: update RecurlyApi#VERSION as well
 version = "1.0.0"
