@@ -4,17 +4,6 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 
-def sonatypeUsername = ""
-def sonatypePassword = ""
-try {
-    Properties properties = new Properties()
-    properties.load(project.file('sonatype_local.properties').newDataInputStream())
-
-    sonatypeUsername = properties.getProperty('sonatypeUsername')
-    sonatypePassword = properties.getProperty('sonatypePassword')
-} catch (Exception ex) {
-}
-
 // NOTE: update RecurlyApi#VERSION as well
 version = "0.5.0"
 group = "com.recurly"
@@ -80,6 +69,7 @@ android.libraryVariants.all { variant ->
     }
 }
 
+if (project.hasProperty("sonatypeUsername")){
 uploadArchives {
     configuration = configurations.archives
     repositories.mavenDeployer {
@@ -123,4 +113,5 @@ uploadArchives {
         }
     }
  
+}
 }
