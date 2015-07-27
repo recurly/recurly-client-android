@@ -20,7 +20,7 @@ Add the Recurly Android SDK dependency to the build.gradle file.
 ```gradle
 
 dependencies {
-    compile 'com.recurly:android-sdk:0.5.1@aar'
+    compile 'com.recurly:android-sdk:1.0.0@aar'
     compile 'com.mcxiaoke.volley:library:1.0.15@aar'
     compile 'com.google.code.gson:gson:2.2.4'
 }
