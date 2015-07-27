@@ -66,7 +66,7 @@ public class RecurlyApi {
   /**
    * Current version number
    */
-  public static final java.lang.String VERSION = "0.5.1";
+  public static final java.lang.String VERSION = "1.0.0";
 
   private RecurlyApiClient mClient;
 
