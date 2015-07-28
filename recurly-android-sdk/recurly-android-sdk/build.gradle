@@ -105,9 +105,9 @@ uploadArchives {
 
             developers {
                 developer {
-                    id 'peter.hsu'
-                    name 'Peter Hsu'
-                    email 'peter.hsu@recurly.com'
+                    id 'support'
+                    name 'Recurly Support'
+                    email 'support@recurly.com'
                 }
             }
         }
