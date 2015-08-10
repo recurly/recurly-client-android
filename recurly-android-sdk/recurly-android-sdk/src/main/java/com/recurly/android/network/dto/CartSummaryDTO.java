@@ -33,52 +33,52 @@ import java.util.Map;
  */
 public class CartSummaryDTO extends BaseDTO {
 
-  /**
-   * The pricing details for the plan
-   */
-  protected CartPlanPricingDTO plan;
+    /**
+     * The pricing details for the plan
+     */
+    protected CartPlanPricingDTO plan;
 
-  /**
-   * The pricing details for the add ons selected, by add on code
-   *
-   * @see AddonDTO
-   * @see AddonDTO#code
-   */
-  protected Map<String, Float> addons;
+    /**
+     * The pricing details for the add ons selected, by add on code
+     *
+     * @see AddonDTO
+     * @see AddonDTO#code
+     */
+    protected Map<String, Float> addons;
 
-  /**
-   * See {@link CartSummaryDTO#plan}
-   */
-  public CartPlanPricingDTO getPlan() {
-    return plan;
-  }
+    /**
+     * See {@link CartSummaryDTO#plan}
+     */
+    public CartPlanPricingDTO getPlan() {
+        return plan;
+    }
 
-  /**
-   * See {@link CartSummaryDTO#plan}
-   */
-  public void setPlan(CartPlanPricingDTO plan) {
-    this.plan = plan;
-  }
+    /**
+     * See {@link CartSummaryDTO#plan}
+     */
+    public void setPlan(CartPlanPricingDTO plan) {
+        this.plan = plan;
+    }
 
-  /**
-   * See {@link CartSummaryDTO#addons}
-   */
-  public Map<String, Float> getAddons() {
-    return addons;
-  }
+    /**
+     * See {@link CartSummaryDTO#addons}
+     */
+    public Map<String, Float> getAddons() {
+        return addons;
+    }
 
-  /**
-   * See {@link CartSummaryDTO#addons}
-   */
-  public void setAddons(Map<String, Float> addons) {
-    this.addons = addons;
-  }
+    /**
+     * See {@link CartSummaryDTO#addons}
+     */
+    public void setAddons(Map<String, Float> addons) {
+        this.addons = addons;
+    }
 
-  @Override
-  public String toString() {
-    return "CartSummary{" +
-        "plan=" + plan +
-        ", addons=" + addons +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "CartSummary{" +
+                "plan=" + plan +
+                ", addons=" + addons +
+                '}';
+    }
 }

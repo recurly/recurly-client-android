@@ -35,79 +35,79 @@ import com.recurly.android.network.request.PricingRequest;
 
 public class PricingDTO {
 
-  /**
-   * The price summary for amount that is due now
-   */
-  protected PriceSummaryDTO now;  // TODO: rename to initialPrice
-  /**
-   * The price summary for amount that will be due on recurring basis when plan expires
-   */
-  protected PriceSummaryDTO next; // TODO: rename to recurringPrice
-  /**
-   * The card summary details for amount due now
-   */
-  protected CartSummaryDTO base;  // TODO: rename to cartItems
+    /**
+     * The price summary for amount that is due now
+     */
+    protected PriceSummaryDTO now;  // TODO: rename to initialPrice
+    /**
+     * The price summary for amount that will be due on recurring basis when plan expires
+     */
+    protected PriceSummaryDTO next; // TODO: rename to recurringPrice
+    /**
+     * The card summary details for amount due now
+     */
+    protected CartSummaryDTO base;  // TODO: rename to cartItems
 
-  /**
-   * The currency code for the pricing
-   *
-   * @see com.recurly.android.Constants.CurrencyType
-   */
-  protected String currencyCode;
+    /**
+     * The currency code for the pricing
+     *
+     * @see com.recurly.android.Constants.CurrencyType
+     */
+    protected String currencyCode;
 
-  /**
-   * The symbol for the currency
-   */
-  protected String currencySymbol;
+    /**
+     * The symbol for the currency
+     */
+    protected String currencySymbol;
 
-  public PriceSummaryDTO getNow() {
-    return now;
-  }
+    public PriceSummaryDTO getNow() {
+        return now;
+    }
 
-  public void setNow(PriceSummaryDTO now) {
-    this.now = now;
-  }
+    public void setNow(PriceSummaryDTO now) {
+        this.now = now;
+    }
 
-  public PriceSummaryDTO getNext() {
-    return next;
-  }
+    public PriceSummaryDTO getNext() {
+        return next;
+    }
 
-  public void setNext(PriceSummaryDTO next) {
-    this.next = next;
-  }
+    public void setNext(PriceSummaryDTO next) {
+        this.next = next;
+    }
 
-  public CartSummaryDTO getBase() {
-    return base;
-  }
+    public CartSummaryDTO getBase() {
+        return base;
+    }
 
-  public void setBase(CartSummaryDTO base) {
-    this.base = base;
-  }
+    public void setBase(CartSummaryDTO base) {
+        this.base = base;
+    }
 
-  public String getCurrencyCode() {
-    return currencyCode;
-  }
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
 
-  public void setCurrencyCode(String currencyCode) {
-    this.currencyCode = currencyCode;
-  }
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 
-  public String getCurrencySymbol() {
-    return currencySymbol;
-  }
+    public String getCurrencySymbol() {
+        return currencySymbol;
+    }
 
-  public void setCurrencySymbol(String currencySymbol) {
-    this.currencySymbol = currencySymbol;
-  }
+    public void setCurrencySymbol(String currencySymbol) {
+        this.currencySymbol = currencySymbol;
+    }
 
-  @Override
-  public String toString() {
-    return "Pricing{" +
-        "now=" + now +
-        ", next=" + next +
-        ", base=" + base +
-        ", currencyCode='" + currencyCode + '\'' +
-        ", currencySymbol='" + currencySymbol + '\'' +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "Pricing{" +
+                "now=" + now +
+                ", next=" + next +
+                ", base=" + base +
+                ", currencyCode='" + currencyCode + '\'' +
+                ", currencySymbol='" + currencySymbol + '\'' +
+                '}';
+    }
 }

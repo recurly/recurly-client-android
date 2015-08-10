@@ -27,44 +27,44 @@ import com.recurly.android.network.RecurlyError;
 import com.recurly.android.network.request.TaxRequest;
 
 public class TaxRequestTest extends UnitTest {
-  public void testTaxRequestBuilder() {
+    public void testTaxRequestBuilder() {
 
-    TaxRequest request = new TaxRequest.Builder()
-        .setCountryCode("ES")
-        .setPostalCode("94131")
-        .build();
+        TaxRequest request = new TaxRequest.Builder()
+                .setCountryCode("ES")
+                .setPostalCode("94131")
+                .build();
 
-    assertEquals(request.getCountryCode(), "ES");
-    assertEquals(request.getPostalCode(), "94131");
+        assertEquals(request.getCountryCode(), "ES");
+        assertEquals(request.getPostalCode(), "94131");
 
-    assertNull(request.validate());
+        assertNull(request.validate());
 
-  }
+    }
 
-  public void testTaxRequestManual() {
+    public void testTaxRequestManual() {
 
-    TaxRequest request = new TaxRequest("94131", "ES");
+        TaxRequest request = new TaxRequest("94131", "ES");
 
-    assertEquals(request.getCountryCode(), "ES");
-    assertEquals(request.getPostalCode(), "94131");
+        assertEquals(request.getCountryCode(), "ES");
+        assertEquals(request.getPostalCode(), "94131");
 
-    assertNull(request.validate());
-  }
+        assertNull(request.validate());
+    }
 
-  public void testMissingPlanCode() {
-    TaxRequest request = new TaxRequest.Builder().setCountryCode("ES").build();
+    public void testMissingPlanCode() {
+        TaxRequest request = new TaxRequest.Builder().setCountryCode("ES").build();
 
-    RecurlyError error = request.validate();
-    assertNotNull(error);
-    assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("postal code"));
+        RecurlyError error = request.validate();
+        assertNotNull(error);
+        assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("postal code"));
 
-    request.setPostalCode("94131");
-    request.setCountryCode("");
+        request.setPostalCode("94131");
+        request.setCountryCode("");
 
-    error = request.validate();
-    assertNotNull(error);
-    assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("country code"));
+        error = request.validate();
+        assertNotNull(error);
+        assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("country code"));
 
-  }
+    }
 
 }

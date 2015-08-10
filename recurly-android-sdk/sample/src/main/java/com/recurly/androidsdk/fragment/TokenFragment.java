@@ -36,6 +36,7 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.recurly.android.RecurlyApi;
+import com.recurly.android.model.Address;
 import com.recurly.android.network.RecurlyError;
 import com.recurly.android.network.request.CardPaymentRequest;
 import com.recurly.androidsdk.R;
@@ -46,6 +47,10 @@ public class TokenFragment extends BaseFragment {
   private EditText mInputLastName;
   private EditText mInputCard;
   private EditText mInputCvv;
+  private EditText mInputAddress1;
+  private EditText mInputCity;
+  private EditText mInputState;
+  private EditText mInputPostalCode;
   private EditText mInputCountry;
   private NumberPicker mInputMonth;
   private NumberPicker mInputYear;
@@ -82,6 +87,11 @@ public class TokenFragment extends BaseFragment {
     mInputLastName = (EditText) view.findViewById(R.id.input_last_name);
     mInputCvv = (EditText) view.findViewById(R.id.input_cvv);
     mInputCard = (EditText) view.findViewById(R.id.input_number);
+
+    mInputAddress1 = (EditText) view.findViewById(R.id.input_address1);
+    mInputCity = (EditText) view.findViewById(R.id.input_city);
+    mInputState = (EditText) view.findViewById(R.id.input_state);
+    mInputPostalCode = (EditText) view.findViewById(R.id.input_postal_code);
     mInputCountry = (EditText) view.findViewById(R.id.input_country);
 
     mInputMonth = (NumberPicker) view.findViewById(R.id.input_month);
@@ -105,14 +115,22 @@ public class TokenFragment extends BaseFragment {
       @Override
       public void onClick(View v) {
         hideKeyboard();
+        Address billingAddress = new Address.Builder()
+                .setAddress1(mInputAddress1.getText().toString())
+                .setCity(mInputCity.getText().toString())
+                .setState(mInputState.getText().toString())
+                .setPostalCode(mInputPostalCode.getText().toString())
+                .setCountry(mInputCountry.getText().toString())
+                .createAddress();
+
         getRecurlyApi().getPaymentToken(new CardPaymentRequest.Builder()
                 .setFirstName(mInputFirstName.getText().toString())
                 .setLastName(mInputLastName.getText().toString())
                 .setNumber(mInputCard.getText().toString())
                 .setCvv(mInputCvv.getText().toString())
-                .setCountry(mInputCountry.getText().toString())
                 .setExpirationMonth(mInputMonth.getValue())
                 .setExpirationYear(mInputYear.getValue())
+                .setBillingAddress(billingAddress)
                 .build(),
             new RecurlyApi.TokenResponseHandler() {
               @Override

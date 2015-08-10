@@ -17,7 +17,7 @@ Add the Recurly Android SDK dependency to the build.gradle file.
 
 ```groovy
 dependencies {
-    compile 'com.recurly:android-sdk:1.0.0@aar'
+    compile 'com.recurly:android-sdk:1.0.1@aar'
     compile 'com.mcxiaoke.volley:library:1.0.15@aar'
     compile 'com.google.code.gson:gson:2.2.4'
 }
@@ -68,14 +68,22 @@ import com.recurly.android.network.request.CardPaymentRequest;
 **Request**:
 
 ```java
+ Address billingAddress = new Address.Builder()
+	.setAddress1("310 Townsend St.")
+	.setCity("San Francisco")
+	.setState("CA")
+	.setPostalCode("94107")
+	.setCountry("US")
+	.createAddress();
+
 CardPaymentRequest cardPaymentRequest = new CardPaymentRequest.Builder()
   .setFirstName("John")
   .setLastName("Doe")
   .setNumber("4111 1111 1111 1111")
   .setCvv("123")
-  .setCountry("US")
   .setExpirationMonth(06)
   .setExpirationYear(2020)
+  .setBillingAddress(billingAddress)
   .build();
 
 recurlyApi.getPaymentToken(cardPaymentRequest,
@@ -108,7 +116,7 @@ import com.recurly.android.network.dto.PlanDTO;
 PlanRequest planRequest = new PlanRequest.Builder()
   .setPlanCode("PLAN_SKU") // Substitue your own plan code here
   .build();
-        
+
 recurlyApi.getPlan(planRequest,
   new RecurlyApi.PlanResponseHandler() {
     @Override
@@ -142,7 +150,7 @@ TaxRequest taxRequest = new TaxRequest.Builder()
   .setCountryCode("US")
   .setPostalCode("94110")
   .build();
-        
+
 recurlyApi.getPostalTax(taxRequest,
   new RecurlyApi.TaxResponseHandler() {
     @Override
@@ -158,6 +166,3 @@ recurlyApi.getPostalTax(taxRequest,
     }
 });
 ```
-
-
-

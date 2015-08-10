@@ -32,10 +32,10 @@ import java.util.Map;
  */
 public abstract class GetRequest extends BaseRequest {
 
-  public final int getRequestMethod() {
-    return Request.Method.GET;
-  }
+    public final int getRequestMethod() {
+        return Request.Method.GET;
+    }
 
-  public abstract Map<String, String> getParams();
+    public abstract Map<String, String> getParams();
 
 }

@@ -25,17 +25,12 @@ package com.recurly.android.network;
 
 import android.content.Context;
 import android.net.Uri;
-
 import com.android.volley.Request;
-import com.recurly.android.network.dto.BaseDTO;
-import com.recurly.android.network.dto.CouponDTO;
-import com.recurly.android.network.dto.PlanDTO;
+import com.recurly.android.network.dto.*;
+import com.recurly.android.network.request.CardPaymentRequest;
 import com.recurly.android.network.request.CouponRequest;
 import com.recurly.android.network.request.PlanRequest;
-import com.recurly.android.network.dto.TaxDTO;
-import com.recurly.android.network.request.CardPaymentRequest;
 import com.recurly.android.network.request.TaxRequest;
-import com.recurly.android.network.dto.TokenDTO;
 import com.recurly.android.util.RecurlyLog;
 
 import java.util.List;
@@ -48,93 +43,93 @@ import java.util.Map;
  */
 public class RecurlyApiClient {
 
-  private RecurlyNetwork mNetwork;
-  private RecurlyConfig mRecurlyConfig;
+    private RecurlyNetwork mNetwork;
+    private RecurlyConfig mRecurlyConfig;
 
-  public void init(Context context, RecurlyConfig configuration) {
-    mRecurlyConfig = configuration;
+    public void init(Context context, RecurlyConfig configuration) {
+        mRecurlyConfig = configuration;
 
-    BaseDTO.setCurrency(configuration.getCurrency());
+        BaseDTO.setCurrency(configuration.getCurrency());
 
-    mNetwork = new RecurlyNetwork();
-    mNetwork.init(context);
-    mNetwork.setDefaultTimeout(mRecurlyConfig.getDefaultTimeout());
-  }
-
-  public void getTaxForPostalCode(TaxRequest taxRequest,
-                           final ResponseHandler<List<TaxDTO>> responseHandler) {
-
-    String url = buildRequestUrl(taxRequest.getEndpoint(), taxRequest.getParams(), true);
-
-    RecurlyLog.d("URL is " + url);
-    RecurlyListRequest<TaxDTO> request = new RecurlyListRequest<TaxDTO> (taxRequest,
-        TaxDTO.class, Request.Method.GET, url,
-        responseHandler);
-
-    mNetwork.transmitRequest(request);
-  }
-
-  public void getTokenForCardPayment(CardPaymentRequest paymentRequest,
-                                  final ResponseHandler<TokenDTO> responseHandler) {
-
-    String url = buildRequestUrl(paymentRequest.getEndpoint(), paymentRequest.getParams(), true);
-
-    RecurlyLog.d("URL is " + url);
-    RecurlyRequest<TokenDTO> request = new RecurlyRequest<TokenDTO> (
-        paymentRequest,
-        TokenDTO.class, Request.Method.GET, url,
-        responseHandler);
-
-    mNetwork.transmitRequest(request);
-  }
-
-  public void getPlan(PlanRequest planRequest,
-                      final ResponseHandler<PlanDTO> responseHandler) {
-
-    String url = buildRequestUrl(planRequest.getEndpoint(), planRequest.getParams(), true);
-
-    RecurlyLog.d("URL is " + url);
-    RecurlyRequest<PlanDTO> request = new RecurlyRequest<PlanDTO> (
-        planRequest,
-        PlanDTO.class, Request.Method.GET, url,
-        responseHandler);
-
-    mNetwork.transmitRequest(request);
-  }
-
-  public void getCoupon(CouponRequest couponRequest,
-                      final ResponseHandler<CouponDTO> responseHandler) {
-
-    String url = buildRequestUrl(couponRequest.getEndpoint(), couponRequest.getParams(), true);
-
-    RecurlyLog.d("URL is " + url);
-    RecurlyRequest<CouponDTO> request = new RecurlyRequest<CouponDTO> (
-        couponRequest,
-        CouponDTO.class, Request.Method.GET, url,
-        responseHandler);
-
-    mNetwork.transmitRequest(request);
-  }
-
-  public String buildRequestUrl(String relativePath, Map<String, String> params, boolean appendKey) {
-
-    Uri.Builder builder = Uri.parse(mRecurlyConfig.getBaseUrl()).buildUpon();
-
-    builder.path(mRecurlyConfig.getApiPath() + "/" + relativePath);
-
-    for (Map.Entry<String, String> entry : params.entrySet()) {
-      builder.appendQueryParameter(entry.getKey(), entry.getValue());
+        mNetwork = new RecurlyNetwork();
+        mNetwork.init(context);
+        mNetwork.setDefaultTimeout(mRecurlyConfig.getDefaultTimeout());
     }
 
-    builder.appendQueryParameter("currency", mRecurlyConfig.getCurrency());
+    public void getTaxForPostalCode(TaxRequest taxRequest,
+                                    final ResponseHandler<List<TaxDTO>> responseHandler) {
 
-    if (appendKey) {
-      builder.appendQueryParameter("key", mRecurlyConfig.getPublicKey());
-      builder.appendQueryParameter("version", mRecurlyConfig.getApiVersion());
+        String url = buildRequestUrl(taxRequest.getEndpoint(), taxRequest.getParams(), true);
+
+        RecurlyLog.d("URL is " + url);
+        RecurlyListRequest<TaxDTO> request = new RecurlyListRequest<TaxDTO>(taxRequest,
+                TaxDTO.class, Request.Method.GET, url,
+                responseHandler);
+
+        mNetwork.transmitRequest(request);
     }
 
-    return builder.build().toString();
-  }
+    public void getTokenForCardPayment(CardPaymentRequest paymentRequest,
+                                       final ResponseHandler<TokenDTO> responseHandler) {
+
+        String url = buildRequestUrl(paymentRequest.getEndpoint(), paymentRequest.getParams(), true);
+
+        RecurlyLog.d("URL is " + url);
+        RecurlyRequest<TokenDTO> request = new RecurlyRequest<TokenDTO>(
+                paymentRequest,
+                TokenDTO.class, Request.Method.GET, url,
+                responseHandler);
+
+        mNetwork.transmitRequest(request);
+    }
+
+    public void getPlan(PlanRequest planRequest,
+                        final ResponseHandler<PlanDTO> responseHandler) {
+
+        String url = buildRequestUrl(planRequest.getEndpoint(), planRequest.getParams(), true);
+
+        RecurlyLog.d("URL is " + url);
+        RecurlyRequest<PlanDTO> request = new RecurlyRequest<PlanDTO>(
+                planRequest,
+                PlanDTO.class, Request.Method.GET, url,
+                responseHandler);
+
+        mNetwork.transmitRequest(request);
+    }
+
+    public void getCoupon(CouponRequest couponRequest,
+                          final ResponseHandler<CouponDTO> responseHandler) {
+
+        String url = buildRequestUrl(couponRequest.getEndpoint(), couponRequest.getParams(), true);
+
+        RecurlyLog.d("URL is " + url);
+        RecurlyRequest<CouponDTO> request = new RecurlyRequest<CouponDTO>(
+                couponRequest,
+                CouponDTO.class, Request.Method.GET, url,
+                responseHandler);
+
+        mNetwork.transmitRequest(request);
+    }
+
+    public String buildRequestUrl(String relativePath, Map<String, String> params, boolean appendKey) {
+
+        Uri.Builder builder = Uri.parse(mRecurlyConfig.getBaseUrl()).buildUpon();
+
+        builder.path(mRecurlyConfig.getApiPath() + "/" + relativePath);
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            builder.appendQueryParameter(entry.getKey(), entry.getValue());
+        }
+
+        builder.appendQueryParameter("currency", mRecurlyConfig.getCurrency());
+
+        if (appendKey) {
+            builder.appendQueryParameter("key", mRecurlyConfig.getPublicKey());
+            builder.appendQueryParameter("version", mRecurlyConfig.getApiVersion());
+        }
+
+        return builder.build().toString();
+    }
 
 
 }

@@ -30,68 +30,68 @@ package com.recurly.android.network.dto;
  * @see com.recurly.android.Constants.CurrencyType
  */
 public class PlanPriceDTO extends BaseDTO {
-  /**
-   * The setup fee for the plan, if any
-   */
-  protected float setup_fee;
-  /**
-   * The cost of the plan on a recurring basis
-   */
-  protected float unit_amount;
+    /**
+     * The setup fee for the plan, if any
+     */
+    protected float setup_fee;
+    /**
+     * The cost of the plan on a recurring basis
+     */
+    protected float unit_amount;
 
-  /**
-   * The symbol for the currency of this plan
-   */
-  protected String symbol;
+    /**
+     * The symbol for the currency of this plan
+     */
+    protected String symbol;
 
-  /**
-   * See {@link PlanPriceDTO#setup_fee}
-   */
-  public float getSetupFee() {
-    return setup_fee;
-  }
+    /**
+     * See {@link PlanPriceDTO#setup_fee}
+     */
+    public float getSetupFee() {
+        return setup_fee;
+    }
 
-  /**
-   * See {@link PlanPriceDTO#setup_fee}
-   */
-  public void setSetupFee(float setupFee) {
-    this.setup_fee = setupFee;
-  }
+    /**
+     * See {@link PlanPriceDTO#setup_fee}
+     */
+    public void setSetupFee(float setupFee) {
+        this.setup_fee = setupFee;
+    }
 
-  /**
-   * See {@link PlanPriceDTO#unit_amount}
-   */
-  public float getUnitAmount() {
-    return unit_amount;
-  }
+    /**
+     * See {@link PlanPriceDTO#unit_amount}
+     */
+    public float getUnitAmount() {
+        return unit_amount;
+    }
 
-  /**
-   * See {@link PlanPriceDTO#unit_amount}
-   */
-  public void setUnitAmount(float unitAmount) {
-    this.unit_amount = unitAmount;
-  }
+    /**
+     * See {@link PlanPriceDTO#unit_amount}
+     */
+    public void setUnitAmount(float unitAmount) {
+        this.unit_amount = unitAmount;
+    }
 
-  /**
-   * See {@link PlanPriceDTO#symbol}
-   */
-  public String getSymbol() {
-    return symbol;
-  }
+    /**
+     * See {@link PlanPriceDTO#symbol}
+     */
+    public String getSymbol() {
+        return symbol;
+    }
 
-  /**
-   * See {@link PlanPriceDTO#symbol}
-   */
-  public void setSymbol(String symbol) {
-    this.symbol = symbol;
-  }
+    /**
+     * See {@link PlanPriceDTO#symbol}
+     */
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
 
-  @Override
-  public String toString() {
-    return "Price{" +
-        "setup_fee=" + setup_fee +
-        ", unit_amount=" + unit_amount +
-        ", symbol='" + symbol + '\'' +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "Price{" +
+                "setup_fee=" + setup_fee +
+                ", unit_amount=" + unit_amount +
+                ", symbol='" + symbol + '\'' +
+                '}';
+    }
 }

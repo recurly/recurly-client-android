@@ -30,29 +30,29 @@ package com.recurly.android.network.dto;
  */
 public class AddonPricingDTO extends BaseDTO {
 
-  /**
-   * The cost of this add on, in the specified currency
-   */
-  protected float unit_amount;
+    /**
+     * The cost of this add on, in the specified currency
+     */
+    protected float unit_amount;
 
-  /**
-   * See {@link AddonPricingDTO#unit_amount}
-   */
-  public float getUnitAmount() {
-    return unit_amount;
-  }
+    /**
+     * See {@link AddonPricingDTO#unit_amount}
+     */
+    public float getUnitAmount() {
+        return unit_amount;
+    }
 
-  /**
-   * See {@link AddonPricingDTO#unit_amount}
-   */
-  public void setUnitAmount(float unitAmount) {
-    this.unit_amount = unitAmount;
-  }
+    /**
+     * See {@link AddonPricingDTO#unit_amount}
+     */
+    public void setUnitAmount(float unitAmount) {
+        this.unit_amount = unitAmount;
+    }
 
-  @Override
-  public String toString() {
-    return "AddonPricing{" +
-        "unit_amount=" + unit_amount +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "AddonPricing{" +
+                "unit_amount=" + unit_amount +
+                '}';
+    }
 }

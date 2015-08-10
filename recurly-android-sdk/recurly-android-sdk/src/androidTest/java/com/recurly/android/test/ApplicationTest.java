@@ -25,31 +25,29 @@ package com.recurly.android.test;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
-import android.util.Log;
-
 import com.recurly.android.RecurlyApi;
 
 public class ApplicationTest extends ApplicationTestCase<Application> {
 
-  protected RecurlyApi mApi;
+    protected RecurlyApi mApi;
 
 
-  public ApplicationTest() {
-    super(Application.class);
+    public ApplicationTest() {
+        super(Application.class);
 
-  }
+    }
 
-  @Override
-  protected void setUp() throws Exception {
-    createApplication();
+    @Override
+    protected void setUp() throws Exception {
+        createApplication();
 
-    mApi = RecurlyApi.getInstance(mContext, "sc-zBh5Z3Jcto0c3Z6YLGPMFb");
+        mApi = RecurlyApi.getInstance(mContext, "sc-zBh5Z3Jcto0c3Z6YLGPMFb");
 
-  }
+    }
 
-  public RecurlyApi getApi() {
-    return mApi;
-  }
+    public RecurlyApi getApi() {
+        return mApi;
+    }
 
 
 }

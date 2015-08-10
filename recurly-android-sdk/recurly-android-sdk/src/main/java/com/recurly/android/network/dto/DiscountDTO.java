@@ -31,71 +31,71 @@ import java.util.Map;
  * @see CouponDTO
  */
 public class DiscountDTO extends BaseDTO {
-  /**
-   * The discount type.  Not to be accessed directly, instead use {@link CouponDTO#getDiscountType()}
-   */
-  protected String type;
+    /**
+     * The discount type.  Not to be accessed directly, instead use {@link CouponDTO#getDiscountType()}
+     */
+    protected String type;
 
-  /**
-   * The fixed discount amount, by currency type
-   *
-   * @see com.recurly.android.Constants.CurrencyType
-   */
-  protected Map<String, Float> amount;
+    /**
+     * The fixed discount amount, by currency type
+     *
+     * @see com.recurly.android.Constants.CurrencyType
+     */
+    protected Map<String, Float> amount;
 
-  /**
-   * The percentage discount rate as a float.  From 0 to 1.00.
-   */
-  protected float rate;
+    /**
+     * The percentage discount rate as a float.  From 0 to 1.00.
+     */
+    protected float rate;
 
-  /**
-   * Do not use publicly. Use {@link CouponDTO#getDiscountType()}
-   */
-  public String getType() {
-    return type;
-  }
+    /**
+     * Do not use publicly. Use {@link CouponDTO#getDiscountType()}
+     */
+    public String getType() {
+        return type;
+    }
 
-  /**
-   * See {@link DiscountDTO#type}
-   */
-  public void setType(String type) {
-    this.type = type;
-  }
+    /**
+     * See {@link DiscountDTO#type}
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
-  /**
-   * See {@link DiscountDTO#amount}
-   */
-  public Map<String, Float> getAmount() {
-    return amount;
-  }
+    /**
+     * See {@link DiscountDTO#amount}
+     */
+    public Map<String, Float> getAmount() {
+        return amount;
+    }
 
-  /**
-   * See {@link DiscountDTO#amount}
-   */
-  public void setAmount(Map<String, Float> amount) {
-    this.amount = amount;
-  }
+    /**
+     * See {@link DiscountDTO#amount}
+     */
+    public void setAmount(Map<String, Float> amount) {
+        this.amount = amount;
+    }
 
-  /**
-   * See {@link DiscountDTO#rate}
-   */
-  public float getRate() {
-    return rate;
-  }
+    /**
+     * See {@link DiscountDTO#rate}
+     */
+    public float getRate() {
+        return rate;
+    }
 
-  /**
-   * See {@link DiscountDTO#rate}
-   */
-  public void setRate(float rate) {
-    this.rate = rate;
-  }
+    /**
+     * See {@link DiscountDTO#rate}
+     */
+    public void setRate(float rate) {
+        this.rate = rate;
+    }
 
-  @Override
-  public String toString() {
-    return "Discount{" +
-        "type='" + type + '\'' +
-        ", amount=" + amount +
-        ", rate=" + rate +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "Discount{" +
+                "type='" + type + '\'' +
+                ", amount=" + amount +
+                ", rate=" + rate +
+                '}';
+    }
 }

@@ -35,104 +35,102 @@ import java.util.Map;
  * limited to using the Builder to create the request.
  *
  * @see com.recurly.android.RecurlyApi#getPostalTax(TaxRequest, RecurlyApi.TaxResponseHandler)
- *
  */
 
 public class TaxRequest extends GetRequest {
 
-  /**
-   * The postal code for this tax request
-   */
-  protected String postalCode;
+    /**
+     * The postal code for this tax request
+     */
+    protected String postalCode;
 
-  /**
-   * The country code for this tax request
-   */
-  protected String countryCode;
+    /**
+     * The country code for this tax request
+     */
+    protected String countryCode;
 
-  /**
-   * Constructor for TaxRequest.  Use Builder instead
-   *
-   * @see com.recurly.android.network.request.TaxRequest.Builder
-   *
-   * @param postalCode
-   * @param countryCode
-   */
-  public TaxRequest(String postalCode, String countryCode) {
-    this.postalCode = postalCode;
-    this.countryCode = countryCode;
-  }
-
-  public String getPostalCode() {
-    return postalCode;
-  }
-
-  public void setPostalCode(String postalCode) {
-    this.postalCode = postalCode;
-  }
-
-  public String getCountryCode() {
-    return countryCode;
-  }
-
-  public void setCountryCode(String countryCode) {
-    this.countryCode = countryCode;
-  }
-
-  @Override
-  public Map<String, String> getParams() {
-    HashMap<String, String> params = new HashMap<String, String>();
-    params.put("postal_code", postalCode);
-    params.put("country", countryCode);
-    return params;
-  }
-
-  @Override
-  public boolean isListRequest() {
-    return true;
-  }
-
-  @Override
-  public String getEndpoint() {
-    return "tax";
-  }
-
-  @Override
-  /**
-   * Validate the request.  Will be called automatically, but can be called by user directly as well
-   */
-  public RecurlyError validate() {
-    if (postalCode == null || postalCode.isEmpty()) {
-      return RecurlyError.validationError("postal code");
-    }
-    if (countryCode == null || countryCode.isEmpty() || !RecurlyValidator.validateCountryCode(countryCode)) {
-      return RecurlyError.validationError("country code");
+    /**
+     * Constructor for TaxRequest.  Use Builder instead
+     *
+     * @param postalCode
+     * @param countryCode
+     * @see com.recurly.android.network.request.TaxRequest.Builder
+     */
+    public TaxRequest(String postalCode, String countryCode) {
+        this.postalCode = postalCode;
+        this.countryCode = countryCode;
     }
 
-    return null;
-  }
-
-  /**
-   * Helper builder class to create instance of TaxRequest
-   */
-  public static class Builder {
-
-    private String mPostalCode;
-    private String mCountryCode;
-
-    public Builder setPostalCode(String postalCode) {
-      mPostalCode = postalCode;
-      return this;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public Builder setCountryCode(String countryCode) {
-      mCountryCode = countryCode;
-      return this;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
-    public TaxRequest build() {
-      return new TaxRequest(mPostalCode, mCountryCode);
+    public String getCountryCode() {
+        return countryCode;
     }
-  }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    @Override
+    public Map<String, String> getParams() {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("postal_code", postalCode);
+        params.put("country", countryCode);
+        return params;
+    }
+
+    @Override
+    public boolean isListRequest() {
+        return true;
+    }
+
+    @Override
+    public String getEndpoint() {
+        return "tax";
+    }
+
+    @Override
+    /**
+     * Validate the request.  Will be called automatically, but can be called by user directly as well
+     */
+    public RecurlyError validate() {
+        if (postalCode == null || postalCode.isEmpty()) {
+            return RecurlyError.validationError("postal code");
+        }
+        if (countryCode == null || countryCode.isEmpty() || !RecurlyValidator.validateCountryCode(countryCode)) {
+            return RecurlyError.validationError("country code");
+        }
+
+        return null;
+    }
+
+    /**
+     * Helper builder class to create instance of TaxRequest
+     */
+    public static class Builder {
+
+        private String mPostalCode;
+        private String mCountryCode;
+
+        public Builder setPostalCode(String postalCode) {
+            mPostalCode = postalCode;
+            return this;
+        }
+
+        public Builder setCountryCode(String countryCode) {
+            mCountryCode = countryCode;
+            return this;
+        }
+
+        public TaxRequest build() {
+            return new TaxRequest(mPostalCode, mCountryCode);
+        }
+    }
 
 }

@@ -29,38 +29,39 @@ import com.recurly.android.network.dto.CouponDTO;
 public class CouponModelTest extends UnitTest {
 
 
-  public static String fixedCouponJson = "{\"code\":\"cyberfixed\",\"name\":\"CYBERFIXED\",\"discount\":{\"type\":\"dollars\",\"amount\":{\"USD\":7.0}}}";
-  public static String percentCouponJson = "{\"code\":\"cyberpercent\",\"name\":\"CYBERPERCENT\",\"discount\":{\"type\":\"percent\",\"rate\":0.15}}";
+    public static String fixedCouponJson = "{\"code\":\"cyberfixed\",\"name\":\"CYBERFIXED\",\"discount\":{\"type\":\"dollars\",\"amount\":{\"USD\":7.0}}}";
+    public static String percentCouponJson = "{\"code\":\"cyberpercent\",\"name\":\"CYBERPERCENT\",\"discount\":{\"type\":\"percent\",\"rate\":0.15}}";
 
 
-  public void testParseFixedCoupon() {
+    public void testParseFixedCoupon() {
 
-    CouponDTO coupon = new Gson().fromJson(fixedCouponJson, CouponDTO.class);
+        CouponDTO coupon = new Gson().fromJson(fixedCouponJson, CouponDTO.class);
 
-    assertEquals(coupon.getName(), "CYBERFIXED");
-    assertEquals(coupon.getCode(), "cyberfixed");
-    assertEquals(coupon.getDiscountType(), CouponDTO.DiscountType.DISCOUNT_TYPE_FIXED_AMOUNT);
-    assertEquals(coupon.getDiscountRate(), 0.0f);
-    assertEquals(coupon.getDiscountAmount(), 7.0f);
+        assertEquals(coupon.getName(), "CYBERFIXED");
+        assertEquals(coupon.getCode(), "cyberfixed");
+        assertEquals(coupon.getDiscountType(), CouponDTO.DiscountType.DISCOUNT_TYPE_FIXED_AMOUNT);
+        assertEquals(coupon.getDiscountRate(), 0.0f);
+        assertEquals(coupon.getDiscountAmount(), 7.0f);
 
-    assertEquals(coupon.getDiscount(1000), 7.0f);
-    assertEquals(coupon.getDiscount(10000), 7.0f);
-    assertEquals(coupon.getDiscount(100000), 7.0f);
+        assertEquals(coupon.getDiscount(1000), 7.0f);
+        assertEquals(coupon.getDiscount(10000), 7.0f);
+        assertEquals(coupon.getDiscount(100000), 7.0f);
 
-  }
-  public void testParsePercentCoupon() {
+    }
 
-    CouponDTO coupon = new Gson().fromJson(percentCouponJson, CouponDTO.class);
+    public void testParsePercentCoupon() {
 
-    assertEquals(coupon.getName(), "CYBERPERCENT");
-    assertEquals(coupon.getCode(), "cyberpercent");
-    assertEquals(coupon.getDiscountType(), CouponDTO.DiscountType.DISCOUNT_TYPE_PERCENT);
-    assertEquals(coupon.getDiscountRate(), 0.15f);
-    assertEquals(coupon.getDiscountAmount(), 0.0f);
+        CouponDTO coupon = new Gson().fromJson(percentCouponJson, CouponDTO.class);
 
-    assertEquals((int)coupon.getDiscount(1000), 150);
-    assertEquals((int)coupon.getDiscount(10000), 1500);
-    assertEquals((int)coupon.getDiscount(100000), 15000);
+        assertEquals(coupon.getName(), "CYBERPERCENT");
+        assertEquals(coupon.getCode(), "cyberpercent");
+        assertEquals(coupon.getDiscountType(), CouponDTO.DiscountType.DISCOUNT_TYPE_PERCENT);
+        assertEquals(coupon.getDiscountRate(), 0.15f);
+        assertEquals(coupon.getDiscountAmount(), 0.0f);
 
-  }
+        assertEquals((int) coupon.getDiscount(1000), 150);
+        assertEquals((int) coupon.getDiscount(10000), 1500);
+        assertEquals((int) coupon.getDiscount(100000), 15000);
+
+    }
 }

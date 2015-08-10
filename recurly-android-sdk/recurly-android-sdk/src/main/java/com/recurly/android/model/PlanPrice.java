@@ -24,40 +24,40 @@
 package com.recurly.android.model;
 
 public class PlanPrice extends BaseModel {
-  private float setup_fee;
-  private float unit_amount;
-  private String symbol;
+    private float setup_fee;
+    private float unit_amount;
+    private String symbol;
 
-  public float getSetupFee() {
-    return setup_fee;
-  }
+    public float getSetupFee() {
+        return setup_fee;
+    }
 
-  public void setSetupFee(float setupFee) {
-    this.setup_fee = setupFee;
-  }
+    public void setSetupFee(float setupFee) {
+        this.setup_fee = setupFee;
+    }
 
-  public float getUnitAmount() {
-    return unit_amount;
-  }
+    public float getUnitAmount() {
+        return unit_amount;
+    }
 
-  public void setUnitAmount(float unitAmount) {
-    this.unit_amount = unitAmount;
-  }
+    public void setUnitAmount(float unitAmount) {
+        this.unit_amount = unitAmount;
+    }
 
-  public String getSymbol() {
-    return symbol;
-  }
+    public String getSymbol() {
+        return symbol;
+    }
 
-  public void setSymbol(String symbol) {
-    this.symbol = symbol;
-  }
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
 
-  @Override
-  public String toString() {
-    return "Price{" +
-        "setup_fee=" + setup_fee +
-        ", unit_amount=" + unit_amount +
-        ", symbol='" + symbol + '\'' +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "Price{" +
+                "setup_fee=" + setup_fee +
+                ", unit_amount=" + unit_amount +
+                ", symbol='" + symbol + '\'' +
+                '}';
+    }
 }

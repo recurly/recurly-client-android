@@ -27,7 +27,7 @@ import java.util.Map;
 
 /**
  * Encapsulates an addon included in a plan.
- *
+ * <p>
  * Instances of this class are populated in a response with a Plan instance
  *
  * @see PlanDTO
@@ -36,97 +36,97 @@ import java.util.Map;
 
 public class AddonDTO extends BaseDTO {
 
-  /**
-   * Unique identifier for this add on
-   */
-  protected String code;
-  /**
-   * Display name for add on
-   */
-  protected String name;
-  /**
-   * Quantity of this add on available for this plan
-   */
-  protected int quantity;
-  /**
-   * Pricing for this add on, mapped by currency type
-   */
-  protected Map<String, AddonPricingDTO> price;
+    /**
+     * Unique identifier for this add on
+     */
+    protected String code;
+    /**
+     * Display name for add on
+     */
+    protected String name;
+    /**
+     * Quantity of this add on available for this plan
+     */
+    protected int quantity;
+    /**
+     * Pricing for this add on, mapped by currency type
+     */
+    protected Map<String, AddonPricingDTO> price;
 
-  /**
-   * See {@link AddonDTO#code}
-   */
-  public String getCode() {
-    return code;
-  }
+    /**
+     * See {@link AddonDTO#code}
+     */
+    public String getCode() {
+        return code;
+    }
 
-  /**
-   *  See {@link AddonDTO#code}
-   */
-  public void setCode(String code) {
-    this.code = code;
-  }
+    /**
+     * See {@link AddonDTO#code}
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  /**
-   *  See {@link AddonDTO#name}
-   */
-  public String getName() {
-    return name;
-  }
+    /**
+     * See {@link AddonDTO#name}
+     */
+    public String getName() {
+        return name;
+    }
 
-  /**
-   *  See {@link AddonDTO#name}
-   */
-  public void setName(String name) {
-    this.name = name;
-  }
+    /**
+     * See {@link AddonDTO#name}
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  /**
-   *  See {@link AddonDTO#quantity}
-   */
-  public int getQuantity() {
-    return quantity;
-  }
+    /**
+     * See {@link AddonDTO#quantity}
+     */
+    public int getQuantity() {
+        return quantity;
+    }
 
-  /**
-   *  See {@link AddonDTO#quantity}
-   */
-  public void setQuantity(int quantity) {
-    this.quantity = quantity;
-  }
+    /**
+     * See {@link AddonDTO#quantity}
+     */
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-  /**
-   *  See {@link AddonDTO#price}
-   */
-  public Map<String, AddonPricingDTO> getPrice() {
-    return price;
-  }
+    /**
+     * See {@link AddonDTO#price}
+     */
+    public Map<String, AddonPricingDTO> getPrice() {
+        return price;
+    }
 
-  /**
-   *  See {@link AddonDTO#price}
-   */
-  public void setPrice(Map<String, AddonPricingDTO> price) {
-    this.price = price;
-  }
+    /**
+     * See {@link AddonDTO#price}
+     */
+    public void setPrice(Map<String, AddonPricingDTO> price) {
+        this.price = price;
+    }
 
-  /**
-   * Helper method that returns the pricing for the configured currency
-   * @return The pricing for the default currency
-   *
-   * @see BaseDTO#sCurrency
-   * @see com.recurly.android.RecurlyValidator#validateCurrency(String)
-   */
-  public AddonPricingDTO getPricing() {
-    return price.get(sCurrency);
-  }
+    /**
+     * Helper method that returns the pricing for the configured currency
+     *
+     * @return The pricing for the default currency
+     * @see BaseDTO#sCurrency
+     * @see com.recurly.android.RecurlyValidator#validateCurrency(String)
+     */
+    public AddonPricingDTO getPricing() {
+        return price.get(sCurrency);
+    }
 
-  @Override
-  public String toString() {
-    return "Addon{" +
-        "code='" + code + '\'' +
-        ", name='" + name + '\'' +
-        ", quantity=" + quantity +
-        ", price=" + price +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "Addon{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                '}';
+    }
 }

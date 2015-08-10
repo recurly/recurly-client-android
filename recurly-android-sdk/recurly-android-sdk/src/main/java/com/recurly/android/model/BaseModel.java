@@ -28,18 +28,18 @@ import com.google.gson.GsonBuilder;
 
 public abstract class BaseModel {
 
-  static protected String sCurrency;
+    static protected String sCurrency;
 
-  public static String getCurrency() {
-    return sCurrency;
-  }
+    public static String getCurrency() {
+        return sCurrency;
+    }
 
-  public static void setCurrency(String currency) {
-    sCurrency = currency;
-  }
+    public static void setCurrency(String currency) {
+        sCurrency = currency;
+    }
 
-  public static Gson getParser() {
-    return new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
-  }
+    public static Gson getParser() {
+        return new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+    }
 
 }

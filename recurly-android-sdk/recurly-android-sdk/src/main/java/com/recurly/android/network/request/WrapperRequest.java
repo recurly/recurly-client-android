@@ -27,14 +27,14 @@ package com.recurly.android.network.request;
  * A request that wraps a number of HTTP calls and does some processing
  */
 public abstract class WrapperRequest extends BaseRequest {
-  @Override
-  public boolean isListRequest() {
-    return false;
-  }
+    @Override
+    public boolean isListRequest() {
+        return false;
+    }
 
-  @Override
-  public String getEndpoint() {
-    // no endpoint, since it is just a wrapper for requests
-    return "";
-  }
+    @Override
+    public String getEndpoint() {
+        // no endpoint, since it is just a wrapper for requests
+        return "";
+    }
 }

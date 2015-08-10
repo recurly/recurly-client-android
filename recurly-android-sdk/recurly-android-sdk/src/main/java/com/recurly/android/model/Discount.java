@@ -26,40 +26,40 @@ package com.recurly.android.model;
 import java.util.Map;
 
 public class Discount extends BaseModel {
-  private String type;
-  private Map<String, Float> amount;
-  private float rate;
+    private String type;
+    private Map<String, Float> amount;
+    private float rate;
 
-  public String getType() {
-    return type;
-  }
+    public String getType() {
+        return type;
+    }
 
-  public void setType(String type) {
-    this.type = type;
-  }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-  public Map<String, Float> getAmount() {
-    return amount;
-  }
+    public Map<String, Float> getAmount() {
+        return amount;
+    }
 
-  public void setAmount(Map<String, Float> amount) {
-    this.amount = amount;
-  }
+    public void setAmount(Map<String, Float> amount) {
+        this.amount = amount;
+    }
 
-  public float getRate() {
-    return rate;
-  }
+    public float getRate() {
+        return rate;
+    }
 
-  public void setRate(float rate) {
-    this.rate = rate;
-  }
+    public void setRate(float rate) {
+        this.rate = rate;
+    }
 
-  @Override
-  public String toString() {
-    return "Discount{" +
-        "type='" + type + '\'' +
-        ", amount=" + amount +
-        ", rate=" + rate +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "Discount{" +
+                "type='" + type + '\'' +
+                ", amount=" + amount +
+                ", rate=" + rate +
+                '}';
+    }
 }

@@ -28,24 +28,24 @@ import com.recurly.android.network.dto.TaxDTO;
 
 public class TaxModelTest extends UnitTest {
 
-  private static String validTaxJson = "{\"type\":\"us\",\"region\":\"CA\",\"rate\":\"0.0875\"}";
+    private static String validTaxJson = "{\"type\":\"us\",\"region\":\"CA\",\"rate\":\"0.0875\"}";
 
-  public void testParseTax() {
+    public void testParseTax() {
 
-    TaxDTO tax = new Gson().fromJson(validTaxJson, TaxDTO.class);
+        TaxDTO tax = new Gson().fromJson(validTaxJson, TaxDTO.class);
 
-    assertEquals(tax.getRate(), 0.0875f);
-    assertEquals(tax.getType(), "us");
+        assertEquals(tax.getRate(), 0.0875f);
+        assertEquals(tax.getType(), "us");
 
-  }
+    }
 
-  public void testNoTax() {
+    public void testNoTax() {
 
-    TaxDTO tax = TaxDTO.NO_TAX;
+        TaxDTO tax = TaxDTO.NO_TAX;
 
-    assertEquals(tax.getRate(), 0.0f);
-    assertEquals(tax.getType(), "all");
+        assertEquals(tax.getRate(), 0.0f);
+        assertEquals(tax.getType(), "all");
 
-  }
+    }
 
 }

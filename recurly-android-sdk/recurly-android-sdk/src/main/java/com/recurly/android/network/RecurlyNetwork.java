@@ -26,8 +26,6 @@ package com.recurly.android.network;
 import android.content.Context;
 import android.os.Build;
 import android.telephony.TelephonyManager;
-import android.util.Log;
-
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -44,165 +42,163 @@ import java.util.Map;
  */
 public class RecurlyNetwork {
 
-  public static final String UA_PLATFORM               = "recurly-android";
+    public static final String UA_PLATFORM = "recurly-android";
 
-  public static final String UA_NETWORK_LIB            = "volley";
-  public static final String UA_NETWORK_VERSION        = "1.0.15";
-  public static final String UA_DEVICE                 = "device";
-  public static final String UA_OS                     = "os";
+    public static final String UA_NETWORK_LIB = "volley";
+    public static final String UA_NETWORK_VERSION = "1.0.15";
+    public static final String UA_DEVICE = "device";
+    public static final String UA_OS = "os";
 
-  public static final String UA_CARRIER_NAME           = "carrierName";
-  public static final String UA_COUNTRY_CODE           = "isoCountryCode";
-  public static final String UA_MOBILE_COUNTRY_CODE    = "mobileCountryCode";
-  public static final String UA_MOBILE_NETWORK_CODE    = "mobileNetworkCode";
+    public static final String UA_CARRIER_NAME = "carrierName";
+    public static final String UA_COUNTRY_CODE = "isoCountryCode";
+    public static final String UA_MOBILE_COUNTRY_CODE = "mobileCountryCode";
+    public static final String UA_MOBILE_NETWORK_CODE = "mobileNetworkCode";
 
-  public static final String UA_APP_NAME               = "appName";
+    public static final String UA_APP_NAME = "appName";
+    private static Map<String, String> sHeaders = new HashMap<String, String>();
+    private RequestQueue mRequestQueue = null;
+    private int mRetryCount = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
+    private float mBackoffMultiplier = DefaultRetryPolicy.DEFAULT_BACKOFF_MULT;
+    private RetryPolicy mRetryPolicy = new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+    private String mCarrierName;
+    private String mCarrierCountry;
+    private String mCarrierOperator;
 
-  private RequestQueue mRequestQueue = null;
-  private static Map<String, String> sHeaders = new HashMap<String, String>();
+    private String mPackageName;
 
-  private int mRetryCount = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
-  private float mBackoffMultiplier = DefaultRetryPolicy.DEFAULT_BACKOFF_MULT;
-  private RetryPolicy mRetryPolicy = new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-  private String mCarrierName;
-  private String mCarrierCountry;
-  private String mCarrierOperator;
-
-  private String mPackageName;
-
-  public void init(Context context) {
-    if (mRequestQueue == null) {
-      mRequestQueue = Volley.newRequestQueue(context);
+    public static void setStaticHeader(String key, String value) {
+        sHeaders.put(key, value);
     }
 
-    try {
-      TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-      mCarrierName = manager.getNetworkOperatorName();
-      String operator = manager.getNetworkOperator();
+    public void init(Context context) {
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(context);
+        }
 
-      if (operator != null && operator.length() == 6) {
-        mCarrierCountry = operator.substring(0, 3);
-        mCarrierOperator = operator.substring(3, 6);
-      }
+        try {
+            TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            mCarrierName = manager.getNetworkOperatorName();
+            String operator = manager.getNetworkOperator();
 
-      mPackageName = context.getPackageName();
-    } catch (Exception ex) {
+            if (operator != null && operator.length() == 6) {
+                mCarrierCountry = operator.substring(0, 3);
+                mCarrierOperator = operator.substring(3, 6);
+            }
+
+            mPackageName = context.getPackageName();
+        } catch (Exception ex) {
+        }
+
+        if (mCarrierName == null || mCarrierName.isEmpty()) {
+            mCarrierName = "unknown";
+        }
+        if (mCarrierCountry == null || mCarrierCountry.isEmpty()) {
+            mCarrierCountry = "unknown";
+        }
+        if (mCarrierOperator == null || mCarrierOperator.isEmpty()) {
+            mCarrierOperator = "unknown";
+        }
+
+        setStaticHeader("Accept", "application/xml");
+        String userAgent = getUserAgentString();
+        setStaticHeader("User-Agent", userAgent);
+
     }
 
-    if (mCarrierName == null || mCarrierName.isEmpty()) {
-      mCarrierName = "unknown";
-    }
-    if (mCarrierCountry == null || mCarrierCountry.isEmpty()) {
-      mCarrierCountry = "unknown";
-    }
-    if (mCarrierOperator == null || mCarrierOperator.isEmpty()) {
-      mCarrierOperator = "unknown";
+    public void setRetryPolicy(int initialTimeout, int maxNumRetries, float backoffMultiplier) {
+        mRetryCount = maxNumRetries;
+        mBackoffMultiplier = backoffMultiplier;
+        mRetryPolicy = new DefaultRetryPolicy(initialTimeout, maxNumRetries, backoffMultiplier);
     }
 
-    setStaticHeader("Accept", "application/xml");
-    String userAgent = getUserAgentString();
-    setStaticHeader("User-Agent", userAgent);
-
-  }
-
-  public void setRetryPolicy(int initialTimeout, int maxNumRetries, float backoffMultiplier) {
-    mRetryCount = maxNumRetries;
-    mBackoffMultiplier = backoffMultiplier;
-    mRetryPolicy = new DefaultRetryPolicy(initialTimeout, maxNumRetries, backoffMultiplier);
-  }
-
-  public void setDefaultTimeout(int initialTimeout) {
-    mRetryPolicy = new DefaultRetryPolicy(initialTimeout, mRetryCount, mBackoffMultiplier);
-  }
-
-  public static void setStaticHeader(String key, String value) {
-    sHeaders.put(key, value);
-  }
-
-  public Map<String, String> getStaticHeaders() {
-    return sHeaders;
-  }
-
-  public void transmitRequest(Request request) {
-
-    request.setRetryPolicy(mRetryPolicy);
-
-    if (request instanceof RecurlyRequest) {
-      updateHeaders();
-      ((RecurlyRequest) request).setHeaders(sHeaders);
+    public void setDefaultTimeout(int initialTimeout) {
+        mRetryPolicy = new DefaultRetryPolicy(initialTimeout, mRetryCount, mBackoffMultiplier);
     }
 
-    if (request instanceof RecurlyListRequest) {
-      updateHeaders();
-      ((RecurlyListRequest) request).setHeaders(sHeaders);
+    public Map<String, String> getStaticHeaders() {
+        return sHeaders;
     }
-    mRequestQueue.add(request);
-  }
 
-  private void updateHeaders() {
-  }
+    public void transmitRequest(Request request) {
 
-  private String getUserAgentString() {
+        request.setRetryPolicy(mRetryPolicy);
 
-    StringBuilder sb = new StringBuilder();
+        if (request instanceof RecurlyRequest) {
+            updateHeaders();
+            ((RecurlyRequest) request).setHeaders(sHeaders);
+        }
 
-    sb.append(UA_PLATFORM);
-    sb.append("/");
-    sb.append(RecurlyApi.VERSION);
-    sb.append("; ");
+        if (request instanceof RecurlyListRequest) {
+            updateHeaders();
+            ((RecurlyListRequest) request).setHeaders(sHeaders);
+        }
+        mRequestQueue.add(request);
+    }
 
-    sb.append(UA_NETWORK_LIB);
-    sb.append("/");
-    sb.append(UA_NETWORK_VERSION);
-    sb.append("; ");
+    private void updateHeaders() {
+    }
 
-    sb.append(UA_DEVICE);
-    sb.append("/");
-    sb.append(Build.PRODUCT.toLowerCase());
-    sb.append("; ");
+    private String getUserAgentString() {
 
-    sb.append(UA_OS);
-    sb.append("/");
-    sb.append(Build.VERSION.SDK_INT);
-    sb.append("; ");
+        StringBuilder sb = new StringBuilder();
 
-    sb.append(UA_CARRIER_NAME);
-    sb.append("/");
-    sb.append(mCarrierName);
-    sb.append("; ");
+        sb.append(UA_PLATFORM);
+        sb.append("/");
+        sb.append(RecurlyApi.VERSION);
+        sb.append("; ");
 
-    sb.append(UA_COUNTRY_CODE);
-    sb.append("/");
-    sb.append(Locale.getDefault().getCountry());
-    sb.append("; ");
+        sb.append(UA_NETWORK_LIB);
+        sb.append("/");
+        sb.append(UA_NETWORK_VERSION);
+        sb.append("; ");
 
-    sb.append(UA_MOBILE_COUNTRY_CODE);
-    sb.append("/");
-    sb.append(mCarrierCountry);
-    sb.append("; ");
+        sb.append(UA_DEVICE);
+        sb.append("/");
+        sb.append(Build.PRODUCT.toLowerCase());
+        sb.append("; ");
 
-    sb.append(UA_MOBILE_NETWORK_CODE);
-    sb.append("/");
-    sb.append(mCarrierOperator);
-    sb.append("; ");
+        sb.append(UA_OS);
+        sb.append("/");
+        sb.append(Build.VERSION.SDK_INT);
+        sb.append("; ");
 
-    sb.append(UA_APP_NAME);
-    sb.append("/");
-    sb.append(mPackageName);
+        sb.append(UA_CARRIER_NAME);
+        sb.append("/");
+        sb.append(mCarrierName);
+        sb.append("; ");
+
+        sb.append(UA_COUNTRY_CODE);
+        sb.append("/");
+        sb.append(Locale.getDefault().getCountry());
+        sb.append("; ");
+
+        sb.append(UA_MOBILE_COUNTRY_CODE);
+        sb.append("/");
+        sb.append(mCarrierCountry);
+        sb.append("; ");
+
+        sb.append(UA_MOBILE_NETWORK_CODE);
+        sb.append("/");
+        sb.append(mCarrierOperator);
+        sb.append("; ");
+
+        sb.append(UA_APP_NAME);
+        sb.append("/");
+        sb.append(mPackageName);
 
 
-    sb.append(";");
+        sb.append(";");
 
-    return sb.toString();
-  }
+        return sb.toString();
+    }
 
-  public void cancelOutstandingRequests() {
-    mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
-      @Override
-      public boolean apply(Request<?> request) {
-        return true;
-      }
-    });
-  }
+    public void cancelOutstandingRequests() {
+        mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
+            @Override
+            public boolean apply(Request<?> request) {
+                return true;
+            }
+        });
+    }
 
 }

@@ -24,12 +24,7 @@
 package com.recurly.android.network;
 
 import android.net.Uri;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import com.android.volley.*;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -48,140 +43,143 @@ import java.util.Map;
 
 /**
  * Wrapper request for Recurly API calls that return a list of BaseModel types as a response.
+ *
  * @param <Res>
  */
 public class RecurlyListRequest<Res extends BaseDTO> extends Request<List<Res>> {
 
-  private static Gson sErrorParser = new Gson();
+    private static Gson sErrorParser = new Gson();
 
-  private BaseRequest mOriginalRequest;
+    private BaseRequest mOriginalRequest;
 
-  private Class<Res> mResponseClass;
-  private ResponseHandler<List<Res>> mHandler;
-  private Map<String, String> mHeaders = new HashMap<String, String>();
+    private Class<Res> mResponseClass;
+    private ResponseHandler<List<Res>> mHandler;
+    private Map<String, String> mHeaders = new HashMap<String, String>();
 
-  private Map<String, Object> mPostParams;
+    private Map<String, Object> mPostParams;
 
-  public RecurlyListRequest(BaseRequest originalRequest, Class<Res> responseClass, int method, String url, ResponseHandler<List<Res>> handler) {
-    super(method, url, handler);
+    public RecurlyListRequest(BaseRequest originalRequest, Class<Res> responseClass, int method, String url, ResponseHandler<List<Res>> handler) {
+        super(method, url, handler);
 
-    mOriginalRequest = originalRequest;
-    mResponseClass = responseClass;
-    mHandler = handler;
-  }
-
-  public static String buildRequestUrl(String baseUrl, HashMap<String, String> params) {
-
-    Uri.Builder builder = Uri.parse(baseUrl).buildUpon();
-
-    for (Map.Entry<String, String> entry : params.entrySet()) {
-      builder.appendQueryParameter(entry.getKey(), entry.getValue());
+        mOriginalRequest = originalRequest;
+        mResponseClass = responseClass;
+        mHandler = handler;
     }
 
-    return builder.build().toString();
-  }
+    public static String buildRequestUrl(String baseUrl, HashMap<String, String> params) {
 
+        Uri.Builder builder = Uri.parse(baseUrl).buildUpon();
 
-  @Override
-  public String getBodyContentType() {
-    if (mPostParams != null) {
-      return "application/json";
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            builder.appendQueryParameter(entry.getKey(), entry.getValue());
+        }
+
+        return builder.build().toString();
     }
 
-    return super.getBodyContentType();
-  }
 
-  @Override
-  public byte[] getBody() throws AuthFailureError {
-    if (mPostParams != null) {
-      Gson gson = new Gson();
-      String body = gson.toJson(mPostParams);
+    @Override
+    public String getBodyContentType() {
+        if (mPostParams != null) {
+            return "application/json";
+        }
 
-      return body.getBytes();
+        return super.getBodyContentType();
     }
 
-    return super.getBody();
-  }
+    @Override
+    public byte[] getBody() throws AuthFailureError {
+        if (mPostParams != null) {
+            Gson gson = new Gson();
+            String body = gson.toJson(mPostParams);
 
-  @Override
-  protected Response<List<Res>> parseNetworkResponse(NetworkResponse networkResponse) {
-    String responseString = null;
-    try {
-      responseString = new String(networkResponse.data, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
+            return body.getBytes();
+        }
+
+        return super.getBody();
     }
 
-    List<Res> parsedResponse;
+    @Override
+    protected Response<List<Res>> parseNetworkResponse(NetworkResponse networkResponse) {
+        String responseString = null;
+        try {
+            responseString = new String(networkResponse.data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+        }
 
-    // check if this is an error, since errors come back as 200s
-    try {
-      NetworkResponseError model = sErrorParser.fromJson(responseString, NetworkResponseError.class);
+        List<Res> parsedResponse;
 
-      if (model.isError()) {
+        // check if this is an error, since errors come back as 200s
+        try {
+            NetworkResponseError model = sErrorParser.fromJson(responseString, NetworkResponseError.class);
+
+            if (model.isError()) {
+                mOriginalRequest.setFinished(true);
+                return Response.error(model);
+            }
+        } catch (Exception ex) {
+            // not an error
+        }
+
+        RecurlyLog.d("Response code " + networkResponse.statusCode);
+        RecurlyLog.d("Response string " + responseString);
+
+        try {
+            Type listType = new TypeToken<List<Res>>() {
+            }.getType();
+            parsedResponse = new ArrayList<Res>();
+
+
+            JsonArray array = BaseDTO.getParser().fromJson(responseString, JsonArray.class);
+
+            for (JsonElement jsonElement : array) {
+                Res entry = BaseDTO.getParser().fromJson(jsonElement, mResponseClass);
+                parsedResponse.add(entry);
+            }
+
+        } catch (Exception ex) {
+            RecurlyLog.d("Error parsing response " + responseString);
+            ex.printStackTrace();
+
+            mOriginalRequest.setFinished(true);
+            return Response.error(new VolleyError(ex));
+        }
+
         mOriginalRequest.setFinished(true);
-        return Response.error(model);
-      }
-    } catch (Exception ex) {
-      // not an error
+        return Response.success(parsedResponse, HttpHeaderParser.parseCacheHeaders(networkResponse));
     }
 
-    RecurlyLog.d("Response code " + networkResponse.statusCode);
-    RecurlyLog.d("Response string " + responseString);
-
-    try {
-      Type listType = new TypeToken<List<Res>>() {}.getType();
-      parsedResponse = new ArrayList<Res>();
-
-
-      JsonArray array = BaseDTO.getParser().fromJson(responseString, JsonArray.class);
-
-      for (JsonElement jsonElement : array) {
-        Res entry = BaseDTO.getParser().fromJson(jsonElement, mResponseClass);
-        parsedResponse.add(entry);
-      }
-
-    } catch (Exception ex) {
-      RecurlyLog.d("Error parsing response " + responseString);
-      ex.printStackTrace();
-
-      mOriginalRequest.setFinished(true);
-      return Response.error(new VolleyError(ex));
+    @Override
+    protected void deliverResponse(List<Res> res) {
+        if (mHandler != null) {
+            mHandler.onResponse(res);
+        }
     }
 
-    mOriginalRequest.setFinished(true);
-    return Response.success(parsedResponse, HttpHeaderParser.parseCacheHeaders(networkResponse));
-  }
+    @Override
+    public Map<String, String> getHeaders() throws AuthFailureError {
+        Map<String, String> headers = super.getHeaders();
 
-  @Override
-  protected void deliverResponse(List<Res> res) {
-    if (mHandler != null) {
-      mHandler.onResponse(res);
-    }
-  }
+        if (headers == null) {
+            return mHeaders;
+        }
 
-  @Override
-  public Map<String, String> getHeaders() throws AuthFailureError {
-    Map<String, String> headers = super.getHeaders();
-
-    if (headers == null) {
-      return mHeaders;
+        mHeaders.putAll(headers);
+        return mHeaders;
     }
 
-    mHeaders.putAll(headers);
-    return mHeaders;
-  }
+    public void setHeaders(Map<String, String> headers) {
+        mHeaders = headers;
+    }
 
-  public void setHeaders(Map<String, String> headers) {
-    mHeaders = headers;
-  }
-
-  /**
-   * Set up the parameters for post.  Only JSON requests are currently supported, and request
-   * will automatically be sent up as JSON.
-   * @param params
-   */
-  public void setPostParams(Map<String, Object> params) {
-    mPostParams = params;
-  }
+    /**
+     * Set up the parameters for post.  Only JSON requests are currently supported, and request
+     * will automatically be sent up as JSON.
+     *
+     * @param params
+     */
+    public void setPostParams(Map<String, Object> params) {
+        mPostParams = params;
+    }
 
 }

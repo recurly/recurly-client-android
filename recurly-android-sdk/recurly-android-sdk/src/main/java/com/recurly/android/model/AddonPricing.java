@@ -24,20 +24,20 @@
 package com.recurly.android.model;
 
 public class AddonPricing extends BaseModel {
-  private float unit_amount;
+    private float unit_amount;
 
-  public float getUnitAmount() {
-    return unit_amount;
-  }
+    public float getUnitAmount() {
+        return unit_amount;
+    }
 
-  public void setUnitAmount(float unitAmount) {
-    this.unit_amount = unitAmount;
-  }
+    public void setUnitAmount(float unitAmount) {
+        this.unit_amount = unitAmount;
+    }
 
-  @Override
-  public String toString() {
-    return "AddonPricing{" +
-        "unit_amount=" + unit_amount +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "AddonPricing{" +
+                "unit_amount=" + unit_amount +
+                '}';
+    }
 }

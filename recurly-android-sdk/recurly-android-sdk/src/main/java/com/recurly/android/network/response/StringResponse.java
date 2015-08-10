@@ -26,17 +26,17 @@ package com.recurly.android.network.response;
 import com.recurly.android.model.BaseModel;
 
 public class StringResponse extends BaseModel {
-  private String response;
+    private String response;
 
-  public StringResponse(String response) {
-    this.response = response;
-  }
+    public StringResponse(String response) {
+        this.response = response;
+    }
 
-  public String getResponse() {
-    return response;
-  }
+    public String getResponse() {
+        return response;
+    }
 
-  public void setResponse(String response) {
-    this.response = response;
-  }
+    public void setResponse(String response) {
+        this.response = response;
+    }
 }

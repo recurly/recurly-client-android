@@ -25,38 +25,38 @@ package com.recurly.android.model;
 
 public class Tax extends BaseModel {
 
-  public static final Tax NO_TAX = new Tax("all", 0);
+    public static final Tax NO_TAX = new Tax("all", 0);
 
-  private String type;
-  private float rate;
+    private String type;
+    private float rate;
 
-  public Tax(String type, float rate) {
-    this.type = type;
-    this.rate = rate;
-  }
+    public Tax(String type, float rate) {
+        this.type = type;
+        this.rate = rate;
+    }
 
-  public String getType() {
-    return type;
-  }
+    public String getType() {
+        return type;
+    }
 
-  public void setType(String type) {
-    this.type = type;
-  }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-  public float getRate() {
-    return rate;
-  }
+    public float getRate() {
+        return rate;
+    }
 
-  public void setRate(float rate) {
-    this.rate = rate;
-  }
+    public void setRate(float rate) {
+        this.rate = rate;
+    }
 
-  @Override
-  public String toString() {
-    return "Tax{" +
-        "type='" + type + '\'' +
-        ", rate=" + rate +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "Tax{" +
+                "type='" + type + '\'' +
+                ", rate=" + rate +
+                '}';
+    }
 
 }

@@ -28,22 +28,22 @@ import com.recurly.android.model.BaseModel;
 import java.util.List;
 
 public class RecurlyResponse<Res extends BaseModel> {
-  private Res response;
-  private List<Res> ListResponse;
+    private Res response;
+    private List<Res> ListResponse;
 
-  public Res getResponse() {
-    return response;
-  }
+    public Res getResponse() {
+        return response;
+    }
 
-  public void setResponse(Res response) {
-    this.response = response;
-  }
+    public void setResponse(Res response) {
+        this.response = response;
+    }
 
-  public List<Res> getListResponse() {
-    return ListResponse;
-  }
+    public List<Res> getListResponse() {
+        return ListResponse;
+    }
 
-  public void setListResponse(List<Res> listResponse) {
-    ListResponse = listResponse;
-  }
+    public void setListResponse(List<Res> listResponse) {
+        ListResponse = listResponse;
+    }
 }

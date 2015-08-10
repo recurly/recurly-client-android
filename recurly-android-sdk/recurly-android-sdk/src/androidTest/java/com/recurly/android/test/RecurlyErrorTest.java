@@ -28,38 +28,38 @@ import com.recurly.android.network.RecurlyError;
 
 public class RecurlyErrorTest extends UnitTest {
 
-  public void testInitializeError() {
-    RecurlyError error = new RecurlyError(500, "code", "message");
+    public void testInitializeError() {
+        RecurlyError error = new RecurlyError(500, "code", "message");
 
-    assertEquals(error.getStatusCode(), 500);
-    assertEquals(error.getErrorCode(), "code");
-    assertEquals(error.getErrorMessage(), "message");
-  }
+        assertEquals(error.getStatusCode(), 500);
+        assertEquals(error.getErrorCode(), "code");
+        assertEquals(error.getErrorMessage(), "message");
+    }
 
-  public void testNetworkError() {
-    NetworkResponseError networkError = new NetworkResponseError();
+    public void testNetworkError() {
+        NetworkResponseError networkError = new NetworkResponseError();
 
-    RecurlyError error = new RecurlyError(networkError);
+        RecurlyError error = new RecurlyError(networkError);
 
-    assertEquals(error.getStatusCode(), 400);
+        assertEquals(error.getStatusCode(), 400);
 
-  }
+    }
 
-  public void testValidationError() {
-    RecurlyError error = RecurlyError.validationError("field");
+    public void testValidationError() {
+        RecurlyError error = RecurlyError.validationError("field");
 
-    assertEquals(error.getStatusCode(), 400);
-    assertEquals(error.getErrorCode(), "validation error");
-    assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("field"));
+        assertEquals(error.getStatusCode(), 400);
+        assertEquals(error.getErrorCode(), "validation error");
+        assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("field"));
 
-  }
+    }
 
-  public void testServerError() {
-    RecurlyError error = RecurlyError.genericServerError("message");
+    public void testServerError() {
+        RecurlyError error = RecurlyError.genericServerError("message");
 
-    assertEquals(error.getStatusCode(), 500);
-    assertEquals(error.getErrorCode(), "Unexpected error");
-    assertEquals(error.getErrorMessage(), "Unexpected error: message");
-  }
+        assertEquals(error.getStatusCode(), 500);
+        assertEquals(error.getErrorCode(), "Unexpected error");
+        assertEquals(error.getErrorMessage(), "Unexpected error: message");
+    }
 
 }

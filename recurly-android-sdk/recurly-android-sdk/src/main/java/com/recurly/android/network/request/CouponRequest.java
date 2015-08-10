@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * Encapsulates the parameters used to make a getCoupon request.  Use of this class should be
  * limited to using the Builder to create the request.
  *
@@ -39,93 +38,92 @@ import java.util.Map;
 
 public class CouponRequest extends GetRequest {
 
-  /**
-   * The unique plan code for the request
-   */
-  protected String planCode;
-  /**
-   * The coupon code for this request
-   */
-  protected String couponCode;
+    /**
+     * The unique plan code for the request
+     */
+    protected String planCode;
+    /**
+     * The coupon code for this request
+     */
+    protected String couponCode;
 
-  /**
-   * Constructor for CouponRequest.  Use Builder instead
-   *
-   * @see com.recurly.android.network.request.CouponRequest.Builder
-   *
-   * @param planCode
-   * @param couponCode
-   */
-  public CouponRequest(String planCode, String couponCode) {
-    this.planCode = planCode;
-    this.couponCode = couponCode;
-  }
-
-  public String getCouponCode() {
-    return couponCode;
-  }
-
-  public void setCouponCode(String couponCode) {
-    this.couponCode = couponCode;
-  }
-
-  public String getPlanCode() {
-    return planCode;
-  }
-
-  public void setPlanCode(String planCode) {
-    this.planCode = planCode;
-  }
-
-  @Override
-  public Map<String, String> getParams() {
-    return new HashMap<String, String>();
-  }
-
-  @Override
-  public boolean isListRequest() {
-    return false;
-  }
-
-  @Override
-  public String getEndpoint() {
-    return "plans/" + planCode + "/coupons/" + couponCode;
-  }
-
-  @Override
-  /**
-   * Validate the request.  Will be called automatically, but can be called by user directly as well
-   */
-  public RecurlyError validate() {
-    if (planCode == null || planCode.isEmpty()) {
-      return RecurlyError.validationError("plan code");
-    }
-    if (couponCode == null || couponCode.isEmpty()) {
-      return RecurlyError.validationError("coupon code");
-    }
-    return null;
-  }
-
-  /**
-   * Builder helper class to create a CouponRequest instance
-   */
-  public static class Builder {
-
-    private String mPlanCode;
-    private String mCouponCode;
-
-    public Builder setPlanCode(String planCode) {
-      mPlanCode = planCode;
-      return this;
+    /**
+     * Constructor for CouponRequest.  Use Builder instead
+     *
+     * @param planCode
+     * @param couponCode
+     * @see com.recurly.android.network.request.CouponRequest.Builder
+     */
+    public CouponRequest(String planCode, String couponCode) {
+        this.planCode = planCode;
+        this.couponCode = couponCode;
     }
 
-    public Builder setCouponCode(String couponCode) {
-      mCouponCode = couponCode;
-      return this;
+    public String getCouponCode() {
+        return couponCode;
     }
 
-    public CouponRequest build() {
-      return new CouponRequest(mPlanCode, mCouponCode);
+    public void setCouponCode(String couponCode) {
+        this.couponCode = couponCode;
     }
-  }
+
+    public String getPlanCode() {
+        return planCode;
+    }
+
+    public void setPlanCode(String planCode) {
+        this.planCode = planCode;
+    }
+
+    @Override
+    public Map<String, String> getParams() {
+        return new HashMap<String, String>();
+    }
+
+    @Override
+    public boolean isListRequest() {
+        return false;
+    }
+
+    @Override
+    public String getEndpoint() {
+        return "plans/" + planCode + "/coupons/" + couponCode;
+    }
+
+    @Override
+    /**
+     * Validate the request.  Will be called automatically, but can be called by user directly as well
+     */
+    public RecurlyError validate() {
+        if (planCode == null || planCode.isEmpty()) {
+            return RecurlyError.validationError("plan code");
+        }
+        if (couponCode == null || couponCode.isEmpty()) {
+            return RecurlyError.validationError("coupon code");
+        }
+        return null;
+    }
+
+    /**
+     * Builder helper class to create a CouponRequest instance
+     */
+    public static class Builder {
+
+        private String mPlanCode;
+        private String mCouponCode;
+
+        public Builder setPlanCode(String planCode) {
+            mPlanCode = planCode;
+            return this;
+        }
+
+        public Builder setCouponCode(String couponCode) {
+            mCouponCode = couponCode;
+            return this;
+        }
+
+        public CouponRequest build() {
+            return new CouponRequest(mPlanCode, mCouponCode);
+        }
+    }
 }

@@ -24,30 +24,30 @@
 package com.recurly.android.model;
 
 public class PlanPricing extends BaseModel {
-  private float setup_fee;
-  private float unit;
+    private float setup_fee;
+    private float unit;
 
-  public float getSetupFee() {
-    return setup_fee;
-  }
+    public float getSetupFee() {
+        return setup_fee;
+    }
 
-  public void setSetupFee(float setupFee) {
-    this.setup_fee = setupFee;
-  }
+    public void setSetupFee(float setupFee) {
+        this.setup_fee = setupFee;
+    }
 
-  public float getUnit() {
-    return unit;
-  }
+    public float getUnit() {
+        return unit;
+    }
 
-  public void setUnit(float unit) {
-    this.unit = unit;
-  }
+    public void setUnit(float unit) {
+        this.unit = unit;
+    }
 
-  @Override
-  public String toString() {
-    return "PlanPricing{" +
-        "setup_fee=" + setup_fee +
-        ", unit=" + unit +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "PlanPricing{" +
+                "setup_fee=" + setup_fee +
+                ", unit=" + unit +
+                '}';
+    }
 }

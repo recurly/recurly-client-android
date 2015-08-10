@@ -29,102 +29,102 @@ import java.util.Map;
 
 public class Plan extends BaseModel {
 
-  private String code;
-  private String name;
-  private Map<String, PlanPrice> price;
-  private PlanPeriod period;
-  private boolean tax_exempt;
-  private PlanPeriod trial;
-  private List<Addon> addons;
+    private String code;
+    private String name;
+    private Map<String, PlanPrice> price;
+    private PlanPeriod period;
+    private boolean tax_exempt;
+    private PlanPeriod trial;
+    private List<Addon> addons;
 
-  private HashMap<String, Addon> addonsByCode = new HashMap<String, Addon>();
+    private HashMap<String, Addon> addonsByCode = new HashMap<String, Addon>();
 
-  public String getCode() {
-    return code;
-  }
-
-  public void setCode(String code) {
-    this.code = code;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Map<String, PlanPrice> getPrice() {
-    return price;
-  }
-
-  public void setPrice(Map<String, PlanPrice> price) {
-    this.price = price;
-  }
-
-  public PlanPeriod getPeriod() {
-    return period;
-  }
-
-  public void setPeriod(PlanPeriod period) {
-    this.period = period;
-  }
-
-  public boolean isTaxExempt() {
-    return tax_exempt;
-  }
-
-  public void setTaxExempt(boolean taxExempt) {
-    this.tax_exempt = taxExempt;
-  }
-
-  public PlanPeriod getTrial() {
-    return trial;
-  }
-
-  public void setTrial(PlanPeriod trial) {
-    this.trial = trial;
-  }
-
-  public List<Addon> getAddons() {
-    return addons;
-  }
-
-  public void setAddons(List<Addon> addons) {
-    this.addons = addons;
-  }
-
-  public Addon getAddon(String code) {
-    if (addons == null) {
-      return null;
+    public String getCode() {
+        return code;
     }
 
-    if (addonsByCode.size() != addons.size()) {
-      addonsByCode = new HashMap<String, Addon>();
-      for (Addon addon : addons) {
-        addonsByCode.put(addon.getCode(), addon);
-      }
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    return addonsByCode.get(code);
+    public String getName() {
+        return name;
+    }
 
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public PlanPrice getPricing() {
-    return price.get(sCurrency);
-  }
+    public Map<String, PlanPrice> getPrice() {
+        return price;
+    }
 
-  @Override
-  public String toString() {
-    return "Plan{" +
-        "code='" + code + '\'' +
-        ", name='" + name + '\'' +
-        ", price=" + price +
-        ", period=" + period +
-        ", tax_exempt=" + tax_exempt +
-        ", trial=" + trial +
-        ", addons=" + addons +
-        '}';
-  }
+    public void setPrice(Map<String, PlanPrice> price) {
+        this.price = price;
+    }
+
+    public PlanPeriod getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(PlanPeriod period) {
+        this.period = period;
+    }
+
+    public boolean isTaxExempt() {
+        return tax_exempt;
+    }
+
+    public void setTaxExempt(boolean taxExempt) {
+        this.tax_exempt = taxExempt;
+    }
+
+    public PlanPeriod getTrial() {
+        return trial;
+    }
+
+    public void setTrial(PlanPeriod trial) {
+        this.trial = trial;
+    }
+
+    public List<Addon> getAddons() {
+        return addons;
+    }
+
+    public void setAddons(List<Addon> addons) {
+        this.addons = addons;
+    }
+
+    public Addon getAddon(String code) {
+        if (addons == null) {
+            return null;
+        }
+
+        if (addonsByCode.size() != addons.size()) {
+            addonsByCode = new HashMap<String, Addon>();
+            for (Addon addon : addons) {
+                addonsByCode.put(addon.getCode(), addon);
+            }
+        }
+
+        return addonsByCode.get(code);
+
+    }
+
+    public PlanPrice getPricing() {
+        return price.get(sCurrency);
+    }
+
+    @Override
+    public String toString() {
+        return "Plan{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", period=" + period +
+                ", tax_exempt=" + tax_exempt +
+                ", trial=" + trial +
+                ", addons=" + addons +
+                '}';
+    }
 }
