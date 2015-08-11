@@ -28,58 +28,58 @@ import com.recurly.android.network.request.CouponRequest;
 
 public class CouponRequestTest extends UnitTest {
 
-  public void testCouponRequestBuilder() {
+    public void testCouponRequestBuilder() {
 
-    CouponRequest request = new CouponRequest.Builder()
-        .setPlanCode("plan_code")
-        .setCouponCode("12345").build();
+        CouponRequest request = new CouponRequest.Builder()
+                .setPlanCode("plan_code")
+                .setCouponCode("12345").build();
 
-    assertEquals(request.getPlanCode(), "plan_code");
-    assertEquals(request.getCouponCode(), "12345");
+        assertEquals(request.getPlanCode(), "plan_code");
+        assertEquals(request.getCouponCode(), "12345");
 
-    assertNull(request.validate());
+        assertNull(request.validate());
 
-  }
+    }
 
-  public void testCouponRequestManual() {
+    public void testCouponRequestManual() {
 
-    CouponRequest request = new CouponRequest("plan_code", "12345");
+        CouponRequest request = new CouponRequest("plan_code", "12345");
 
-    assertEquals(request.getPlanCode(), "plan_code");
-    assertEquals(request.getCouponCode(), "12345");
+        assertEquals(request.getPlanCode(), "plan_code");
+        assertEquals(request.getCouponCode(), "12345");
 
-    assertNull(request.validate());
-  }
+        assertNull(request.validate());
+    }
 
-  public void testMissingPlanCode() {
-    CouponRequest request = new CouponRequest.Builder()
-        .setCouponCode("12345").build();
+    public void testMissingPlanCode() {
+        CouponRequest request = new CouponRequest.Builder()
+                .setCouponCode("12345").build();
 
-    RecurlyError error = request.validate();
-    assertNotNull(error);
-    assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("plan code"));
+        RecurlyError error = request.validate();
+        assertNotNull(error);
+        assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("plan code"));
 
-    request.setPlanCode("");
+        request.setPlanCode("");
 
-    error = request.validate();
-    assertNotNull(error);
-    assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("plan code"));
+        error = request.validate();
+        assertNotNull(error);
+        assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("plan code"));
 
-  }
+    }
 
-  public void testMissingCouponCode() {
-    CouponRequest request = new CouponRequest.Builder()
-        .setPlanCode("plan_code").build();
+    public void testMissingCouponCode() {
+        CouponRequest request = new CouponRequest.Builder()
+                .setPlanCode("plan_code").build();
 
-    RecurlyError error = request.validate();
-    assertNotNull(error);
-    assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("coupon code"));
+        RecurlyError error = request.validate();
+        assertNotNull(error);
+        assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("coupon code"));
 
-    request.setCouponCode("");
+        request.setCouponCode("");
 
-    error = request.validate();
-    assertNotNull(error);
-    assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("coupon code"));
+        error = request.validate();
+        assertNotNull(error);
+        assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("coupon code"));
 
-  }
+    }
 }

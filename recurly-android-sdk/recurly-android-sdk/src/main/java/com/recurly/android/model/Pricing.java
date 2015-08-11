@@ -25,61 +25,61 @@ package com.recurly.android.model;
 
 public class Pricing {
 
-  private PriceSummary now;  // TODO: rename to initialPrice
-  private PriceSummary next; // TODO: rename to recurringPrice
-  private CartSummary base;  // TODO: rename to cartItems
+    private PriceSummary now;  // TODO: rename to initialPrice
+    private PriceSummary next; // TODO: rename to recurringPrice
+    private CartSummary base;  // TODO: rename to cartItems
 
-  private String currencyCode;
-  private String currencySymbol;
+    private String currencyCode;
+    private String currencySymbol;
 
-  public PriceSummary getNow() {
-    return now;
-  }
+    public PriceSummary getNow() {
+        return now;
+    }
 
-  public void setNow(PriceSummary now) {
-    this.now = now;
-  }
+    public void setNow(PriceSummary now) {
+        this.now = now;
+    }
 
-  public PriceSummary getNext() {
-    return next;
-  }
+    public PriceSummary getNext() {
+        return next;
+    }
 
-  public void setNext(PriceSummary next) {
-    this.next = next;
-  }
+    public void setNext(PriceSummary next) {
+        this.next = next;
+    }
 
-  public CartSummary getBase() {
-    return base;
-  }
+    public CartSummary getBase() {
+        return base;
+    }
 
-  public void setBase(CartSummary base) {
-    this.base = base;
-  }
+    public void setBase(CartSummary base) {
+        this.base = base;
+    }
 
-  public String getCurrencyCode() {
-    return currencyCode;
-  }
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
 
-  public void setCurrencyCode(String currencyCode) {
-    this.currencyCode = currencyCode;
-  }
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 
-  public String getCurrencySymbol() {
-    return currencySymbol;
-  }
+    public String getCurrencySymbol() {
+        return currencySymbol;
+    }
 
-  public void setCurrencySymbol(String currencySymbol) {
-    this.currencySymbol = currencySymbol;
-  }
+    public void setCurrencySymbol(String currencySymbol) {
+        this.currencySymbol = currencySymbol;
+    }
 
-  @Override
-  public String toString() {
-    return "Pricing{" +
-        "now=" + now +
-        ", next=" + next +
-        ", base=" + base +
-        ", currencyCode='" + currencyCode + '\'' +
-        ", currencySymbol='" + currencySymbol + '\'' +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "Pricing{" +
+                "now=" + now +
+                ", next=" + next +
+                ", base=" + base +
+                ", currencyCode='" + currencyCode + '\'' +
+                ", currencySymbol='" + currencySymbol + '\'' +
+                '}';
+    }
 }

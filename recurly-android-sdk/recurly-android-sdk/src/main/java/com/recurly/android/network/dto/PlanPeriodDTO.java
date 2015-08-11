@@ -30,51 +30,51 @@ package com.recurly.android.network.dto;
  */
 public class PlanPeriodDTO extends BaseDTO {
 
-  /**
-   * The plan interval unit.
-   *
-   * @see com.recurly.android.Constants.PlanInterval
-   */
-  protected String interval;
+    /**
+     * The plan interval unit.
+     *
+     * @see com.recurly.android.Constants.PlanInterval
+     */
+    protected String interval;
 
-  /**
-   * The length of this plan, in {@link PlanPeriodDTO#interval}
-   */
-  protected int length;
+    /**
+     * The length of this plan, in {@link PlanPeriodDTO#interval}
+     */
+    protected int length;
 
-  /**
-   * {@link PlanPeriodDTO#interval}
-   */
-  public String getInterval() {
-    return interval;
-  }
+    /**
+     * {@link PlanPeriodDTO#interval}
+     */
+    public String getInterval() {
+        return interval;
+    }
 
-  /**
-   * {@link PlanPeriodDTO#interval}
-   */
-  public void setInterval(String interval) {
-    this.interval = interval;
-  }
+    /**
+     * {@link PlanPeriodDTO#interval}
+     */
+    public void setInterval(String interval) {
+        this.interval = interval;
+    }
 
-  /**
-   * {@link PlanPeriodDTO#length}
-   */
-  public int getLength() {
-    return length;
-  }
+    /**
+     * {@link PlanPeriodDTO#length}
+     */
+    public int getLength() {
+        return length;
+    }
 
-  /**
-   * {@link PlanPeriodDTO#length}
-   */
-  public void setLength(int length) {
-    this.length = length;
-  }
+    /**
+     * {@link PlanPeriodDTO#length}
+     */
+    public void setLength(int length) {
+        this.length = length;
+    }
 
-  @Override
-  public String toString() {
-    return "PlanPeriod{" +
-        "interval='" + interval + '\'' +
-        ", length=" + length +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "PlanPeriod{" +
+                "interval='" + interval + '\'' +
+                ", length=" + length +
+                '}';
+    }
 }

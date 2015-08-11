@@ -26,30 +26,30 @@ package com.recurly.android.model;
 import java.util.Map;
 
 public class CartSummary extends BaseModel {
-  private PlanPricing plan;
-  private Map<String, Float> addons;
+    private PlanPricing plan;
+    private Map<String, Float> addons;
 
-  public PlanPricing getPlan() {
-    return plan;
-  }
+    public PlanPricing getPlan() {
+        return plan;
+    }
 
-  public void setPlan(PlanPricing plan) {
-    this.plan = plan;
-  }
+    public void setPlan(PlanPricing plan) {
+        this.plan = plan;
+    }
 
-  public Map<String, Float> getAddons() {
-    return addons;
-  }
+    public Map<String, Float> getAddons() {
+        return addons;
+    }
 
-  public void setAddons(Map<String, Float> addons) {
-    this.addons = addons;
-  }
+    public void setAddons(Map<String, Float> addons) {
+        this.addons = addons;
+    }
 
-  @Override
-  public String toString() {
-    return "CartSummary{" +
-        "plan=" + plan +
-        ", addons=" + addons +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "CartSummary{" +
+                "plan=" + plan +
+                ", addons=" + addons +
+                '}';
+    }
 }

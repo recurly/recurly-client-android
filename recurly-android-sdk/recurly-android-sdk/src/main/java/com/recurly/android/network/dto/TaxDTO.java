@@ -30,60 +30,60 @@ package com.recurly.android.network.dto;
  */
 public class TaxDTO extends BaseDTO {
 
-  /**
-   * Tax instance representing no tax
-   */
-  public static final TaxDTO NO_TAX = new TaxDTO("all", 0);
+    /**
+     * Tax instance representing no tax
+     */
+    public static final TaxDTO NO_TAX = new TaxDTO("all", 0);
 
-  /**
-   * The currency type for this tax
-   */
-  protected String type;
+    /**
+     * The currency type for this tax
+     */
+    protected String type;
 
-  /**
-   * The tax rate
-   */
-  protected float rate;
+    /**
+     * The tax rate
+     */
+    protected float rate;
 
-  public TaxDTO(String type, float rate) {
-    this.type = type;
-    this.rate = rate;
-  }
+    public TaxDTO(String type, float rate) {
+        this.type = type;
+        this.rate = rate;
+    }
 
-  /**
-   * See {@link TaxDTO#type}
-   */
-  public String getType() {
-    return type;
-  }
+    /**
+     * See {@link TaxDTO#type}
+     */
+    public String getType() {
+        return type;
+    }
 
-  /**
-   * See {@link TaxDTO#type}
-   */
-  public void setType(String type) {
-    this.type = type;
-  }
+    /**
+     * See {@link TaxDTO#type}
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
-  /**
-   * See {@link TaxDTO#rate}
-   */
-  public float getRate() {
-    return rate;
-  }
+    /**
+     * See {@link TaxDTO#rate}
+     */
+    public float getRate() {
+        return rate;
+    }
 
-  /**
-   * See {@link TaxDTO#rate}
-   */
-  public void setRate(float rate) {
-    this.rate = rate;
-  }
+    /**
+     * See {@link TaxDTO#rate}
+     */
+    public void setRate(float rate) {
+        this.rate = rate;
+    }
 
-  @Override
-  public String toString() {
-    return "Tax{" +
-        "type='" + type + '\'' +
-        ", rate=" + rate +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "Tax{" +
+                "type='" + type + '\'' +
+                ", rate=" + rate +
+                '}';
+    }
 
 }

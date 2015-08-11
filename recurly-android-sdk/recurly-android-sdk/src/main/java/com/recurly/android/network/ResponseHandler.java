@@ -27,16 +27,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 public abstract class ResponseHandler<T> implements Response.Listener<T>, Response.ErrorListener {
-  public abstract void onSuccess(T t);
-  public abstract void onFailure(RecurlyError ex);
+    public abstract void onSuccess(T t);
 
-  @Override
-  public void onResponse(T t) {
-    onSuccess(t);
-  }
-  @Override
-  public void onErrorResponse(VolleyError volleyError) {
+    public abstract void onFailure(RecurlyError ex);
 
-    onFailure(RecurlyError.errorFromVolley(volleyError));
-  }
+    @Override
+    public void onResponse(T t) {
+        onSuccess(t);
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError volleyError) {
+
+        onFailure(RecurlyError.errorFromVolley(volleyError));
+    }
 }

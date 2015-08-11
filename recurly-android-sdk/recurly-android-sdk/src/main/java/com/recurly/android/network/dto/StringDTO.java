@@ -28,20 +28,20 @@ package com.recurly.android.network.dto;
  */
 public class StringDTO extends BaseDTO {
 
-  /**
-   * The text of the response
-   */
-  protected String response;
+    /**
+     * The text of the response
+     */
+    protected String response;
 
-  public StringDTO(String response) {
-    this.response = response;
-  }
+    public StringDTO(String response) {
+        this.response = response;
+    }
 
-  public String getResponse() {
-    return response;
-  }
+    public String getResponse() {
+        return response;
+    }
 
-  public void setResponse(String response) {
-    this.response = response;
-  }
+    public void setResponse(String response) {
+        this.response = response;
+    }
 }

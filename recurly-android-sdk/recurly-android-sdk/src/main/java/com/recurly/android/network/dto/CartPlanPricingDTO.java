@@ -30,49 +30,49 @@ package com.recurly.android.network.dto;
  */
 public class CartPlanPricingDTO extends BaseDTO {
 
-  /**
-   * The setup fee for this plan
-   */
-  protected float setup_fee;
+    /**
+     * The setup fee for this plan
+     */
+    protected float setup_fee;
 
-  /**
-   * The recurring cost of this plan
-   */
-  protected float unit;
+    /**
+     * The recurring cost of this plan
+     */
+    protected float unit;
 
-  /**
-   * See {@link CartPlanPricingDTO#setup_fee}
-   */
-  public float getSetupFee() {
-    return setup_fee;
-  }
+    /**
+     * See {@link CartPlanPricingDTO#setup_fee}
+     */
+    public float getSetupFee() {
+        return setup_fee;
+    }
 
-  /**
-   * See {@link CartPlanPricingDTO#setup_fee}
-   */
-  public void setSetupFee(float setupFee) {
-    this.setup_fee = setupFee;
-  }
+    /**
+     * See {@link CartPlanPricingDTO#setup_fee}
+     */
+    public void setSetupFee(float setupFee) {
+        this.setup_fee = setupFee;
+    }
 
-  /**
-   * See {@link CartPlanPricingDTO#unit}
-   */
-  public float getUnit() {
-    return unit;
-  }
+    /**
+     * See {@link CartPlanPricingDTO#unit}
+     */
+    public float getUnit() {
+        return unit;
+    }
 
-  /**
-   * See {@link CartPlanPricingDTO#unit}
-   */
-  public void setUnit(float unit) {
-    this.unit = unit;
-  }
+    /**
+     * See {@link CartPlanPricingDTO#unit}
+     */
+    public void setUnit(float unit) {
+        this.unit = unit;
+    }
 
-  @Override
-  public String toString() {
-    return "PlanPricing{" +
-        "setup_fee=" + setup_fee +
-        ", unit=" + unit +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "PlanPricing{" +
+                "setup_fee=" + setup_fee +
+                ", unit=" + unit +
+                '}';
+    }
 }

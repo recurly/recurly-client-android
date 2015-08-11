@@ -28,83 +28,6 @@ package com.recurly.android.network;
  */
 public class RecurlyConfig {
 
-  private String mBaseUrl;
-  private String mApiPath;
-  private String mPublicKey;
-  private String mCurrency;
-  private int mDefaultTimeout;
-  private String mApiVersion;
-
-  public RecurlyConfig(String baseUrl, String apiPath, String publicKey, String currency, int defaultTimeout, String apiVersion) {
-    mBaseUrl = baseUrl;
-    mApiPath = apiPath;
-    mPublicKey = publicKey;
-    mCurrency = currency;
-    mDefaultTimeout = defaultTimeout;
-    mApiVersion = apiVersion;
-  }
-
-  public String getBaseUrl() {
-    return mBaseUrl;
-  }
-
-  public void setBaseUrl(String baseUrl) {
-    mBaseUrl = baseUrl;
-  }
-
-  public String getApiPath() {
-    return mApiPath;
-  }
-
-  public void setApiPath(String apiPath) {
-    mApiPath = apiPath;
-  }
-
-  public String getPublicKey() {
-    return mPublicKey;
-  }
-
-  public void setPublicKey(String publicKey) {
-    mPublicKey = publicKey;
-  }
-
-  public String getCurrency() {
-    return mCurrency;
-  }
-
-  public void setCurrency(String currency) {
-    mCurrency = currency;
-  }
-
-  public int getDefaultTimeout() {
-    return mDefaultTimeout;
-  }
-
-  public void setDefaultTimeout(int defaultTimeout) {
-    mDefaultTimeout = defaultTimeout;
-  }
-
-  public String getApiVersion() {
-    return mApiVersion;
-  }
-
-  public void setApiVersion(String apiVersion) {
-    mApiVersion = apiVersion;
-  }
-
-  public static RecurlyConfig getDefaultConfiguration(String publicKey) {
-    return new Builder()
-        .setBaseUrl("https://api.recurly.com/")
-        .setApiPath("js/v1")
-        .setDefaultTimeout(10000)
-        .setPublicKey(publicKey)
-        .setCurrency("USD")
-        .setApiVersion("3.0.9")
-        .build();
-  }
-
-  public static class Builder {
-
     private String mBaseUrl;
     private String mApiPath;
     private String mPublicKey;
@@ -112,39 +35,116 @@ public class RecurlyConfig {
     private int mDefaultTimeout;
     private String mApiVersion;
 
-    public Builder setBaseUrl(String baseUrl) {
-      mBaseUrl = baseUrl;
-      return this;
+    public RecurlyConfig(String baseUrl, String apiPath, String publicKey, String currency, int defaultTimeout, String apiVersion) {
+        mBaseUrl = baseUrl;
+        mApiPath = apiPath;
+        mPublicKey = publicKey;
+        mCurrency = currency;
+        mDefaultTimeout = defaultTimeout;
+        mApiVersion = apiVersion;
     }
 
-    public Builder setApiPath(String apiPath) {
-      mApiPath = apiPath;
-      return this;
+    public static RecurlyConfig getDefaultConfiguration(String publicKey) {
+        return new Builder()
+                .setBaseUrl("https://api.recurly.com/")
+                .setApiPath("js/v1")
+                .setDefaultTimeout(10000)
+                .setPublicKey(publicKey)
+                .setCurrency("USD")
+                .setApiVersion("3.0.9")
+                .build();
     }
 
-    public Builder setPublicKey(String publicKey) {
-      mPublicKey = publicKey;
-      return this;
+    public String getBaseUrl() {
+        return mBaseUrl;
     }
 
-    public Builder setCurrency(String currency) {
-      mCurrency = currency;
-      return this;
+    public void setBaseUrl(String baseUrl) {
+        mBaseUrl = baseUrl;
     }
 
-    public Builder setDefaultTimeout(int defaultTimeout) {
-      mDefaultTimeout = defaultTimeout;
-      return this;
+    public String getApiPath() {
+        return mApiPath;
     }
 
-    public Builder setApiVersion(String apiVersion) {
-      mApiVersion = apiVersion;
-      return this;
+    public void setApiPath(String apiPath) {
+        mApiPath = apiPath;
     }
 
-    public RecurlyConfig build() {
-      return new RecurlyConfig(mBaseUrl, mApiPath, mPublicKey, mCurrency, mDefaultTimeout, mApiVersion);
+    public String getPublicKey() {
+        return mPublicKey;
     }
-  }
+
+    public void setPublicKey(String publicKey) {
+        mPublicKey = publicKey;
+    }
+
+    public String getCurrency() {
+        return mCurrency;
+    }
+
+    public void setCurrency(String currency) {
+        mCurrency = currency;
+    }
+
+    public int getDefaultTimeout() {
+        return mDefaultTimeout;
+    }
+
+    public void setDefaultTimeout(int defaultTimeout) {
+        mDefaultTimeout = defaultTimeout;
+    }
+
+    public String getApiVersion() {
+        return mApiVersion;
+    }
+
+    public void setApiVersion(String apiVersion) {
+        mApiVersion = apiVersion;
+    }
+
+    public static class Builder {
+
+        private String mBaseUrl;
+        private String mApiPath;
+        private String mPublicKey;
+        private String mCurrency;
+        private int mDefaultTimeout;
+        private String mApiVersion;
+
+        public Builder setBaseUrl(String baseUrl) {
+            mBaseUrl = baseUrl;
+            return this;
+        }
+
+        public Builder setApiPath(String apiPath) {
+            mApiPath = apiPath;
+            return this;
+        }
+
+        public Builder setPublicKey(String publicKey) {
+            mPublicKey = publicKey;
+            return this;
+        }
+
+        public Builder setCurrency(String currency) {
+            mCurrency = currency;
+            return this;
+        }
+
+        public Builder setDefaultTimeout(int defaultTimeout) {
+            mDefaultTimeout = defaultTimeout;
+            return this;
+        }
+
+        public Builder setApiVersion(String apiVersion) {
+            mApiVersion = apiVersion;
+            return this;
+        }
+
+        public RecurlyConfig build() {
+            return new RecurlyConfig(mBaseUrl, mApiPath, mPublicKey, mCurrency, mDefaultTimeout, mApiVersion);
+        }
+    }
 
 }

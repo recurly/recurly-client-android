@@ -24,78 +24,78 @@
 package com.recurly.android.model;
 
 public class PriceSummary extends BaseModel {
-  private float subtotal;
-  private float addons;
-  private float discount;
-  private float setup_fee;
-  private float tax;
-  private float total;
+    private float subtotal;
+    private float addons;
+    private float discount;
+    private float setup_fee;
+    private float tax;
+    private float total;
 
-  public float getSubtotal() {
-    return subtotal;
-  }
+    public float getSubtotal() {
+        return subtotal;
+    }
 
-  public void setSubtotal(float subtotal) {
-    this.subtotal = subtotal;
-  }
+    public void setSubtotal(float subtotal) {
+        this.subtotal = subtotal;
+    }
 
-  public float getAddons() {
-    return addons;
-  }
+    public float getAddons() {
+        return addons;
+    }
 
-  public void setAddons(float addons) {
-    this.addons = addons;
-  }
+    public void setAddons(float addons) {
+        this.addons = addons;
+    }
 
-  public float getDiscount() {
-    return discount;
-  }
+    public float getDiscount() {
+        return discount;
+    }
 
-  public void setDiscount(float discount) {
-    this.discount = discount;
-  }
+    public void setDiscount(float discount) {
+        this.discount = discount;
+    }
 
-  public float getSetupFee() {
-    return setup_fee;
-  }
+    public float getSetupFee() {
+        return setup_fee;
+    }
 
-  public void setSetupFee(float setupFee) {
-    this.setup_fee = setupFee;
-  }
+    public void setSetupFee(float setupFee) {
+        this.setup_fee = setupFee;
+    }
 
-  public float getTax() {
-    return tax;
-  }
+    public float getTax() {
+        return tax;
+    }
 
-  public void setTax(float tax) {
-    this.tax = tax;
-  }
+    public void setTax(float tax) {
+        this.tax = tax;
+    }
 
-  public float getTotal() {
-    return total;
-  }
+    public float getTotal() {
+        return total;
+    }
 
-  public void setTotal(float total) {
-    this.total = total;
-  }
+    public void setTotal(float total) {
+        this.total = total;
+    }
 
-  /**
-   * Update total based on other info
-   */
-  public void updateTotal() {
-    total = subtotal - discount + tax;
-  }
+    /**
+     * Update total based on other info
+     */
+    public void updateTotal() {
+        total = subtotal - discount + tax;
+    }
 
-  @Override
-  public String toString() {
-    return "PriceSummary{" +
-        "subtotal=" + subtotal +
-        ", addons=" + addons +
-        ", discount=" + discount +
-        ", setup_fee=" + setup_fee +
-        ", tax=" + tax +
-        ", total=" + total +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "PriceSummary{" +
+                "subtotal=" + subtotal +
+                ", addons=" + addons +
+                ", discount=" + discount +
+                ", setup_fee=" + setup_fee +
+                ", tax=" + tax +
+                ", total=" + total +
+                '}';
+    }
 
 }

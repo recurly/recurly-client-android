@@ -30,17 +30,17 @@ import com.android.volley.Request;
  */
 public abstract class PostRequest extends BaseRequest {
 
-  public final int getRequestMethod() {
-    return Request.Method.GET;
-  }
+    public final int getRequestMethod() {
+        return Request.Method.GET;
+    }
 
-  @Override
-  public boolean isListRequest() {
-    return false;
-  }
+    @Override
+    public boolean isListRequest() {
+        return false;
+    }
 
-  @Override
-  public String getEndpoint() {
-    return null;
-  }
+    @Override
+    public String getEndpoint() {
+        return null;
+    }
 }

@@ -34,76 +34,74 @@ import java.util.Map;
  * limited to using the Builder to create the request.
  *
  * @see com.recurly.android.RecurlyApi#getPlan(PlanRequest, RecurlyApi.PlanResponseHandler)
- *
  */
 
 public class PlanRequest extends GetRequest {
 
-  /**
-   * The unique code of the plan to fetch
-   */
-  protected String planCode;
+    /**
+     * The unique code of the plan to fetch
+     */
+    protected String planCode;
 
-  /**
-   * Constructor for PlanRequest.  Use Builder instead
-   *
-   * @see com.recurly.android.network.request.PlanRequest.Builder
-   *
-   * @param planCode
-   */
-  public PlanRequest(String planCode) {
-    this.planCode = planCode;
-  }
-
-  public String getPlanCode() {
-    return planCode;
-  }
-
-  public void setPlanCode(String planCode) {
-    this.planCode = planCode;
-  }
-
-  @Override
-  public Map<String, String> getParams() {
-    return new HashMap<String, String>();
-  }
-
-  @Override
-  public boolean isListRequest() {
-    return false;
-  }
-
-  @Override
-  public String getEndpoint() {
-    return "plans/" + planCode;
-  }
-
-  @Override
-  /**
-   * Validate the request.  Will be called automatically, but can be called by user directly as well
-   */
-  public RecurlyError validate() {
-    if (planCode == null || planCode.isEmpty()) {
-      return RecurlyError.validationError("plan code");
+    /**
+     * Constructor for PlanRequest.  Use Builder instead
+     *
+     * @param planCode
+     * @see com.recurly.android.network.request.PlanRequest.Builder
+     */
+    public PlanRequest(String planCode) {
+        this.planCode = planCode;
     }
 
-    return null;
-  }
-
-  /**
-   * Helper builder class to create instance of PlanRequest
-   */
-  public static class Builder {
-
-    private String mPlanCode;
-
-    public Builder setPlanCode(String planCode) {
-      mPlanCode = planCode;
-      return this;
+    public String getPlanCode() {
+        return planCode;
     }
 
-    public PlanRequest build() {
-      return new PlanRequest(mPlanCode);
+    public void setPlanCode(String planCode) {
+        this.planCode = planCode;
     }
-  }
+
+    @Override
+    public Map<String, String> getParams() {
+        return new HashMap<String, String>();
+    }
+
+    @Override
+    public boolean isListRequest() {
+        return false;
+    }
+
+    @Override
+    public String getEndpoint() {
+        return "plans/" + planCode;
+    }
+
+    @Override
+    /**
+     * Validate the request.  Will be called automatically, but can be called by user directly as well
+     */
+    public RecurlyError validate() {
+        if (planCode == null || planCode.isEmpty()) {
+            return RecurlyError.validationError("plan code");
+        }
+
+        return null;
+    }
+
+    /**
+     * Helper builder class to create instance of PlanRequest
+     */
+    public static class Builder {
+
+        private String mPlanCode;
+
+        public Builder setPlanCode(String planCode) {
+            mPlanCode = planCode;
+            return this;
+        }
+
+        public PlanRequest build() {
+            return new PlanRequest(mPlanCode);
+        }
+    }
 }

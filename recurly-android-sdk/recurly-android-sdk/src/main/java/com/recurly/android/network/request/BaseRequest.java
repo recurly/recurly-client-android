@@ -30,31 +30,34 @@ import com.recurly.android.network.RecurlyError;
  */
 public abstract class BaseRequest {
 
-  /**
-   * Used internally by parser.  Whether or not the implementing request returns a list of Models or a single Model
-   * @return true if request is a list request
-   */
-  public abstract boolean isListRequest();
+    public boolean mFinished = false;
 
-  /**
-   * Used internally by API client.  Gets the destination endpoint for the implementing request.
-   * @return the endpoint of this API call
-   */
-  public abstract String getEndpoint();
+    /**
+     * Used internally by parser.  Whether or not the implementing request returns a list of Models or a single Model
+     *
+     * @return true if request is a list request
+     */
+    public abstract boolean isListRequest();
 
-  /**
-   * Used internally by API client.  Checks to see if the request is valid before sending it off.
-   * @return null if validated, RecurlyError otherwise
-   */
-  public abstract RecurlyError validate();
+    /**
+     * Used internally by API client.  Gets the destination endpoint for the implementing request.
+     *
+     * @return the endpoint of this API call
+     */
+    public abstract String getEndpoint();
 
-  public boolean mFinished = false;
+    /**
+     * Used internally by API client.  Checks to see if the request is valid before sending it off.
+     *
+     * @return null if validated, RecurlyError otherwise
+     */
+    public abstract RecurlyError validate();
 
-  public boolean isFinished() {
-    return mFinished;
-  }
+    public boolean isFinished() {
+        return mFinished;
+    }
 
-  public void setFinished(boolean finished) {
-    mFinished = finished;
-  }
+    public void setFinished(boolean finished) {
+        mFinished = finished;
+    }
 }

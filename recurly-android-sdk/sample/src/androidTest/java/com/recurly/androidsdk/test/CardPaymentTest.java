@@ -24,6 +24,7 @@
 package com.recurly.androidsdk.test;
 
 import com.recurly.android.RecurlyApi;
+import com.recurly.android.model.Address;
 import com.recurly.android.network.RecurlyError;
 import com.recurly.android.network.request.CardPaymentRequest;
 import com.recurly.androidsdk.MainActivity;
@@ -77,6 +78,14 @@ public class CardPaymentTest extends ApiTest {
 
   public void testValidCard() {
 
+    Address address = new Address.Builder()
+        .setAddress1("123 main street")
+        .setCity("Los Gatos")
+        .setState("CA")
+        .setPostalCode("95033")
+        .setCountry("US")
+        .build();
+
     CardPaymentRequest request = new CardPaymentRequest.Builder()
         .setFirstName("first")
         .setLastName("last")
@@ -84,7 +93,7 @@ public class CardPaymentTest extends ApiTest {
         .setExpirationMonth(12)
         .setExpirationYear(20)
         .setCvv("123")
-        .setCountry("US")
+        .setBillingAddress(address)
         .build();
 
 

@@ -31,31 +31,32 @@ import com.google.gson.GsonBuilder;
  */
 public abstract class BaseDTO {
 
-  /**
-   * Helper field to statically set currency for all implementing instances of BaseModel
-   */
-  static protected String sCurrency;
+    /**
+     * Helper field to statically set currency for all implementing instances of BaseModel
+     */
+    static protected String sCurrency;
 
-  /**
-   * {@link BaseDTO#sCurrency}
-   */
-  public static String getCurrency() {
-    return sCurrency;
-  }
+    /**
+     * {@link BaseDTO#sCurrency}
+     */
+    public static String getCurrency() {
+        return sCurrency;
+    }
 
-  /**
-   * {@link BaseDTO#sCurrency}
-   */
-  public static void setCurrency(String currency) {
-    sCurrency = currency;
-  }
+    /**
+     * {@link BaseDTO#sCurrency}
+     */
+    public static void setCurrency(String currency) {
+        sCurrency = currency;
+    }
 
-  /**
-   * JSON parser for recurly network responses
-   * @return json parser
-   */
-  public static Gson getParser() {
-    return new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
-  }
+    /**
+     * JSON parser for recurly network responses
+     *
+     * @return json parser
+     */
+    public static Gson getParser() {
+        return new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+    }
 
 }

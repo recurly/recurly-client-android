@@ -31,147 +31,152 @@ import com.android.volley.VolleyError;
  */
 public class RecurlyError extends Exception {
 
-  /**
-   * Represents a RecurlyError caused by failed validation of a field.
-   */
-  public static final int STATUS_CODE_VALIDATION      = 401;
+    /**
+     * Represents a RecurlyError caused by failed validation of a field.
+     */
+    public static final int STATUS_CODE_VALIDATION = 401;
 
-  /**
-   * HTTP status code
-   */
-  protected int mStatusCode;
+    /**
+     * HTTP status code
+     */
+    protected int mStatusCode;
 
-  /**
-   * Error code used to classify the error
-   */
-  protected String mErrorCode;
+    /**
+     * Error code used to classify the error
+     */
+    protected String mErrorCode;
 
-  /**
-   * Human readable error message
-   */
-  protected String mErrorMessage;
+    /**
+     * Human readable error message
+     */
+    protected String mErrorMessage;
 
-  /**
-   * Create a RecurlyNetworkError from a NetworkResponseError response.  NetworkResponseError is
-   * a class that indicates server responded with 200, but is actually passed back error information
-   * @param error
-   */
-  public RecurlyError(NetworkResponseError error) {
-    // made up status code, 400 = bad request
-    mStatusCode = 400;
-    mErrorCode = error.getErrorCode();
-    mErrorMessage = error.getErrorMessage();
-  }
-
-  public RecurlyError(int statusCode, String errorCode, String errorMessage) {
-    mStatusCode = statusCode;
-    mErrorCode = errorCode;
-    mErrorMessage = errorMessage;
-  }
-
-  public RecurlyError() {
-
-  }
-
-  /**
-   * Generate the validation error message for a field
-   * @param fieldName The field name that did not pass validation
-   * @return human readable error message
-   */
-  public static String getValidationError(String fieldName) {
-    return "Input validation for '" + fieldName + "' failed";
-  }
-
-  /**
-   * Helper method to instantiate a validation error from a field name
-   * @param fieldName The field name that did not pass validation
-   * @return Instance of RecurlyError representing a validation error
-   */
-  public static RecurlyError validationError(String fieldName) {
-    RecurlyError error = new RecurlyError();
-
-    error.setStatusCode(400); // bad request
-    error.setErrorCode("validation error");
-    error.setErrorMessage(getValidationError(fieldName));
-
-    return error;
-  }
-
-  /**
-   * Helper method to instantiate an unexpected server error
-   * @param errorString Error string from the server
-   * @return Instance of RecurlyError representing a server error
-   */
-  public static RecurlyError genericServerError(String errorString) {
-    RecurlyError error = new RecurlyError();
-
-    error.setStatusCode(500); // bad request
-    error.setErrorCode("Unexpected error");
-    error.setErrorMessage("Unexpected error: " + errorString);
-
-    return error;
-  }
-
-
-  /**
-   * Helper method to create a RecurlyError from a VolleyError
-   * @param volleyError The underlying error causing the exception
-   * @return An instance of RecurlyError
-   */
-  public static RecurlyError errorFromVolley(VolleyError volleyError) {
-    if (volleyError instanceof NetworkResponseError) {
-      return new RecurlyError((NetworkResponseError) volleyError);
+    /**
+     * Create a RecurlyNetworkError from a NetworkResponseError response.  NetworkResponseError is
+     * a class that indicates server responded with 200, but is actually passed back error information
+     *
+     * @param error
+     */
+    public RecurlyError(NetworkResponseError error) {
+        // made up status code, 400 = bad request
+        mStatusCode = 400;
+        mErrorCode = error.getErrorCode();
+        mErrorMessage = error.getErrorMessage();
     }
 
-    RecurlyError error = new RecurlyError();
-
-    String responseBody = null;
-    if (volleyError.networkResponse != null && volleyError.networkResponse.data != null) {
-      responseBody = new String(volleyError.networkResponse.data);
-    }
-    if (!(volleyError instanceof NoConnectionError)) {
-      volleyError.printStackTrace();
+    public RecurlyError(int statusCode, String errorCode, String errorMessage) {
+        mStatusCode = statusCode;
+        mErrorCode = errorCode;
+        mErrorMessage = errorMessage;
     }
 
-    if (volleyError.networkResponse != null) {
-      error.mStatusCode = volleyError.networkResponse.statusCode;
+    public RecurlyError() {
+
     }
-    error.mErrorMessage = volleyError.getLocalizedMessage();
-    error.mErrorCode = volleyError.getMessage();
 
-    return error;
-  }
+    /**
+     * Generate the validation error message for a field
+     *
+     * @param fieldName The field name that did not pass validation
+     * @return human readable error message
+     */
+    public static String getValidationError(String fieldName) {
+        return "Input validation for '" + fieldName + "' failed";
+    }
 
-  public String getErrorCode() {
-    return mErrorCode;
-  }
+    /**
+     * Helper method to instantiate a validation error from a field name
+     *
+     * @param fieldName The field name that did not pass validation
+     * @return Instance of RecurlyError representing a validation error
+     */
+    public static RecurlyError validationError(String fieldName) {
+        RecurlyError error = new RecurlyError();
 
-  public void setErrorCode(String errorCode) {
-    mErrorCode = errorCode;
-  }
+        error.setStatusCode(400); // bad request
+        error.setErrorCode("validation error");
+        error.setErrorMessage(getValidationError(fieldName));
 
-  public String getErrorMessage() {
-    return mErrorMessage;
-  }
+        return error;
+    }
 
-  public void setErrorMessage(String errorMessage) {
-    mErrorMessage = errorMessage;
-  }
+    /**
+     * Helper method to instantiate an unexpected server error
+     *
+     * @param errorString Error string from the server
+     * @return Instance of RecurlyError representing a server error
+     */
+    public static RecurlyError genericServerError(String errorString) {
+        RecurlyError error = new RecurlyError();
 
-  public int getStatusCode() {
-    return mStatusCode;
-  }
+        error.setStatusCode(500); // bad request
+        error.setErrorCode("Unexpected error");
+        error.setErrorMessage("Unexpected error: " + errorString);
 
-  public void setStatusCode(int statusCode) {
-    mStatusCode = statusCode;
-  }
+        return error;
+    }
 
-  @Override
-  public String toString() {
-    return "RecurlyNetworkError{" +
-        "mStatusCode=" + mStatusCode +
-        ", mErrorCode='" + mErrorCode + '\'' +
-        ", mErrorMessage='" + mErrorMessage + '\'' +
-        '}';
-  }
+
+    /**
+     * Helper method to create a RecurlyError from a VolleyError
+     *
+     * @param volleyError The underlying error causing the exception
+     * @return An instance of RecurlyError
+     */
+    public static RecurlyError errorFromVolley(VolleyError volleyError) {
+        if (volleyError instanceof NetworkResponseError) {
+            return new RecurlyError((NetworkResponseError) volleyError);
+        }
+
+        RecurlyError error = new RecurlyError();
+
+        String responseBody = null;
+        if (volleyError.networkResponse != null && volleyError.networkResponse.data != null) {
+            responseBody = new String(volleyError.networkResponse.data);
+        }
+        if (!(volleyError instanceof NoConnectionError)) {
+            volleyError.printStackTrace();
+        }
+
+        if (volleyError.networkResponse != null) {
+            error.mStatusCode = volleyError.networkResponse.statusCode;
+        }
+        error.mErrorMessage = volleyError.getLocalizedMessage();
+        error.mErrorCode = volleyError.getMessage();
+
+        return error;
+    }
+
+    public String getErrorCode() {
+        return mErrorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        mErrorCode = errorCode;
+    }
+
+    public String getErrorMessage() {
+        return mErrorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        mErrorMessage = errorMessage;
+    }
+
+    public int getStatusCode() {
+        return mStatusCode;
+    }
+
+    public void setStatusCode(int statusCode) {
+        mStatusCode = statusCode;
+    }
+
+    @Override
+    public String toString() {
+        return "RecurlyNetworkError{" +
+                "mStatusCode=" + mStatusCode +
+                ", mErrorCode='" + mErrorCode + '\'' +
+                ", mErrorMessage='" + mErrorMessage + '\'' +
+                '}';
+    }
 }

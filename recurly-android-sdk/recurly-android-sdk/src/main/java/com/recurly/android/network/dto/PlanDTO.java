@@ -38,188 +38,188 @@ import java.util.Map;
  */
 public class PlanDTO extends BaseDTO {
 
-  /**
-   * The unique code for this plan.
-   */
-  protected String code;
+    /**
+     * The unique code for this plan.
+     */
+    protected String code;
 
-  /**
-   * The display name of this plan.
-   */
-  protected String name;
+    /**
+     * The display name of this plan.
+     */
+    protected String name;
 
-  /**
-   * The pricing details of this plan, mapped by currency type.
-   *
-   * @see com.recurly.android.Constants.CurrencyType
-   */
-  protected Map<String, PlanPriceDTO> price;
+    /**
+     * The pricing details of this plan, mapped by currency type.
+     *
+     * @see com.recurly.android.Constants.CurrencyType
+     */
+    protected Map<String, PlanPriceDTO> price;
 
-  /**
-   * The details about the frequency of this plan.
-   */
-  protected PlanPeriodDTO period;
+    /**
+     * The details about the frequency of this plan.
+     */
+    protected PlanPeriodDTO period;
 
-  /**
-   * Whether or not the plan is tax exempt.
-   */
-  protected boolean tax_exempt;
+    /**
+     * Whether or not the plan is tax exempt.
+     */
+    protected boolean tax_exempt;
 
-  /**
-   * The duration of the trial period of this plan, if any.
-   */
-  protected PlanPeriodDTO trial;
+    /**
+     * The duration of the trial period of this plan, if any.
+     */
+    protected PlanPeriodDTO trial;
 
-  /**
-   * A list of add ons available for this plan.
-   */
-  protected List<AddonDTO> addons;
+    /**
+     * A list of add ons available for this plan.
+     */
+    protected List<AddonDTO> addons;
 
-  /**
-   * Helper map listing addons by add on code.
-   */
-  protected HashMap<String, AddonDTO> addonsByCode = new HashMap<String, AddonDTO>();
+    /**
+     * Helper map listing addons by add on code.
+     */
+    protected HashMap<String, AddonDTO> addonsByCode = new HashMap<String, AddonDTO>();
 
-  /**
-   * See {@link PlanDTO#code}
-   */
-  public String getCode() {
-    return code;
-  }
-
-  /**
-   * See {@link PlanDTO#code}
-   */
-  public void setCode(String code) {
-    this.code = code;
-  }
-
-  /**
-   * See {@link PlanDTO#name}
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * See {@link PlanDTO#name}
-   */
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  /**
-   * See {@link PlanDTO#price}
-   */
-  public Map<String, PlanPriceDTO> getPrice() {
-    return price;
-  }
-
-  /**
-   * See {@link PlanDTO#price}
-   */
-  public void setPrice(Map<String, PlanPriceDTO> price) {
-    this.price = price;
-  }
-
-  /**
-   * See {@link PlanDTO#period}
-   */
-  public PlanPeriodDTO getPeriod() {
-    return period;
-  }
-
-  /**
-   * See {@link PlanDTO#period}
-   */
-  public void setPeriod(PlanPeriodDTO period) {
-    this.period = period;
-  }
-
-  /**
-   * See {@link PlanDTO#tax_exempt}
-   */
-  public boolean isTaxExempt() {
-    return tax_exempt;
-  }
-
-  /**
-   * See {@link PlanDTO#tax_exempt}
-   */
-  public void setTaxExempt(boolean taxExempt) {
-    this.tax_exempt = taxExempt;
-  }
-
-  /**
-   * See {@link PlanDTO#trial}
-   */
-  public PlanPeriodDTO getTrial() {
-    return trial;
-  }
-
-  /**
-   * See {@link PlanDTO#trial}
-   */
-  public void setTrial(PlanPeriodDTO trial) {
-    this.trial = trial;
-  }
-
-  /**
-   * See {@link PlanDTO#addons}
-   */
-  public List<AddonDTO> getAddons() {
-    return addons;
-  }
-
-  /**
-   * See {@link PlanDTO#addons}
-   */
-  public void setAddons(List<AddonDTO> addons) {
-    this.addons = addons;
-  }
-
-  /**
-   * Helper method to look up an add on by code for this plan.
-   * @param code The add on code.
-   * @return The AddOn, if exists, null otherwise.
-   */
-  public AddonDTO getAddon(String code) {
-    if (addons == null) {
-      return null;
+    /**
+     * See {@link PlanDTO#code}
+     */
+    public String getCode() {
+        return code;
     }
 
-    if (addonsByCode.size() != addons.size()) {
-      addonsByCode = new HashMap<String, AddonDTO>();
-      for (AddonDTO addon : addons) {
-        addonsByCode.put(addon.getCode(), addon);
-      }
+    /**
+     * See {@link PlanDTO#code}
+     */
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    return addonsByCode.get(code);
+    /**
+     * See {@link PlanDTO#name}
+     */
+    public String getName() {
+        return name;
+    }
 
-  }
+    /**
+     * See {@link PlanDTO#name}
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  /**
-   * Helper method that returns pricing details for the default currency
-   *
-   * @return The plan's pricing details for the default currency
-   *
-   * @see BaseDTO#sCurrency
-   */
-  public PlanPriceDTO getPricing() {
-    return price.get(sCurrency);
-  }
+    /**
+     * See {@link PlanDTO#price}
+     */
+    public Map<String, PlanPriceDTO> getPrice() {
+        return price;
+    }
 
-  @Override
-  public String toString() {
-    return "Plan{" +
-        "code='" + code + '\'' +
-        ", name='" + name + '\'' +
-        ", price=" + price +
-        ", period=" + period +
-        ", tax_exempt=" + tax_exempt +
-        ", trial=" + trial +
-        ", addons=" + addons +
-        '}';
-  }
+    /**
+     * See {@link PlanDTO#price}
+     */
+    public void setPrice(Map<String, PlanPriceDTO> price) {
+        this.price = price;
+    }
+
+    /**
+     * See {@link PlanDTO#period}
+     */
+    public PlanPeriodDTO getPeriod() {
+        return period;
+    }
+
+    /**
+     * See {@link PlanDTO#period}
+     */
+    public void setPeriod(PlanPeriodDTO period) {
+        this.period = period;
+    }
+
+    /**
+     * See {@link PlanDTO#tax_exempt}
+     */
+    public boolean isTaxExempt() {
+        return tax_exempt;
+    }
+
+    /**
+     * See {@link PlanDTO#tax_exempt}
+     */
+    public void setTaxExempt(boolean taxExempt) {
+        this.tax_exempt = taxExempt;
+    }
+
+    /**
+     * See {@link PlanDTO#trial}
+     */
+    public PlanPeriodDTO getTrial() {
+        return trial;
+    }
+
+    /**
+     * See {@link PlanDTO#trial}
+     */
+    public void setTrial(PlanPeriodDTO trial) {
+        this.trial = trial;
+    }
+
+    /**
+     * See {@link PlanDTO#addons}
+     */
+    public List<AddonDTO> getAddons() {
+        return addons;
+    }
+
+    /**
+     * See {@link PlanDTO#addons}
+     */
+    public void setAddons(List<AddonDTO> addons) {
+        this.addons = addons;
+    }
+
+    /**
+     * Helper method to look up an add on by code for this plan.
+     *
+     * @param code The add on code.
+     * @return The AddOn, if exists, null otherwise.
+     */
+    public AddonDTO getAddon(String code) {
+        if (addons == null) {
+            return null;
+        }
+
+        if (addonsByCode.size() != addons.size()) {
+            addonsByCode = new HashMap<String, AddonDTO>();
+            for (AddonDTO addon : addons) {
+                addonsByCode.put(addon.getCode(), addon);
+            }
+        }
+
+        return addonsByCode.get(code);
+
+    }
+
+    /**
+     * Helper method that returns pricing details for the default currency
+     *
+     * @return The plan's pricing details for the default currency
+     * @see BaseDTO#sCurrency
+     */
+    public PlanPriceDTO getPricing() {
+        return price.get(sCurrency);
+    }
+
+    @Override
+    public String toString() {
+        return "Plan{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", period=" + period +
+                ", tax_exempt=" + tax_exempt +
+                ", trial=" + trial +
+                ", addons=" + addons +
+                '}';
+    }
 }

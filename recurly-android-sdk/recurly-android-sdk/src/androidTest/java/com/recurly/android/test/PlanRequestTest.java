@@ -27,40 +27,40 @@ import com.recurly.android.network.RecurlyError;
 import com.recurly.android.network.request.PlanRequest;
 
 public class PlanRequestTest extends UnitTest {
-  public void testPlanRequestBuilder() {
+    public void testPlanRequestBuilder() {
 
-    PlanRequest request = new PlanRequest.Builder()
-        .setPlanCode("plan_code").build();
+        PlanRequest request = new PlanRequest.Builder()
+                .setPlanCode("plan_code").build();
 
-    assertEquals(request.getPlanCode(), "plan_code");
+        assertEquals(request.getPlanCode(), "plan_code");
 
-    assertNull(request.validate());
+        assertNull(request.validate());
 
-  }
+    }
 
-  public void testPlanRequestManual() {
+    public void testPlanRequestManual() {
 
-    PlanRequest request = new PlanRequest("plan_code");
+        PlanRequest request = new PlanRequest("plan_code");
 
-    assertEquals(request.getPlanCode(), "plan_code");
+        assertEquals(request.getPlanCode(), "plan_code");
 
-    assertNull(request.validate());
-  }
+        assertNull(request.validate());
+    }
 
-  public void testMissingPlanCode() {
-    PlanRequest request = new PlanRequest.Builder().build();
+    public void testMissingPlanCode() {
+        PlanRequest request = new PlanRequest.Builder().build();
 
-    RecurlyError error = request.validate();
-    assertNotNull(error);
-    assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("plan code"));
+        RecurlyError error = request.validate();
+        assertNotNull(error);
+        assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("plan code"));
 
-    request.setPlanCode("");
+        request.setPlanCode("");
 
-    error = request.validate();
-    assertNotNull(error);
-    assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("plan code"));
+        error = request.validate();
+        assertNotNull(error);
+        assertEquals(error.getErrorMessage(), RecurlyError.getValidationError("plan code"));
 
-  }
+    }
 
 
 }

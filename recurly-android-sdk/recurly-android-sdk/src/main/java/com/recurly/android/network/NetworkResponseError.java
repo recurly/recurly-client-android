@@ -30,46 +30,46 @@ import com.android.volley.VolleyError;
  */
 public class NetworkResponseError extends VolleyError {
 
-  private ErrorDetails error = null;
+    private ErrorDetails error = null;
 
-  public boolean isError() {
-    return error != null;
-  }
-
-  public String getErrorCode() {
-    return error == null ? null : error.getCode();
-  }
-
-  public String getErrorMessage() {
-    return error == null ? null : error.getMessage();
-  }
-
-  public ErrorDetails getError() {
-    return error;
-  }
-
-  public void setError(ErrorDetails error) {
-    this.error = error;
-  }
-
-  private class ErrorDetails {
-    private String code = null;
-    private String message = null;
-
-    public String getCode() {
-      return code;
+    public boolean isError() {
+        return error != null;
     }
 
-    public void setCode(String code) {
-      this.code = code;
+    public String getErrorCode() {
+        return error == null ? null : error.getCode();
     }
 
-    public String getMessage() {
-      return message;
+    public String getErrorMessage() {
+        return error == null ? null : error.getMessage();
     }
 
-    public void setMessage(String message) {
-      this.message = message;
+    public ErrorDetails getError() {
+        return error;
     }
-  }
+
+    public void setError(ErrorDetails error) {
+        this.error = error;
+    }
+
+    private class ErrorDetails {
+        private String code = null;
+        private String message = null;
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
 }

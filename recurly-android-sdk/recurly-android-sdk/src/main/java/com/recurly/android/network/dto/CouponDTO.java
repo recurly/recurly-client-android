@@ -31,151 +31,146 @@ import com.recurly.android.network.request.CouponRequest;
  *
  * @see com.recurly.android.network.request.CouponRequest
  * @see com.recurly.android.RecurlyApi#getCoupon(CouponRequest, RecurlyApi.CouponResponseHandler)
- *
  */
 public class CouponDTO extends BaseDTO {
 
-  /**
-   * The discount type. Either a fixed amount, or a percentage of the total.
-   */
-  public enum DiscountType {
-    DISCOUNT_TYPE_NONE,
-    DISCOUNT_TYPE_PERCENT,
-    DISCOUNT_TYPE_FIXED_AMOUNT,
-  }
+    /**
+     * The unique coupon code
+     */
+    protected String code;
+    /**
+     * The display name for this coupon
+     */
+    protected String name;
+    /**
+     * The discount given by this coupon
+     */
+    protected DiscountDTO discount;
 
-  /**
-   * The unique coupon code
-   */
-  protected String code;
-
-  /**
-   * The display name for this coupon
-   */
-  protected String name;
-
-  /**
-   * The discount given by this coupon
-   */
-  protected DiscountDTO discount;
-
-  /**
-   * See {@link CouponDTO#code}
-   */
-  public String getCode() {
-    return code;
-  }
-
-  /**
-   * See {@link CouponDTO#code}
-   */
-  public void setCode(String code) {
-    this.code = code;
-  }
-
-  /**
-   * See {@link CouponDTO#name}
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * See {@link CouponDTO#name}
-   */
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  /**
-   * See {@link CouponDTO#discount}
-   */
-  public void setDiscount(DiscountDTO discount) {
-    this.discount = discount;
-  }
-
-  /**
-   * Parses and returns the DiscountType
-   *
-   * See {@link CouponDTO#discount}
-   */
-  public DiscountType getDiscountType() {
-
-    if (discount != null) {
-      if (discount.getType().equals("percent")) {
-        return DiscountType.DISCOUNT_TYPE_PERCENT;
-      } else if (discount.getType().equals("dollars")) {
-        return DiscountType.DISCOUNT_TYPE_FIXED_AMOUNT;
-      }
+    /**
+     * See {@link CouponDTO#code}
+     */
+    public String getCode() {
+        return code;
     }
 
-    return DiscountType.DISCOUNT_TYPE_NONE;
-  }
-
-  /**
-   * Helper method that returns the discount applied based on a subtotal.
-   * @param total The total that this coupon applies to
-   * @return The discount given by this coupon
-   */
-  public float getDiscount(float total) {
-    switch (getDiscountType()) {
-
-      case DISCOUNT_TYPE_NONE:
-        return 0;
-      case DISCOUNT_TYPE_FIXED_AMOUNT:
-        return getDiscountAmount();
-      case DISCOUNT_TYPE_PERCENT:
-        return total * getDiscountRate();
+    /**
+     * See {@link CouponDTO#code}
+     */
+    public void setCode(String code) {
+        this.code = code;
     }
-    return 0;
-  }
 
-
-  /**
-   * Helper method to return the discount rate for this coupon.
-   *
-   * Relies on configured default currency.
-   *
-   * @return Percentage discount returned, 0 if no discount or not a percent type coupon
-   *
-   * @see BaseDTO#sCurrency
-   */
-  public float getDiscountRate() {
-    if (discount != null) {
-      return discount.getRate();
+    /**
+     * See {@link CouponDTO#name}
+     */
+    public String getName() {
+        return name;
     }
-    return 0;
-  }
 
-  /**
-   * Helper method to return the fixed discount for this coupon
-   *
-   * Relies on configured default currency.
-   *
-   * @return Fixed discount returned, 0 if no discount or not a fixed amount type coupon
-   *
-   * @see BaseDTO#sCurrency
-   */
-  public float getDiscountAmount() {
-    if (discount != null) {
-      if (discount.getAmount() != null) {
-        Float amount = discount.getAmount().get(sCurrency);
+    /**
+     * See {@link CouponDTO#name}
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-        if (amount != null) {
-          return amount;
+    /**
+     * See {@link CouponDTO#discount}
+     */
+    public void setDiscount(DiscountDTO discount) {
+        this.discount = discount;
+    }
+
+    /**
+     * Parses and returns the DiscountType
+     * <p>
+     * See {@link CouponDTO#discount}
+     */
+    public DiscountType getDiscountType() {
+
+        if (discount != null) {
+            if (discount.getType().equals("percent")) {
+                return DiscountType.DISCOUNT_TYPE_PERCENT;
+            } else if (discount.getType().equals("dollars")) {
+                return DiscountType.DISCOUNT_TYPE_FIXED_AMOUNT;
+            }
         }
-      }
+
+        return DiscountType.DISCOUNT_TYPE_NONE;
     }
-    return 0;
-  }
+
+    /**
+     * Helper method that returns the discount applied based on a subtotal.
+     *
+     * @param total The total that this coupon applies to
+     * @return The discount given by this coupon
+     */
+    public float getDiscount(float total) {
+        switch (getDiscountType()) {
+
+            case DISCOUNT_TYPE_NONE:
+                return 0;
+            case DISCOUNT_TYPE_FIXED_AMOUNT:
+                return getDiscountAmount();
+            case DISCOUNT_TYPE_PERCENT:
+                return total * getDiscountRate();
+        }
+        return 0;
+    }
+
+    /**
+     * Helper method to return the discount rate for this coupon.
+     * <p>
+     * Relies on configured default currency.
+     *
+     * @return Percentage discount returned, 0 if no discount or not a percent type coupon
+     * @see BaseDTO#sCurrency
+     */
+    public float getDiscountRate() {
+        if (discount != null) {
+            return discount.getRate();
+        }
+        return 0;
+    }
+
+    /**
+     * Helper method to return the fixed discount for this coupon
+     * <p>
+     * Relies on configured default currency.
+     *
+     * @return Fixed discount returned, 0 if no discount or not a fixed amount type coupon
+     * @see BaseDTO#sCurrency
+     */
+    public float getDiscountAmount() {
+        if (discount != null) {
+            if (discount.getAmount() != null) {
+                Float amount = discount.getAmount().get(sCurrency);
+
+                if (amount != null) {
+                    return amount;
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Coupon{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", discount=" + discount +
+                '}';
+    }
 
 
-  @Override
-  public String toString() {
-    return "Coupon{" +
-        "code='" + code + '\'' +
-        ", name='" + name + '\'' +
-        ", discount=" + discount +
-        '}';
-  }
+    /**
+     * The discount type. Either a fixed amount, or a percentage of the total.
+     */
+    public enum DiscountType {
+        DISCOUNT_TYPE_NONE,
+        DISCOUNT_TYPE_PERCENT,
+        DISCOUNT_TYPE_FIXED_AMOUNT,
+    }
 }

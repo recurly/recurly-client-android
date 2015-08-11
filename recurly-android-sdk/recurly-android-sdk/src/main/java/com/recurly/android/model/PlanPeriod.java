@@ -24,30 +24,30 @@
 package com.recurly.android.model;
 
 public class PlanPeriod extends BaseModel {
-  private String interval;
-  private int length;
+    private String interval;
+    private int length;
 
-  public String getInterval() {
-    return interval;
-  }
+    public String getInterval() {
+        return interval;
+    }
 
-  public void setInterval(String interval) {
-    this.interval = interval;
-  }
+    public void setInterval(String interval) {
+        this.interval = interval;
+    }
 
-  public int getLength() {
-    return length;
-  }
+    public int getLength() {
+        return length;
+    }
 
-  public void setLength(int length) {
-    this.length = length;
-  }
+    public void setLength(int length) {
+        this.length = length;
+    }
 
-  @Override
-  public String toString() {
-    return "PlanPeriod{" +
-        "interval='" + interval + '\'' +
-        ", length=" + length +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "PlanPeriod{" +
+                "interval='" + interval + '\'' +
+                ", length=" + length +
+                '}';
+    }
 }

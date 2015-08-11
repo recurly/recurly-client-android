@@ -26,54 +26,54 @@ package com.recurly.android.model;
 import java.util.Map;
 
 public class Addon extends BaseModel {
-  private String code;
-  private String name;
-  private int quantity;
-  private Map<String, AddonPricing> price;
+    private String code;
+    private String name;
+    private int quantity;
+    private Map<String, AddonPricing> price;
 
-  public String getCode() {
-    return code;
-  }
+    public String getCode() {
+        return code;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public int getQuantity() {
-    return quantity;
-  }
+    public int getQuantity() {
+        return quantity;
+    }
 
-  public void setQuantity(int quantity) {
-    this.quantity = quantity;
-  }
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-  public Map<String, AddonPricing> getPrice() {
-    return price;
-  }
+    public Map<String, AddonPricing> getPrice() {
+        return price;
+    }
 
-  public void setPrice(Map<String, AddonPricing> price) {
-    this.price = price;
-  }
+    public void setPrice(Map<String, AddonPricing> price) {
+        this.price = price;
+    }
 
-  public AddonPricing getPricing() {
-    return price.get(sCurrency);
-  }
+    public AddonPricing getPricing() {
+        return price.get(sCurrency);
+    }
 
-  @Override
-  public String toString() {
-    return "Addon{" +
-        "code='" + code + '\'' +
-        ", name='" + name + '\'' +
-        ", quantity=" + quantity +
-        ", price=" + price +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "Addon{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                '}';
+    }
 }
