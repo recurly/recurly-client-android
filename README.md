@@ -1,10 +1,12 @@
 # Recurly Android SDK
 
-The Recurly SDK allows you to integrate recurrent payments in your exisiting Android app in a matter of minutes.
+The Recurly SDK allows you to integrate recurrent payments in your existing Android app in a matter of minutes.
 
 We encourage our partners to review Google's guidelines on mobile application development. In particular, please review the "Paid and Free Apps" section to familiarize yourself with the guidelines around in-app purchases. https://play.google.com/about/developer-content-policy.html
 
-By using the Recurly SDK, you can tokenize your users' payment information and safely use it to process transactions – since sensitive payment information is passed on directly to Recurly, your PCI scope is drastically reduced.
+When a customer submits your payment form, the Recurly Android SDK sends customer payment information to be encrypted and stored at Recurly and gives you an authorization key to complete the subscription process using our powerful API.
+
+With this authorization key (or token), you can do anything with our API that requires payment information. Because you never handle any sensitive payment information, your PCI scope is drastically reduced.
 
 
 ## 1. Sign Up for Recurly
@@ -114,7 +116,7 @@ import com.recurly.android.network.dto.PlanDTO;
 
 ```java
 PlanRequest planRequest = new PlanRequest.Builder()
-  .setPlanCode("PLAN_SKU") // Substitue your own plan code here
+  .setPlanCode("PLAN_SKU") // Substitute your own plan code here
   .build();
 
 recurlyApi.getPlan(planRequest,
@@ -166,3 +168,18 @@ recurlyApi.getPostalTax(taxRequest,
     }
 });
 ```
+
+## 5. Using a Token
+
+Once the SDK has stored your customer’s sensitive data and given you a token reference, you will have 20 minutes to use it in our [API](https://dev.recurly.com/). Expired tokens are permanently removed from the Recurly servers.
+
+Tokens can be used to populate any account Billing Info data through our API. Simply assign it to the Billing Info’s `token_id` property and we’ll do the rest.
+
+**These endpoints accept tokens within billing info.**
+
+* Subscription [`create`](https://dev.recurly.com/docs/create-subscription)
+* Account [`create`](https://dev.recurly.com/docs/create-an-account), [`update`](https://dev.recurly.com/docs/update-account)
+* Billing Info [`update`](https://dev.recurly.com/docs/update-an-accounts-billing-info-token)
+* Transaction [`create`](https://dev.recurly.com/docs/create-transaction)
+
+> If you use a token, no other attributes will be allowed on that Billing Info for that request.
