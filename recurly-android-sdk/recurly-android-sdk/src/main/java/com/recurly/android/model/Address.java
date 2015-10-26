@@ -38,7 +38,7 @@ public class Address extends BaseModel {
     private String vatNumber;
 
     /**
-     * Constructor for Address Object. Pass in null values for fields which are not applicable.
+     * Constructor for Address Object. Pass in empty string for fields which are not applicable.
      *
      * @param address1
      * @param address2
@@ -62,7 +62,7 @@ public class Address extends BaseModel {
 
     @Deprecated
     public Address(String address1, String address2, String city, String postalCode, String country) {
-        this(address1, address2, city, null, postalCode, country, null, null);
+        this(address1, address2, city, "", postalCode, country, "", "");
     }
 
     public String getAddress1() {
@@ -153,14 +153,14 @@ public class Address extends BaseModel {
     }
 
     public static class Builder {
-        private String mAddress1;
-        private String mAddress2;
-        private String mCity;
-        private String mState;
-        private String mPostalCode;
-        private String mCountry;
-        private String mPhone;
-        private String mVatNumber;
+        private String mAddress1 = "";
+        private String mAddress2 = "";
+        private String mCity = "";
+        private String mState = "";
+        private String mPostalCode = "";
+        private String mCountry = "";
+        private String mPhone = "";
+        private String mVatNumber = "";
 
         public Builder setAddress1(String address1) {
             mAddress1 = address1;
