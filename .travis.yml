@@ -1,0 +1,6 @@
+language: android
+dist: trusty
+android:
+  components:
+    - build-tools-21.1.1
+    - android-21
