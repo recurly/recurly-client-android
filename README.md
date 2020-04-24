@@ -4,9 +4,9 @@ The Recurly SDK allows you to integrate recurrent payments in your existing Andr
 
 We encourage our partners to review Google's guidelines on mobile application development. In particular, please review the "Paid and Free Apps" section to familiarize yourself with the guidelines around in-app purchases. https://play.google.com/about/developer-content-policy.html
 
-When a customer submits your payment form, the Recurly Android SDK sends customer payment information to be encrypted and stored at Recurly and gives you an authorization key to complete the subscription process using our powerful API.
+When a customer submits your payment form, the Recurly Android SDK sends customer payment information to be encrypted and stored at Recurly and gives you an billing token to complete the subscription process using our powerful API.
 
-With this authorization key (or token), you can do anything with our API that requires payment information. Because you never handle any sensitive payment information, your PCI scope is drastically reduced.
+With this billing token, you can do anything with our API that requires payment information. Because you never handle any sensitive payment information, your PCI scope is drastically reduced.
 
 
 ## 1. Sign Up for Recurly
