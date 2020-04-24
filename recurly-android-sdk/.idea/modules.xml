@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/recurly-android-sdk.iml" filepath="$PROJECT_DIR$/recurly-android-sdk.iml" />
-      <module fileurl="file://$PROJECT_DIR$/recurly-android-sdk/recurly-android-sdk-recurly-android-sdk.iml" filepath="$PROJECT_DIR$/recurly-android-sdk/recurly-android-sdk-recurly-android-sdk.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/recurly-android-sdk.iml" filepath="$PROJECT_DIR$/recurly-android-sdk.iml" group="recurly-android-sdk" />
+      <module fileurl="file://$PROJECT_DIR$/recurly-android-sdk/recurly-android-sdk-recurly-android-sdk.iml" filepath="$PROJECT_DIR$/recurly-android-sdk/recurly-android-sdk-recurly-android-sdk.iml" group="recurly-android-sdk/recurly-android-sdk" />
+      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" group="recurly-android-sdk/sample" />
     </modules>
   </component>
 </project>

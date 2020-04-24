@@ -51,7 +51,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     // NOTE: update RecurlyNetwork#UA_NETWORK_VERSION as well
     compile 'com.mcxiaoke.volley:library:1.0.15@aar'
-    compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.android.support:support-v4:21.0.3'
 }
 
 android.libraryVariants.all { variant ->
