@@ -49,7 +49,7 @@ public class CardPaymentTest extends ApiTest {
         .setLastName("last")
         .setNumber("4111111111111112")
         .setExpirationMonth(12)
-        .setExpirationYear(20)
+        .setExpirationYear(30)
         .setCvv("123")
         .setCountry("US")
         .build();
@@ -91,7 +91,7 @@ public class CardPaymentTest extends ApiTest {
         .setLastName("last")
         .setNumber("4111111111111111")
         .setExpirationMonth(12)
-        .setExpirationYear(20)
+        .setExpirationYear(30)
         .setCvv("123")
         .setBillingAddress(address)
         .build();

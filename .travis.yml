@@ -3,8 +3,11 @@ dist: trusty
 script: cd recurly-android-sdk tmp && gradle build connectedCheck
 android:
   components:
-    - build-tools-21.1.2
-    - android-21
+    - platform-tools
+    - tools
+    - build-tools-23.0.3
+    - android-23
+    - extra-android-m2repository
   licenses:
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
