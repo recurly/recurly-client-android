@@ -1,6 +1,6 @@
 language: android
 dist: trusty
-script: cd recurly-android-sdk tmp && gradle build connectedCheck
+script: cd recurly-android-sdk tmp && ./gradlew build connectedCheck
 android:
   components:
     - platform-tools
