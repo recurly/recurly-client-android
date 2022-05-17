@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name = "recurly_text_size">12sp</dimen>
+    <dimen name = "recurly_icon_card_width">30dp</dimen>
+    <dimen name = "recurly_icon_card_height">18dp</dimen>
+    <dimen name = "recurly_margin_normal">9dp</dimen>
+    <dimen name = "recurly_margin_small">6dp</dimen>
+
+</resources>

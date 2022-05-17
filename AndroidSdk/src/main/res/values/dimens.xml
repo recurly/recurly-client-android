@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name = "recurly_text_size">15sp</dimen>
+    <dimen name = "recurly_icon_card_width">40dp</dimen>
+    <dimen name = "recurly_icon_card_height">24dp</dimen>
+    <dimen name = "recurly_margin_normal">12dp</dimen>
+    <dimen name = "recurly_margin_small">8dp</dimen>
+
+    <!--    0.75 - ldpi  (small)   //mdpi dimens *0.75-->
+    <!--    1.0  - mdpi  (normal)  //Original dimens-->
+    <!--    1.5  - hdpi  (large)   //mdpi dimens *1.5-->
+    <!--    2.0  - xhdpi (xLarge)  //mdpi dimens *2.0-->
+    <!--    2.5  - xxhdpi (xxLarge)  //mdpi dimens *2.5-->
+
+</resources>

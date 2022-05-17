@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="recurly_black">#FF000000</color>
+    <color name="recurly_transparent">#00000000</color>
+    <color name="recurly_focused_blue">#2373E0</color>
+    <color name="recurly_blue_stroke">#007AFF</color>
+    <color name="recurly_error_red">#ED2C2C</color>
+    <color name="recurly_error_red_blur">#99ED2C2C</color>
+    <color name="recurly_gray_stroke">#C7C6C6</color>
+    <color name="recurly_gray_text">#707074</color>
+</resources>

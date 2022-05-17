@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <ImageView
+        android:id="@+id/recurly_image_view_stroke_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:src="@drawable/unified_stroke_container"
+        app:layout_constraintBottom_toBottomOf="@+id/recurly_constraint_unified_container"
+        app:layout_constraintTop_toTopOf="@+id/recurly_constraint_unified_container"
+        tools:ignore="ContentDescription" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/recurly_constraint_unified_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/recurly_image_unified_card_icon"
+            android:layout_width="@dimen/recurly_icon_card_width"
+            android:layout_height="@dimen/recurly_icon_card_height"
+            android:layout_marginStart="@dimen/recurly_margin_normal"
+            android:contentDescription="@string/credit_card_icon_description"
+            android:src="@drawable/ic_generic_disabled_card"
+            app:layout_constraintBottom_toBottomOf="@+id/recurly_text_input_card_number"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/recurly_text_input_card_number"
+            app:layout_constraintWidth_percent="0.05" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/recurly_text_input_card_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/recurly_margin_small"
+            android:layout_marginEnd="@dimen/recurly_margin_small"
+            android:background="@color/recurly_transparent"
+            android:padding="0dp"
+            app:boxStrokeColor="@color/recurly_transparent"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:hintTextColor="@color/recurly_gray_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/recurly_text_input_card_expiration"
+            app:layout_constraintStart_toEndOf="@+id/recurly_image_unified_card_icon"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/recurly_text_edit_card_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/recurly_transparent"
+                android:digits="01234 56789"
+                android:ellipsize="start"
+                android:fontFamily="@font/inter_regular"
+                android:hint="@string/hint_card_number"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:maxLength="22"
+                android:nextFocusRight="@id/recurly_text_edit_card_expiration"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:singleLine="true"
+                android:textColor="@color/recurly_black"
+                android:textSize="@dimen/recurly_text_size" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/recurly_text_input_card_expiration"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/recurly_transparent"
+            app:boxStrokeColor="@color/recurly_transparent"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:hintTextColor="@color/recurly_gray_text"
+            app:layout_constraintBottom_toBottomOf="@+id/recurly_text_input_card_number"
+            app:layout_constraintEnd_toStartOf="@+id/unified_guideline"
+            app:layout_constraintTop_toTopOf="@+id/recurly_text_input_card_number">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/recurly_text_edit_card_expiration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:background="@color/recurly_transparent"
+                android:digits="01234/56789"
+                android:fontFamily="@font/inter_regular"
+                android:hint="@string/hint_month_and_year"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:maxLength="5"
+                android:maxLines="1"
+                android:nextFocusRight="@id/recurly_text_edit_card_cvv"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:textColor="@color/recurly_black"
+                android:textSize="@dimen/recurly_text_size" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/unified_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.85" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/recurly_text_input_card_cvv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/recurly_margin_small"
+            android:background="@color/recurly_transparent"
+            android:gravity="center_horizontal"
+            app:boxStrokeColor="@color/recurly_transparent"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:hintTextColor="@color/recurly_gray_text"
+            app:layout_constraintBottom_toBottomOf="@+id/recurly_constraint_unified_container"
+            app:layout_constraintStart_toStartOf="@+id/unified_guideline"
+            app:layout_constraintTop_toTopOf="@+id/recurly_constraint_unified_container"
+            app:layout_constraintWidth_percent="0.2">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/recurly_text_edit_card_cvv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/recurly_transparent"
+                android:digits="0123456789"
+                android:fontFamily="@font/inter_regular"
+                android:hint="@string/hint_cvv_code"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:maxLength="4"
+                android:maxLines="1"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:textColor="@color/recurly_black"
+                android:textSize="@dimen/recurly_text_size" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>
