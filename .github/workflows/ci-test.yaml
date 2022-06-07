@@ -12,5 +12,5 @@ jobs:
           distribution: 'adopt'
       - uses: gradle/gradle-build-action@v2
         with:
-          arguments: build            
-      - run: ./gradlew test      
+          arguments: build           
+      - run: ./gradlew test
