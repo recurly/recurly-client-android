@@ -129,8 +129,8 @@ After the validation of the credit card inputs you should fill the billing Infor
 ```kotlin
 // Checkout the documentation about this fields at https://developers.recurly.com/reference/recurly-js/index.html
 val billingInfo = RecurlyApi.buildCreditCardBillingInfo(
-        firstName = "Hugo",
-        lastName = "Flores",
+        firstName = "John",
+        lastName = "Doe",
         company = "",
         addressOne = "",
         addressTwo = "",

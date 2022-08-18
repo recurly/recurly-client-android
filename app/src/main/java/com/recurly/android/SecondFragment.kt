@@ -50,15 +50,15 @@ class SecondFragment : Fragment() {
             if (numberValidation && dateValidation && cvvValidation) {
                 binding.textviewSecond.text = "Loading..."
                 val billingInfo = RecurlyApi.buildCreditCardBillingInfo(
-                    "Hugo",
-                    "Flores",
-                    "CH2Solutions",
-                    "home",
+                    "John",
+                    "Doe",
+                    "Recurly",
+                    "address1",
                     "",
-                    "La Paz",
-                    "La Paz",
+                    "Boulder",
+                    "Colorado",
                     "00000",
-                    "Bolivia"
+                    "America"
                 )
                 RecurlyApi.creditCardTokenization(
                     viewLifecycleOwner,

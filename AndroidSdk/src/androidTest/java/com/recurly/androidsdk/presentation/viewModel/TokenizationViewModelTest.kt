@@ -38,15 +38,15 @@ class TokenizationViewModelTest: TestCase(){
     @Test
     fun tokenizationTest(){
 //        viewModel.initTokenization(
-//            "Hugo",
-//            "Flores",
-//            "CH2Solutions",
-//            "at my home",
-//            "really at my home",
-//            "La Paz",
-//            "La Paz",
+//            "John",
+//            "Doe",
+//            "Recurly",
+//            "address1",
+//            "address2",
+//            "City1",
+//            "City2",
 //            "00000",
-//            "Bolivia"
+//            "America"
 //        )
 //
 //        assertThat(viewModel.mutableTokenization.getOrAwaitValue() != null).isEqualTo(true)
