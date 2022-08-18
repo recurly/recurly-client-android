@@ -1,10 +1,6 @@
 .gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
-/.idea/tasks.xml
-/.idea/gradle.xml
-/.idea/misc.xml
+.idea
 .DS_Store
 /build
 recurly-android-sdk/sonatype_local.properties
