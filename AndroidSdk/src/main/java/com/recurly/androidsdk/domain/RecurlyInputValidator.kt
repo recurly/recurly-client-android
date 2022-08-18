@@ -50,7 +50,6 @@ internal object RecurlyInputValidator {
         var cardType = ""
         var formattedNumber = regexSpecialCharacters(number, "0-9 ")
         var physicalPattern = ""
-
         CreditCardsParameters.values().forEach {
             if (Pattern.matches(it.numberPattern, formattedNumber)) {
                 correct = Pattern.matches(it.numberPattern, formattedNumber)
