@@ -73,7 +73,7 @@ class RecurlyInputValidatorTest{
     @Test
     fun creditCardDonNotFollowsPattern(){
         val result = RecurlyInputValidator.validateCreditCardNumber("1111111111111111")
-        assertThat(result).isEqualTo(Triple(false,"",""))
+        assertThat(result).isEqualTo(Triple(false,"","1111111111111111"))
     }
 
     @Test

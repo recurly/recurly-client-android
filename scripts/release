@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Usage
+#
+# ./release
+#
+
+# publish
+mvn versions:set -DnewVersion="$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//')"
+mvn clean package
+mvn deploy
+mvn versions:revert
+

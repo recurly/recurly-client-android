@@ -48,15 +48,15 @@ class FirstFragment : Fragment() {
             if (validationData.first && validationData.second && validationData.third) {
                 binding.textApiText.text = "Loading..."
                 val billingInfo = RecurlyApi.buildCreditCardBillingInfo(
-                    "Hugo",
-                    "Flores",
-                    "CH2Solutions",
-                    "Home",
+                    "John",
+                    "Doe",
+                    "Recurly",
+                    "Address1",
                     "",
-                    "La Paz",
-                    "La Paz",
+                    "Boulder",
+                    "Colorado",
                     "00000",
-                    "Bolivia"
+                    "America"
                 )
                 RecurlyApi.creditCardTokenization(
                     viewLifecycleOwner,

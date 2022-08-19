@@ -1,4 +1,5 @@
 # Recurly Android SDK
+[![Maven Central](https://img.shields.io/static/v1?label=Maven%20Central&message=recurly&color=purple)](https://search.maven.org/artifact/com.recurly/android-sdk) ![Recurly Client Android](https://github.com/recurly/recurly-client-android/actions/workflows/ci-test.yaml/badge.svg?branch=master)
 
 The Recurly SDK allows you to integrate recurrent payments in your existing Android app in a matter of minutes.
 
@@ -128,8 +129,8 @@ After the validation of the credit card inputs you should fill the billing Infor
 ```kotlin
 // Checkout the documentation about this fields at https://developers.recurly.com/reference/recurly-js/index.html
 val billingInfo = RecurlyApi.buildCreditCardBillingInfo(
-        firstName = "Hugo",
-        lastName = "Flores",
+        firstName = "John",
+        lastName = "Doe",
         company = "",
         addressOne = "",
         addressTwo = "",
