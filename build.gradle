@@ -13,9 +13,8 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
+apply plugin: "com.vanniktech.maven.publish"
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-//apply plugin: "com.vanniktech.maven.publish"
