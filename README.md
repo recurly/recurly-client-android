@@ -1,5 +1,5 @@
 # Recurly Android SDK
-[![Maven Central](https://img.shields.io/static/v1?label=Maven%20Central&message=recurly&color=purple)](https://search.maven.org/artifact/com.recurly/android-sdk) ![Recurly Client Android](https://github.com/recurly/recurly-client-android/actions/workflows/ci-test.yaml/badge.svg?branch=master) ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/recurly/recurly-client-android?sort=semver)
+[![Maven Central](https://img.shields.io/static/v1?label=Maven%20Central&message=recurly&color=purple)](https://search.maven.org/artifact/com.recurly/android-sdk) ![Recurly Client Android](https://github.com/recurly/recurly-client-android/actions/workflows/ci-test.yaml/badge.svg?branch=master) ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/recurly/recurly-client-android?logo=Android&sort=semver)
 
 The Recurly SDK allows you to integrate recurrent payments in your existing Android app in a matter of minutes.
 
