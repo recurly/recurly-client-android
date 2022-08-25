@@ -1,9 +1,9 @@
 name: maven publishing
 
 on:
-  workflow_dispatch:
   release:
-    types: release
+    types: [released]
+
 jobs:
   build:
     runs-on: ubuntu-latest
