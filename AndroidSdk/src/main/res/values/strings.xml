@@ -1,0 +1,9 @@
+<resources>
+    <string name="sdk_name">Recurly Android SDK</string>
+    <string name="hint_card_number">Card number</string>
+    <string name="hint_month_and_year">MM/YY</string>
+    <string name="hint_cvv_code">CVV</string>
+    <string name="hint_expire_month">Month</string>
+    <string name="hint_expire_year">Year</string>
+    <string name="credit_card_icon_description">Credit Card Icon</string>
+</resources>

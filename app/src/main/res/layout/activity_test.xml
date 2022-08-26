@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp"
+    tools:context=".TestActivity">
+
+    <com.recurly.androidsdk.presentation.view.RecurlyCreditCardNumber
+        android:id="@+id/recurly_card_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.recurly.androidsdk.presentation.view.RecurlyExpirationMMYY
+        android:id="@+id/recurly_expiration_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recurly_card_number"
+        app:layout_constraintWidth_percent="0.5"/>
+
+    <com.recurly.androidsdk.presentation.view.RecurlyCVV
+        android:id="@+id/recurly_cvv_code"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toEndOf="@+id/recurly_expiration_date"
+        app:layout_constraintTop_toBottomOf="@+id/recurly_card_number" />
+
+    <com.recurly.androidsdk.presentation.view.RecurlyUnifiedCreditCard
+        android:id="@+id/recurly_unified_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_api_text"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recurly_unified_view"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:text="Here will appear all the mesages and responses from Tokenization testing"
+        app:layout_constraintBottom_toTopOf="@+id/test_button"/>
+
+    <Button
+        android:id="@+id/test_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Tokenization"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

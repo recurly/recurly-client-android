@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/recurly_text_input_layout_individual_expiration_mmyy"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxStrokeColor="@color/recurly_focused_blue"
+        app:endIconMode="clear_text"
+        app:errorIconDrawable="@null"
+        app:errorTextAppearance="@style/MyZeroSizeTextAppearance"
+        app:hintTextColor="@color/recurly_focused_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/recurly_text_input_edit_individual_expiration_mmyy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="01234/56789"
+            android:fontFamily="@font/inter_regular"
+            android:hint="@string/hint_month_and_year"
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:maxLength="5"
+            android:maxLines="1"
+            android:textColor="@color/recurly_black"
+            android:textSize="@dimen/recurly_text_size" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</merge>

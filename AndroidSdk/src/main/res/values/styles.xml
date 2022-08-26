@@ -1,0 +1,12 @@
+<resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/recurly_black</item>
+        <item name="colorPrimaryDark">@color/recurly_black</item>
+        <item name="colorAccent">@color/recurly_black</item>
+    </style>
+    <style name="MyZeroSizeTextAppearance">
+        <item name="android:textSize">0sp</item>
+        <item name="android:padding">0dp</item>
+    </style>
+</resources>

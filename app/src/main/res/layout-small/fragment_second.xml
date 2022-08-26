@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SecondFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.recurly.androidsdk.presentation.view.RecurlyCreditCardNumber
+                    android:id="@+id/recurly_card_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <com.recurly.androidsdk.presentation.view.RecurlyExpirationMMYY
+                    android:id="@+id/recurly_expiration_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recurly_card_number"
+                    app:layout_constraintWidth_percent="0.5"/>
+
+                <com.recurly.androidsdk.presentation.view.RecurlyCVV
+                    android:id="@+id/recurly_cvv_code"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
+                    app:layout_constraintStart_toEndOf="@+id/recurly_expiration_date"
+                    app:layout_constraintTop_toBottomOf="@+id/recurly_card_number" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/textview_second"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Here will appear all the messages and responses from Tokenization testing"/>
+
+            <Button
+                android:id="@+id/button_test_second"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tokenization"
+                android:layout_margin="10dp"/>
+
+            <Button
+                android:id="@+id/button_second"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Previous fragment"
+                android:layout_margin="10dp"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraint_card_icon"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <ImageView
+        android:id="@+id/image_recurly_card_brand"
+        android:layout_width="@dimen/recurly_icon_card_width"
+        android:layout_height="@dimen/recurly_icon_card_height"
+        android:layout_margin="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/constraint_card_icon"
+        app:layout_constraintEnd_toEndOf="@+id/constraint_card_icon"
+        app:layout_constraintStart_toStartOf="@+id/constraint_card_icon"
+        app:layout_constraintTop_toTopOf="@+id/constraint_card_icon"
+        tools:src="@drawable/ic_generic_valid_card" />
+
+</merge>
