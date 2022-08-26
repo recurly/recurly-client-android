@@ -1,7 +1,6 @@
 name: maven publishing
 
 on:
-  workflow_dispatch:
   release:
     types: [released]
 
