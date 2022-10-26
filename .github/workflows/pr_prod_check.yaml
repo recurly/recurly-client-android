@@ -9,5 +9,5 @@ jobs:
     uses: recurly/pipeline-configs/.github/workflows/pr_prod_check_latest.yaml@master
     secrets:
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-      CF_API_TOKEN: ${{ secrets.CF_API_KEY }}
+#      CF_API_TOKEN: ${{ secrets.CF_API_KEY }}
       GCR_STAGING_DEVOPS_SA: ${{secrets.GCR_STAGING_DEVOPS_SA}}
