@@ -4,13 +4,11 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 33
 
     defaultConfig {
         minSdk 21
-        targetSdk 31
-        versionCode 1
-        versionName "2.0.0"
+        targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -37,6 +35,7 @@ android {
     viewBinding {
         enabled = true
     }
+    namespace 'com.recurly.androidsdk'
 }
 
 dependencies {
