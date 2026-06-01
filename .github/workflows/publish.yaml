@@ -11,7 +11,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       # TODO(SWI-5336): actions/create-release is archived and has no node24 release.
       # Remove this flag when a node24-compatible replacement is adopted.
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
