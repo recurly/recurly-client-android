@@ -13,7 +13,6 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
-    env:
     steps:
       - uses: actions/checkout@v6.0.2
       - uses: r7kamura/semgrepper@v0
