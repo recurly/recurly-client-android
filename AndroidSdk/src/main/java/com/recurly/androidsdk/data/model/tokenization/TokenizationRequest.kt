@@ -39,13 +39,13 @@ data class TokenizationRequest(
     @SerializedName("tax_identifier_type")
     var taxIdentifierType: String,
     @SerializedName("number")
-    var cardNumber: Long,
+    var cardNumber: String,
     @SerializedName("month")
     var expirationMonth: Int,
     @SerializedName("year")
     var expirationYear: Int,
     @SerializedName("cvv")
-    var cvvCode: Int,
+    var cvvCode: String,
     @SerializedName("version")
     var sdkVersion: String,
     @SerializedName("key")

@@ -2,6 +2,7 @@ package com.recurly.androidsdk.domain
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import java.util.Calendar
 
 class RecurlyInputValidatorTest{
 
@@ -40,7 +41,8 @@ class RecurlyInputValidatorTest{
 
     @Test
     fun validExpirationDateInput(){
-        val result = RecurlyInputValidator.verifyDate("08/22")
+        val futureYear = (Calendar.getInstance().get(Calendar.YEAR) % 100) + 1
+        val result = RecurlyInputValidator.verifyDate("12/$futureYear")
         assertThat(result).isTrue()
     }
 

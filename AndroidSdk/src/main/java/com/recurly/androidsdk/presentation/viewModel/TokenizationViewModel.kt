@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.recurly.androidsdk.data.model.CreditCardData
 import com.recurly.androidsdk.data.model.RecurlySessionData
+import com.recurly.androidsdk.data.model.tokenization.ErrorRecurly
 import com.recurly.androidsdk.data.model.tokenization.RecurlyBillingInfo
 import com.recurly.androidsdk.data.model.tokenization.TokenizationRequest
 import com.recurly.androidsdk.data.model.tokenization.TokenizationResponse
 import com.recurly.androidsdk.domain.GetRecurlyToken
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -62,8 +64,23 @@ internal class TokenizationViewModel constructor(
             sessionId = UUID.randomUUID().toString()
         )
         viewModelScope.launch {
-            val result: TokenizationResponse = getRecurlyToken(request)
-            mutableTokenization.postValue(result)
+            try {
+                val result: TokenizationResponse = getRecurlyToken(request)
+                mutableTokenization.postValue(result)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                mutableTokenization.postValue(
+                    TokenizationResponse(
+                        null, null, ErrorRecurly(
+                            "connection_failed",
+                            e.message ?: "Network request failed",
+                            emptyList(),
+                            emptyList()
+                        )
+                    )
+                )
+            }
         }
     }
 }
