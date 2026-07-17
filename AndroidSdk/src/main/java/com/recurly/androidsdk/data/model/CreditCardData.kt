@@ -13,17 +13,17 @@ internal object CreditCardData {
      * Every variable has its own getters and setters
      */
 
-    private var cardNumber: Long = 0
+    private var cardNumber: String = ""
     private var expirationMonth: Int = 0
     private var expirationYear: Int = 0
-    private var cvvCode: Int = 0
+    private var cvvCode: String = ""
     private var cvvLength = 3
 
-    internal fun getCardNumber(): Long{
+    internal fun getCardNumber(): String {
         return cardNumber
     }
 
-    internal fun setCardNumber(number: Long){
+    internal fun setCardNumber(number: String) {
         cardNumber = number
     }
 
@@ -43,11 +43,11 @@ internal object CreditCardData {
         expirationYear = year
     }
 
-    internal fun getCvvCode(): Int{
+    internal fun getCvvCode(): String {
         return cvvCode
     }
 
-    internal fun setCvvCode(cvv: Int){
+    internal fun setCvvCode(cvv: String) {
         cvvCode = cvv
     }
 

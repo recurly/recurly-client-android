@@ -8,18 +8,13 @@ import com.recurly.androidsdk.data.model.CreditCardsParameters
 
 internal object RecurlyDataFormatter {
 
-    /**
-     * @param number credit card number
-     * @param validInput is recognized from a credit card pattern
-     * @return Returns the credit card number as Long if it is correct, return 0 if the Card Number is invalid or if it don´t belongs to a credit card type
-     */
-    internal fun getCardNumber(number: String, validInput: Boolean): Long {
+    internal fun getCardNumber(number: String, validInput: Boolean): String {
         val cardNumber =
             number.replace(" ", "")
-        return if (cardNumber.isNotEmpty() && validInput)
-            cardNumber.toLong()
+        return if (cardNumber.isNotEmpty() && validInput && cardNumber.all { it.isDigit() })
+            cardNumber
         else
-            0
+            ""
     }
 
     /**
@@ -56,16 +51,11 @@ internal object RecurlyDataFormatter {
             0
     }
 
-    /**
-     * @param cvv cvv code
-     * @param validInput if it is a valid cvv code
-     * @return Returns the cvv code as an Int
-     */
-    internal fun getCvvCode(cvv: String, validInput: Boolean): Int {
-        return if (cvv.isNotEmpty() && validInput)
-            cvv.toInt()
+    internal fun getCvvCode(cvv: String, validInput: Boolean): String {
+        return if (cvv.isNotEmpty() && validInput && cvv.all { it.isDigit() })
+            cvv
         else
-            0
+            ""
     }
 
     /**

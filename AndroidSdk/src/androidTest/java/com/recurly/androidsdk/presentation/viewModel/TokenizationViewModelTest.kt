@@ -29,8 +29,8 @@ class TokenizationViewModelTest: TestCase(){
         //Setup Credit Card and session data
 
         RecurlySessionData.setPublicKey("ewr1-4TIXlPCkR68woNJp7UYMSL")
-        CreditCardData.setCardNumber(4111111111111111)
-        CreditCardData.setCvvCode(123)
+        CreditCardData.setCardNumber("4111111111111111")
+        CreditCardData.setCvvCode("123")
         CreditCardData.setExpirationYear(22)
         CreditCardData.setExpirationMonth(8)
     }

@@ -1,5 +1,6 @@
 package com.recurly.androidsdk.data.network
 
+import com.google.gson.Gson
 import com.recurly.androidsdk.data.model.tokenization.ErrorRecurly
 import com.recurly.androidsdk.data.model.tokenization.TokenizationRequest
 import com.recurly.androidsdk.data.model.tokenization.TokenizationResponse
@@ -10,16 +11,16 @@ import kotlinx.coroutines.withContext
 class TokenService {
 
     private val retrofit = RetrofitHelper.getRetrofit()
+    private val gson = Gson()
 
     /**
-     * @param TokenizationRequest
+     * @param request TokenizationRequest
      * @return TokenizationResponse
      *
-     * If the api call succeeds the response will a TokenizationResponse
+     * If the api call succeeds the response will be the parsed TokenizationResponse.
      *
-     * If the api call fails the response will be an empty Response Object with everything set
-     * on empty
-     *
+     * If the api call fails, the response error body is parsed into an ErrorRecurly;
+     * if it cannot be parsed, a fallback ErrorRecurly built from the HTTP status is returned.
      */
     suspend fun getToken(request: TokenizationRequest): TokenizationResponse {
         return withContext(Dispatchers.IO) {
@@ -47,12 +48,23 @@ class TokenService {
                     deviceId = request.deviceId,
                     sessionId = request.sessionId
                 )
-            response.body() ?: TokenizationResponse(
-                "", "", ErrorRecurly(
-                    "", "", emptyList(),
-                    emptyList()
+            if (response.isSuccessful) {
+                response.body() ?: TokenizationResponse(
+                    null, null, ErrorRecurly("", "Empty response body", emptyList(), emptyList())
                 )
-            )
+            } else {
+                val parsed = runCatching {
+                    gson.fromJson(response.errorBody()?.string(), TokenizationResponse::class.java)
+                }.getOrNull()
+                parsed?.takeIf { it.error != null } ?: TokenizationResponse(
+                    null, null, ErrorRecurly(
+                        response.code().toString(),
+                        response.message(),
+                        emptyList(),
+                        emptyList()
+                    )
+                )
+            }
         }
     }
 

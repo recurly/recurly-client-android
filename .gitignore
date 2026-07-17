@@ -6,3 +6,4 @@ build/
 out/
 .vscode
 local.properties
+.serena/
