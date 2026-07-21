@@ -9,6 +9,12 @@ When a customer submits your payment form, the Recurly Android SDK sends custome
 
 With this authorization key (or token), you can do anything with our API that requires payment information. Because you never handle any sensitive payment information, your PCI scope is drastically reduced.
 
+## Requirements
+
+- Android 7.1 (API 25) or higher
+- JDK 17
+- Android Gradle Plugin 8.x
+
 ## 1. Sign Up for Recurly
 
 Sign up for a free Recurly account if you don't have one already, at https://app.recurly.com/signup

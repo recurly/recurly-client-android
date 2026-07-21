@@ -14,6 +14,7 @@ internal object RetrofitHelper {
         return Retrofit.Builder()
             .client(OkHttpHelper.getOkHttpClient())
             .baseUrl("https://api.recurly.com/")
+            .addConverterFactory(NullOnEmptyConverterFactory())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

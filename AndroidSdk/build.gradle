@@ -1,16 +1,19 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'maven-publish'
+    id 'signing'
 }
 
 android {
-    compileSdk 31
+    namespace 'com.recurly.androidsdk'
+    compileSdk 35
 
     defaultConfig {
-        minSdk 21
-        targetSdk 31
+        minSdk 25
+        targetSdk 35
         versionCode 1
-        versionName "2.0.0"
+        versionName project.findProperty("VERSION_NAME") ?: "3.0.0-SNAPSHOT"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -25,47 +28,107 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
     viewBinding {
         enabled = true
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+    implementation 'com.google.android.material:material:1.12.0'
 
     //Test
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'com.google.truth:truth:1.0.1'
-    androidTestImplementation 'com.google.truth:truth:1.0.1'
+    testImplementation 'com.google.truth:truth:1.4.4'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0'
+    androidTestImplementation 'com.google.truth:truth:1.4.4'
     androidTestImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
     //ViewModel
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7'
 
     // LiveData
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.7'
 
     // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0'
 
     // Retrofit2
-    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
 }
-apply plugin: "com.vanniktech.maven.publish"
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId project.property("GROUP")
+                artifactId project.property("POM_ARTIFACT_ID")
+                version project.property("VERSION_NAME")
+                pom {
+                    name = project.property("POM_NAME")
+                    description = project.property("POM_DESCRIPTION")
+                    url = project.property("POM_URL")
+                    licenses {
+                        license {
+                            name = project.property("POM_LICENSE_NAME")
+                            url = project.property("POM_LICENSE_URL")
+                            distribution = project.property("POM_LICENSE_DIST")
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = project.property("POM_DEVELOPER_ID")
+                            name = project.property("POM_DEVELOPER_NAME")
+                            email = project.property("POM_DEVELOPER_EMAIL")
+                        }
+                    }
+                    scm {
+                        url = project.property("POM_SCM_URL")
+                        connection = project.property("POM_SCM_CONNECTION")
+                        developerConnection = project.property("POM_SCM_DEV_CONNECTION")
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        def signingKey = findProperty("signingInMemoryKey")
+        def signingPassword = findProperty("signingInMemoryKeyPassword")
+        if (signingKey && signingPassword) {
+            useInMemoryPgpKeys(signingKey, signingPassword)
+            sign publishing.publications.release
+        } else {
+            logger.warn("Signing skipped: signingInMemoryKey/signingInMemoryKeyPassword not set. " +
+                "Published artifacts will be UNSIGNED, which Maven Central rejects.")
+        }
+    }
+}

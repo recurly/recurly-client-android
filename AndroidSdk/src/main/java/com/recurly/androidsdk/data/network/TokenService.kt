@@ -8,9 +8,10 @@ import com.recurly.androidsdk.data.network.core.RetrofitHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class TokenService {
+class TokenService(
+    private val apiClient: RecurlyApiClient = RetrofitHelper.getRetrofit().create(RecurlyApiClient::class.java)
+) {
 
-    private val retrofit = RetrofitHelper.getRetrofit()
     private val gson = Gson()
 
     /**
@@ -25,7 +26,7 @@ class TokenService {
     suspend fun getToken(request: TokenizationRequest): TokenizationResponse {
         return withContext(Dispatchers.IO) {
             val response =
-                retrofit.create(RecurlyApiClient::class.java).recurlyTokenization(
+                apiClient.recurlyTokenization(
                     first_name = request.firstName,
                     last_name = request.lastName,
                     company = request.company,
@@ -56,6 +57,11 @@ class TokenService {
                 val parsed = runCatching {
                     gson.fromJson(response.errorBody()?.string(), TokenizationResponse::class.java)
                 }.getOrNull()
+                // Gson populates fields via reflection and leaves object refs at their JVM
+                // default (null) when a JSON key is absent, bypassing Kotlin's non-null type
+                // guarantee for ErrorRecurly. The null check below is a real runtime necessity,
+                // not dead code, even though the compiler cannot see it.
+                @Suppress("SENSELESS_COMPARISON")
                 parsed?.takeIf { it.error != null } ?: TokenizationResponse(
                     null, null, ErrorRecurly(
                         response.code().toString(),
