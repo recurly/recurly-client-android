@@ -8,7 +8,7 @@ import com.recurly.androidsdk.data.network.core.RetrofitHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class TokenService(
+internal class TokenService(
     private val apiClient: RecurlyApiClient = RetrofitHelper.getRetrofit().create(RecurlyApiClient::class.java)
 ) {
 
@@ -45,13 +45,11 @@ class TokenService(
                     year = request.expirationYear,
                     cvv = request.cvvCode,
                     version = request.sdkVersion,
-                    key = request.publicKey,
-                    deviceId = request.deviceId,
-                    sessionId = request.sessionId
+                    key = request.publicKey
                 )
             if (response.isSuccessful) {
                 response.body() ?: TokenizationResponse(
-                    null, null, ErrorRecurly("", "Empty response body", emptyList(), emptyList())
+                    null, null, error = ErrorRecurly("", "Empty response body", emptyList(), emptyList())
                 )
             } else {
                 val parsed = runCatching {
@@ -63,7 +61,7 @@ class TokenService(
                 // not dead code, even though the compiler cannot see it.
                 @Suppress("SENSELESS_COMPARISON")
                 parsed?.takeIf { it.error != null } ?: TokenizationResponse(
-                    null, null, ErrorRecurly(
+                    null, null, error = ErrorRecurly(
                         response.code().toString(),
                         response.message(),
                         emptyList(),

@@ -45,14 +45,16 @@ Declare the necessary permissions for your Android Project by adding the followi
 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 ```
 
-You need to configure your public key before using the API
+You need a `RecurlyClient` instance, configured with your public key, before you can tokenize a card
 
 ```kotlin
-import com.recurly.androidsdk.data.model.RecurlySessionData
+import com.recurly.androidsdk.RecurlyClient
 ```
 ```kotlin
-RecurlySessionData.setPublicKey("YOUR_PUBLIC_KEY");
+val recurlyClient = RecurlyClient("YOUR_PUBLIC_KEY")
 ```
+
+Requests are automatically routed to Recurly's EU data center when your public key is an EU site's public key (prefixed `fra-`); no additional configuration is required.
 
 ## 4 Examples
 
@@ -130,43 +132,35 @@ recurlyView.setExpirationError()
 recurlyView.setCvvError()
 ```
 
-When you need to call the Tokenization you first need to have your public key already instantiated, then as a recommendation you should call the `.validateData()` functions of the views you are using.
+When you need to call the Tokenization, as a recommendation you should call the `.validateData()` functions of the views you are using first.
 After the validation of the credit card inputs you should fill the billing Information as this example
 ```kotlin
 // Checkout the documentation about this fields at https://developers.recurly.com/reference/recurly-js/index.html
-val billingInfo = RecurlyApi.buildCreditCardBillingInfo(
+val billingInfo = RecurlyBillingInfo(
         firstName = "John",
-        lastName = "Doe",
-        company = "",
-        addressOne = "",
-        addressTwo = "",
-        city = "",
-        state = "",
-        postalCode = "",
-        country = "",
-        phone = "",
-        vatNumber = "",
-        taxIdentifier = "",
-        taxIdentifierType = ""
-    ) 
+        lastName = "Doe"
+    )
 ```
 
-Once you have completed the billing info you can directly call the tokenization, the Credit Card data is saved automatically  
+Then build a `RecurlyCardParams` snapshot from your card input view(s). If you're using the unified view:
+```kotlin
+val cardParams = recurlyUnifiedView.cardParams()
+```
+Or, if you're using the individual (loose) card views:
+```kotlin
+val cardParams = RecurlyCardParams.from(recurlyCardNumber, recurlyExpirationDate, recurlyCvvCode)
+```
+
+`tokenize` is a suspend function, so call it from a coroutine scope, such as `lifecycleScope`:
 
 ```kotlin
-RecurlyApi.creditCardTokenization(
-    lifecycleOwner, // The LifecycleOwner where you are calling the tokenization
-    billingInfo, // The Billing information you previously filled
-    object : ResponseHandler, // The Handler that will allow you to directly get a success or error response
-        RecurlyTokenizationHandler {
-        
-        override fun onSuccess(token: String, type: String) {
-            // Here you receive directly the token and the type
-        }
-
-        override fun onError(error: ErrorRecurly) {
-            // Here you can obtain and handle the error from recurly, to have a deep look at the error codes checkout
-            // https://developers.recurly.com/reference/recurly-js/index.html#validation
-        }
-    })
+lifecycleScope.launch {
+    try {
+        val token = recurlyClient.tokenize(cardParams, billingInfo)
+        // token.id is the resulting token; token.card exposes brand/lastFour/expMonth/expYear/etc.
+    } catch (e: RecurlyException) {
+        // e.error holds the Recurly error detail (code, message, fields). To have a deep look
+        // at the error codes checkout https://developers.recurly.com/reference/recurly-js/index.html#validation
+    }
+}
 ```

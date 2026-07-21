@@ -15,6 +15,7 @@ import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
 import com.recurly.androidsdk.data.model.CreditCardData
 import com.recurly.androidsdk.data.model.CreditCardsParameters
+import com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams
 import com.recurly.androidsdk.domain.RecurlyDataFormatter
 import com.recurly.androidsdk.domain.RecurlyInputValidator
 
@@ -149,6 +150,15 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         validateAndChangeColors(false)
         return Triple(correctCardInput, correctExpirationInput, correctCVVInput)
     }
+
+
+    /**
+     * Builds a [RecurlyCardParams] snapshot of the card data currently entered into this view,
+     * ready to pass to [com.recurly.androidsdk.RecurlyClient.tokenize].
+     *
+     * Call [validateData] first to ensure the entered card data is complete and valid.
+     */
+    fun cardParams(): RecurlyCardParams = RecurlyCardParams.currentInputSnapshot()
 
     /**
      * This fun will highlight the Credit Card Number as it have an error, you can use this

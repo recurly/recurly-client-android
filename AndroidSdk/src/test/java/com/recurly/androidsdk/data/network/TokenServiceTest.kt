@@ -48,6 +48,41 @@ class TokenServiceTest {
         assertThat(result.type).isEqualTo("credit_card")
     }
 
+
+    @Test
+    fun getToken_successResponseWithCard_returnsParsedCardMetadata() = runTest {
+        mockWebServer.enqueue(
+            MockResponse().setResponseCode(200).setBody(
+                """{"id":"tok_abc123","type":"credit_card","card":{"brand":"visa","first_six":"411111","last_four":"1111","exp_month":12,"exp_year":2030,"issuing_country":"US","funding_source":"credit"}}"""
+            )
+        )
+
+        val result = tokenService.getToken(buildRequest())
+
+        assertThat(result.card).isNotNull()
+        assertThat(result.card?.brand).isEqualTo("visa")
+        assertThat(result.card?.firstSix).isEqualTo("411111")
+        assertThat(result.card?.lastFour).isEqualTo("1111")
+        assertThat(result.card?.expMonth).isEqualTo(12)
+        assertThat(result.card?.expYear).isEqualTo(2030)
+        assertThat(result.card?.issuingCountry).isEqualTo("US")
+        assertThat(result.card?.fundingSource).isEqualTo("credit")
+    }
+
+    @Test
+    fun getToken_request_doesNotSendDeviceIdOrSessionId() = runTest {
+        mockWebServer.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{"id":"tok_abc123","type":"credit_card"}""")
+        )
+
+        tokenService.getToken(buildRequest())
+
+        val recordedBody = mockWebServer.takeRequest().body.readUtf8()
+        assertThat(recordedBody).doesNotContain("deviceId")
+        assertThat(recordedBody).doesNotContain("sessionId")
+    }
+
     @Test
     fun getToken_errorResponseWithParsableBody_returnsParsedError() = runTest {
         mockWebServer.enqueue(
@@ -114,8 +149,6 @@ class TokenServiceTest {
         expirationYear = 2030,
         cvvCode = "123",
         sdkVersion = "3.0.0",
-        publicKey = "test-public-key",
-        deviceId = "test-device-id",
-        sessionId = "test-session-id"
+        publicKey = "test-public-key"
     )
 }

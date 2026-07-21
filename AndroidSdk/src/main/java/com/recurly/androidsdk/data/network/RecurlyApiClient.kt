@@ -11,7 +11,7 @@ import retrofit2.http.POST
 /**
  * Here should be all the calls to the api with retrofit
  */
-interface RecurlyApiClient {
+internal interface RecurlyApiClient {
 
     @FormUrlEncoded
     @POST("js/v1/tokens")
@@ -34,9 +34,7 @@ interface RecurlyApiClient {
         @Field(value = "year", encoded = true) year: Int,
         @Field(value = "cvv", encoded = true) cvv: String,
         @Field(value = "version", encoded = true) version: String,
-        @Field(value = "key", encoded = true) key: String,
-        @Field(value = "deviceId", encoded = true) deviceId: String,
-        @Field(value = "sessionId", encoded = true) sessionId: String
+        @Field(value = "key", encoded = true) key: String
     ): Response<TokenizationResponse>
 
 }

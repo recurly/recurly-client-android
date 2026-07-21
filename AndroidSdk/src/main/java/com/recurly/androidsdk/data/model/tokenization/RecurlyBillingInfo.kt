@@ -4,29 +4,29 @@ import com.google.gson.annotations.SerializedName
 
 data class RecurlyBillingInfo(
     @SerializedName("first_name")
-    var firstName: String,
+    val firstName: String,
     @SerializedName("last_name")
-    var lastName: String,
+    val lastName: String,
     @SerializedName("company")
-    var company: String,
+    val company: String = "",
     @SerializedName("address1")
-    var addressOne: String,
+    val addressOne: String = "",
     @SerializedName("address2")
-    var addressTwo: String,
+    val addressTwo: String = "",
     @SerializedName("city")
-    var city: String,
+    val city: String = "",
     @SerializedName("state")
-    var state: String,
+    val state: String = "",
     @SerializedName("postal_code")
-    var postalCode: String,
+    val postalCode: String = "",
     @SerializedName("country")
-    var country: String,
+    val country: String = "",
     @SerializedName("phone")
-    var phone: String,
+    val phone: String = "",
     @SerializedName("vat_number")
-    var vatNumber: String,
+    val vatNumber: String = "",
     @SerializedName("tax_identifier")
-    var taxIdentifier: String,
+    val taxIdentifier: String = "",
     @SerializedName("tax_identifier_type")
-    var taxIdentifierType: String
+    val taxIdentifierType: String = ""
 )
