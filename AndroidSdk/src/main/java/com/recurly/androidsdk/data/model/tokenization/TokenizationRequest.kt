@@ -2,15 +2,6 @@ package com.recurly.androidsdk.data.model.tokenization
 
 import com.google.gson.annotations.SerializedName
 
-/**
- * Tokenization Request
- *
- * This is a data class that is used to have the model structure that the server awaits
- * to make the Tokenization, some fields are not required, but we send them as empty strings
- * instead of using null
- *
- */
-
 data class TokenizationRequest(
     @SerializedName("first_name")
     var firstName: String,
@@ -49,9 +40,5 @@ data class TokenizationRequest(
     @SerializedName("version")
     var sdkVersion: String,
     @SerializedName("key")
-    var publicKey: String,
-    @SerializedName("deviceId")
-    var deviceId: String,
-    @SerializedName("sessionId")
-    var sessionId: String
+    var publicKey: String
 )

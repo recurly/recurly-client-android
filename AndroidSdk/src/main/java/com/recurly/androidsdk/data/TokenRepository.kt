@@ -5,13 +5,13 @@ import com.recurly.androidsdk.data.model.tokenization.TokenizationResponse
 import com.recurly.androidsdk.data.network.TokenService
 
 /**
- * Part of the MVVM architecture pattern, manages and decides if the call should
- * go to the api or the ROOM of the app
+ * Thin suspend pass-through from the domain layer to [TokenService].
  */
-class TokenRepository constructor(
+
+internal class TokenRepository constructor(
     private val apiClient: TokenService
 ) {
-    internal suspend fun getToken(request: TokenizationRequest): TokenizationResponse{
+    suspend fun getToken(request: TokenizationRequest): TokenizationResponse{
         return apiClient.getToken(request)
     }
 

@@ -3,6 +3,13 @@ plugins {
     id 'kotlin-android'
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+def recurlyPublicKey = localProperties.getProperty('recurly.publicKey', 'YOUR_PUBLIC_KEY')
+
 android {
     namespace 'com.recurly.android'
     compileSdk 35
@@ -15,6 +22,7 @@ android {
         versionName "2.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "RECURLY_PUBLIC_KEY", "\"${recurlyPublicKey}\""
     }
 
     buildTypes {
@@ -33,6 +41,7 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
+        buildConfig true
     }
     viewBinding {
         enabled = true

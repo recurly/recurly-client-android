@@ -13,7 +13,7 @@ android {
         minSdk 25
         targetSdk 35
         versionCode 1
-        versionName project.findProperty("VERSION_NAME") ?: "3.0.0-SNAPSHOT"
+        versionName project.findProperty("VERSION_NAME") ?: "3.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

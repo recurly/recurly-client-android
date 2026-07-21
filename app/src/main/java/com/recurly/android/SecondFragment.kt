@@ -5,18 +5,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.GsonBuilder
 import com.recurly.android.databinding.FragmentSecondBinding
-import com.recurly.androidsdk.data.model.RecurlySessionData
-import com.recurly.androidsdk.data.model.tokenization.ErrorRecurly
-import com.recurly.androidsdk.data.network.core.RecurlyTokenizationHandler
-import com.recurly.androidsdk.presentation.viewModel.RecurlyApi
+import com.recurly.androidsdk.RecurlyClient
+import com.recurly.androidsdk.data.model.tokenization.RecurlyBillingInfo
+import com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams
+import com.recurly.androidsdk.data.model.tokenization.RecurlyException
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
 class SecondFragment : Fragment() {
+
+    private val recurlyClient = RecurlyClient(BuildConfig.RECURLY_PUBLIC_KEY)
 
     private var _binding: FragmentSecondBinding? = null
 
@@ -41,47 +45,44 @@ class SecondFragment : Fragment() {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
 
-        RecurlySessionData.setPublicKey("ewr1-4TIXlPCkR68woNJp7UYMSL")
-
         binding.buttonTestSecond.setOnClickListener {
             val numberValidation =binding.recurlyCardNumber.validateData()
             val dateValidation =binding.recurlyExpirationDate.validateData()
             val cvvValidation = binding.recurlyCvvCode.validateData()
             if (numberValidation && dateValidation && cvvValidation) {
                 binding.textviewSecond.text = "Loading..."
-                val billingInfo = RecurlyApi.buildCreditCardBillingInfo(
-                    "John",
-                    "Doe",
-                    "Recurly",
-                    "address1",
-                    "",
-                    "Boulder",
-                    "Colorado",
-                    "00000",
-                    "America"
+                val billingInfo = RecurlyBillingInfo(
+                    firstName = "John",
+                    lastName = "Doe",
+                    company = "Recurly",
+                    addressOne = "address1",
+                    city = "Boulder",
+                    state = "Colorado",
+                    postalCode = "00000",
+                    country = "America"
                 )
-                RecurlyApi.creditCardTokenization(
-                    viewLifecycleOwner,
-                    billingInfo,
-                    object : RecurlyApi.ResponseHandler,
-                        RecurlyTokenizationHandler {
-                        override fun onSuccess(token: String, type: String) {
-                            binding.textviewSecond.text = " token: $token \n type: $type"
+                val cardParams = RecurlyCardParams.from(
+                    binding.recurlyCardNumber,
+                    binding.recurlyExpirationDate,
+                    binding.recurlyCvvCode
+                )
+                viewLifecycleOwner.lifecycleScope.launch {
+                    try {
+                        val token = recurlyClient.tokenize(cardParams, billingInfo)
+                        binding.textviewSecond.text = " token: ${token.id} \n type: ${token.type}"
+                    } catch (e: RecurlyException) {
+                        val gsonPretty = GsonBuilder().setPrettyPrinting().create()
+                        binding.textviewSecond.text = gsonPretty.toJson(e.error)
+                        e.error.fields.forEach {
+                            if (it == "number") {
+                                binding.recurlyCardNumber.setCreditCardNumberError()
+                            } else if (it == "year" || it == "month") {
+                                binding.recurlyExpirationDate.setExpirationError()
+                            } else if (it == "cvv")
+                                binding.recurlyCvvCode.setCvvError()
                         }
-
-                        override fun onError(error: ErrorRecurly) {
-                            val gsonPretty = GsonBuilder().setPrettyPrinting().create()
-                            binding.textviewSecond.text = gsonPretty.toJson(error)
-                            error.fields.forEach {
-                                if (it == "number"){
-                                    binding.recurlyCardNumber.setCreditCardNumberError()
-                                } else if (it == "year" || it == "month"){
-                                    binding.recurlyExpirationDate.setExpirationError()
-                                } else if (it == "cvv")
-                                    binding.recurlyCvvCode.setCvvError()
-                            }
-                        }
-                    })
+                    }
+                }
             } else {
                 var errorMessage = "Verify: \n"
 

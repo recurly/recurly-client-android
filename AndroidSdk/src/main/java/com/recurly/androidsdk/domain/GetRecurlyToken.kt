@@ -7,7 +7,7 @@ import com.recurly.androidsdk.data.model.tokenization.TokenizationResponse
 /**
  * Case of use that manages the call to the repository
  */
-class GetRecurlyToken constructor(
+internal class GetRecurlyToken constructor(
     private val repository: TokenRepository
 ){
 
