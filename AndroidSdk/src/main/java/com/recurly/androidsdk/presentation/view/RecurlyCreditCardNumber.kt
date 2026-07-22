@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.recurly.androidsdk.R
-import com.recurly.androidsdk.data.model.CreditCardData
+import com.recurly.androidsdk.data.model.RecurlyCardMetadata
 import com.recurly.androidsdk.data.model.CreditCardsParameters
 import com.recurly.androidsdk.databinding.RecurlyCreditCardNumberBinding
 import com.recurly.androidsdk.domain.RecurlyDataFormatter
@@ -31,6 +31,7 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
     private var cardType = ""
     private var correctCardInput = true
     private var iconEnabled = true
+    private var cardNumber = ""
 
     private var binding: RecurlyCreditCardNumberBinding =
         RecurlyCreditCardNumberBinding.inflate(LayoutInflater.from(context), this)
@@ -131,6 +132,13 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
     }
 
     /**
+     * Returns the currently validated card number entered into this view. Internal visibility:
+     * consumed by [com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams.from] to build
+     * a tokenization snapshot without exposing raw card data publicly.
+     */
+    internal fun getCardNumber(): String = cardNumber
+
+    /**
      * This fun changes the text color and the field highlight according at if it is correct or not
      */
     private fun changeColors() {
@@ -183,20 +191,18 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
                                 this
                             )
                         }
-                        CreditCardData.setCardNumber(
-                            RecurlyDataFormatter.getCardNumber(
-                                s.toString(), correctCardInput
-                            )
+                        cardNumber = RecurlyDataFormatter.getCardNumber(
+                            s.toString(), correctCardInput
                         )
                         if (cardType.isNotEmpty())
-                            CreditCardData.setCvvLength(
+                            RecurlyCardMetadata.setCvvLength(
                                 CreditCardsParameters.valueOf(cardType.uppercase()).cvvLength
                             )
                         else
-                            CreditCardData.setCvvLength(3)
+                            RecurlyCardMetadata.setCvvLength(3)
                     } else {
                         cardType = ""
-                        CreditCardData.setCvvLength(3)
+                        RecurlyCardMetadata.setCvvLength(3)
                         correctCardInput = true
                     }
                     changeCardIcon()
@@ -211,18 +217,16 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
                     binding.recurlyTextInputEditIndividualCardNumber.text.toString(), cardType
                 ) || binding.recurlyTextInputEditIndividualCardNumber.text.toString().isEmpty()
                 changeColors()
-                CreditCardData.setCardNumber(
-                    RecurlyDataFormatter.getCardNumber(
-                        binding.recurlyTextInputEditIndividualCardNumber.text.toString(),
-                        correctCardInput
-                    )
+                cardNumber = RecurlyDataFormatter.getCardNumber(
+                    binding.recurlyTextInputEditIndividualCardNumber.text.toString(),
+                    correctCardInput
                 )
             }
         }
     }
 
     /**
-     * This fun get as a parameter the card type from CreditCardData to change the credit card icon
+     * This fun get as a parameter the card type from CreditCardsParameters to change the credit card icon
      */
     private fun changeCardIcon() {
         binding.recurlyTextInputLayoutIndividualCardNumber.startIconDrawable =

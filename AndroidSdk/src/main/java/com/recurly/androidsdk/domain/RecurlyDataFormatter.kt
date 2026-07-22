@@ -59,7 +59,7 @@ internal object RecurlyDataFormatter {
     }
 
     /**
-     * This fun get as a parameter the card type from CreditCardData to change the credit card icon
+     * This fun get as a parameter the card type from CreditCardsParameters to change the credit card icon
      * @param context Context
      * @param cardType the card type according to CreditCardsParameters
      * @return Returns the icon of the credit card

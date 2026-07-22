@@ -22,26 +22,37 @@ import kotlinx.coroutines.CancellationException
  * site's public key (prefixed `fra-`); no additional configuration is required.
  *
  * @param publicKey your Recurly site's public key
+ * @param enableLogging when `true`, verbose transport failure detail (exception messages, HTTP
+ * status text) is surfaced in thrown [RecurlyException]s. Defaults to `false`, which returns a
+ * generic client-safe message instead; server-sent validation errors are unaffected either way.
  */
 class RecurlyClient private constructor(
     private val publicKey: String,
-    private val getRecurlyToken: GetRecurlyToken
+    private val getRecurlyToken: GetRecurlyToken,
+    private val enableLogging: Boolean
 ) {
 
-    constructor(publicKey: String) : this(
+    constructor(publicKey: String, enableLogging: Boolean = false) : this(
         publicKey,
         GetRecurlyToken(
-            TokenRepository(TokenService(RetrofitHelper.getRetrofit(publicKey).create(RecurlyApiClient::class.java)))
-        )
+            TokenRepository(
+                TokenService(
+                    RetrofitHelper.getRetrofit(publicKey).create(RecurlyApiClient::class.java),
+                    enableLogging
+                )
+            )
+        ),
+        enableLogging
     )
 
     /**
      * DI seam for offline testing: allows injecting a [RecurlyApiClient] pointed at a mock
      * server instead of building one via [RetrofitHelper].
      */
-    internal constructor(publicKey: String, apiClient: RecurlyApiClient) : this(
+    internal constructor(publicKey: String, apiClient: RecurlyApiClient, enableLogging: Boolean = false) : this(
         publicKey,
-        GetRecurlyToken(TokenRepository(TokenService(apiClient)))
+        GetRecurlyToken(TokenRepository(TokenService(apiClient, enableLogging))),
+        enableLogging
     )
 
     /**
@@ -75,29 +86,36 @@ class RecurlyClient private constructor(
             publicKey = publicKey
         )
 
-        val response = try {
-            getRecurlyToken(request)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            throw RecurlyException(
-                ErrorRecurly(
-                    "connection_failed",
-                    e.message ?: "Network request failed",
-                    emptyList(),
-                    emptyList()
+        try {
+            val response = try {
+                getRecurlyToken(request)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                throw RecurlyException(
+                    ErrorRecurly(
+                        "connection_failed",
+                        if (enableLogging) (e.message ?: "Network request failed") else "Network request failed",
+                        emptyList(),
+                        emptyList()
+                    )
                 )
+            }
+
+            if (response.token.isNullOrEmpty() || response.type.isNullOrEmpty()) {
+                throw RecurlyException(response.error)
+            }
+
+            return RecurlyToken(
+                id = response.token,
+                type = response.type,
+                card = response.card?.toPublic()
             )
+        } finally {
+            // Drop the plaintext PAN/CVV copy as soon as the request has been sent, win or lose,
+            // to shrink how long cardholder data lingers on the JVM heap.
+            request.cardNumber = ""
+            request.cvvCode = ""
         }
-
-        if (response.token.isNullOrEmpty() || response.type.isNullOrEmpty()) {
-            throw RecurlyException(response.error)
-        }
-
-        return RecurlyToken(
-            id = response.token,
-            type = response.type,
-            card = response.card?.toPublic()
-        )
     }
 }
