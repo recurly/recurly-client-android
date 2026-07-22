@@ -26,17 +26,8 @@ jobs:
       id: version
       run: echo "version=$(./gradlew -q :AndroidSdk:properties | grep '^VERSION_NAME:' | cut -d' ' -f2)" >> "$GITHUB_OUTPUT"
 
-    - name: Require signing secrets
-      run: |
-        if [ -z "${{ secrets.MAVEN_LIB_PRIV_KEY }}" ] || [ -z "${{ secrets.MAVEN_LIB_PASSPHRASE }}" ]; then
-          echo "::error::MAVEN_LIB_PRIV_KEY/MAVEN_LIB_PASSPHRASE are not set. Refusing to publish an unsigned artifact to Maven Central."
-          exit 1
-        fi
-
     - name: Publish & Upload release
-      run: |
-           ./gradlew :AndroidSdk:publish --no-daemon --no-parallel
-           ./gradlew closeAndReleaseRepository
+      run: ./gradlew publishToSonatype closeAndReleaseRepository --no-daemon --no-parallel
       env:
         ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_TOKEN_USER }}
         ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_TOKEN }}
