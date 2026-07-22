@@ -31,8 +31,6 @@ class RecurlyCVV @JvmOverloads constructor(
     private var correctCVVInput = true
     private var cvvCode = ""
 
-    private val maxCVVLength: Int = 3
-
     private var binding: RecurlyCvvCodeBinding =
         RecurlyCvvCodeBinding.inflate(LayoutInflater.from(context), this)
 
@@ -107,7 +105,7 @@ class RecurlyCVV @JvmOverloads constructor(
      */
     fun validateData(): Boolean {
         correctCVVInput =
-            binding.recurlyTextInputEditIndividualCvvCode.text.toString().length == maxCVVLength
+            binding.recurlyTextInputEditIndividualCvvCode.text.toString().length == RecurlyCardMetadata.getCvvLength()
         changeColors()
         return correctCVVInput
     }
