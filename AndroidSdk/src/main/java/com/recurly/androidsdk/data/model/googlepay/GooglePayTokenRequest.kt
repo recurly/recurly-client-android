@@ -1,8 +1,19 @@
-package com.recurly.androidsdk.data.model.tokenization
+package com.recurly.androidsdk.data.model.googlepay
 
+import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 
-data class TokenizationRequest(
+/**
+ * Body of `POST js/v1/google_pay/token`.
+ *
+ * Billing fields are flattened at the top level (matching the existing `/tokens` card
+ * tokenization contract) alongside the full Google Pay `PaymentData` payload.
+ */
+internal data class GooglePayTokenRequest(
+    @SerializedName("gateway_code")
+    var gatewayCode: String?,
+    @SerializedName("payment_data")
+    var paymentData: JsonObject,
     @SerializedName("first_name")
     var firstName: String,
     @SerializedName("last_name")
@@ -29,14 +40,6 @@ data class TokenizationRequest(
     var taxIdentifier: String,
     @SerializedName("tax_identifier_type")
     var taxIdentifierType: String,
-    @SerializedName("number")
-    var cardNumber: String,
-    @SerializedName("month")
-    var expirationMonth: Int,
-    @SerializedName("year")
-    var expirationYear: Int,
-    @SerializedName("cvv")
-    var cvvCode: String,
     @SerializedName("version")
     var sdkVersion: String,
     @SerializedName("key")

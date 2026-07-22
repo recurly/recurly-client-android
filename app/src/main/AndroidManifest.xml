@@ -12,6 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RecurlyAndroid">
+
+        <!-- Required for Google Pay: https://developers.google.com/pay/api/android/guides/setup -->
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+
         <activity
             android:name="com.recurly.android.TestActivity"
             android:exported="false" />

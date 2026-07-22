@@ -11,19 +11,40 @@ import com.google.gson.GsonBuilder
 import com.recurly.android.databinding.FragmentFirstBinding
 import com.recurly.androidsdk.RecurlyClient
 import com.recurly.androidsdk.data.model.tokenization.RecurlyBillingInfo
+import com.recurly.androidsdk.data.model.googlepay.GooglePayEnvironment
+import com.recurly.androidsdk.data.model.googlepay.RecurlyGooglePayParams
 import com.recurly.androidsdk.data.model.tokenization.RecurlyException
+import com.recurly.androidsdk.presentation.view.RecurlyGooglePayHandler
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
 class FirstFragment : Fragment() {
 
     private val recurlyClient = RecurlyClient(BuildConfig.RECURLY_PUBLIC_KEY)
 
+    private lateinit var googlePayHandler: RecurlyGooglePayHandler
+
+    // TEST-environment Google Pay params. googleMerchantId is ignored by Google in TEST mode;
+    // replace with a real Google Pay Business Console merchant id before switching to PRODUCTION.
+    private val googlePayParams = RecurlyGooglePayParams(
+        googleMerchantId = "01234567890123456789",
+        googleBusinessName = "Recurly Test Merchant",
+        currency = "USD",
+        country = "US",
+        total = "1.00",
+        environment = GooglePayEnvironment.TEST
+    )
+
     private var _binding: FragmentFirstBinding? = null
 
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Must be created before the host activity reaches STARTED: it registers an
+        // ActivityResultLauncher internally.
+        googlePayHandler = recurlyClient.googlePay(requireActivity())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,6 +106,41 @@ class FirstFragment : Fragment() {
                     errorMessage += "CVV code\n"
 
                 binding.textApiText.text = errorMessage
+            }
+        }
+
+        // Only show the Google Pay button once the gateway confirms it supports native card
+        // tokenization for this configuration (server-driven, never assumed).
+        viewLifecycleOwner.lifecycleScope.launch {
+            val method = googlePayHandler.getPaymentMethod(googlePayParams)
+            if (method != null) {
+                binding.recurlyGooglePayButton?.configure(method)
+                binding.recurlyGooglePayButton?.visibility = View.VISIBLE
+            }
+        }
+
+        binding.recurlyGooglePayButton?.setOnClickListener {
+            binding.textApiText.text = "Loading..."
+            val billingInfo = RecurlyBillingInfo(
+                firstName = "John",
+                lastName = "Doe",
+                company = "Recurly",
+                addressOne = "Address1",
+                city = "Boulder",
+                state = "Colorado",
+                postalCode = "00000",
+                country = "America"
+            )
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val token = googlePayHandler.requestPayment(googlePayParams, billingInfo)
+                    binding.textApiText.text = "Google Pay token: ${token.id} \n type: ${token.type}"
+                } catch (e: RecurlyException) {
+                    val gsonPretty = GsonBuilder().setPrettyPrinting().create()
+                    binding.textApiText.text = gsonPretty.toJson(e.error)
+                } catch (e: CancellationException) {
+                    binding.textApiText.text = "Google Pay was canceled"
+                }
             }
         }
     }
