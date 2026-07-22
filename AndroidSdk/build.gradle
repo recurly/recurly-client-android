@@ -13,7 +13,7 @@ android {
         minSdk 25
         targetSdk 35
         versionCode 1
-        versionName project.findProperty("VERSION_NAME") ?: "3.1.0"
+        versionName project.findProperty("VERSION_NAME") ?: "3.1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -42,7 +42,10 @@ android {
         enabled = true
     }
     testOptions {
-        unitTests.returnDefaultValues = true
+        unitTests {
+            returnDefaultValues = true
+            includeAndroidResources = true
+        }
     }
     publishing {
         singleVariant('release') {
@@ -64,6 +67,7 @@ dependencies {
     testImplementation 'com.google.truth:truth:1.4.4'
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0'
+    testImplementation 'org.robolectric:robolectric:4.16.1'
     androidTestImplementation 'com.google.truth:truth:1.4.4'
     androidTestImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
