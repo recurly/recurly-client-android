@@ -111,6 +111,37 @@ class TokenServiceTest {
     }
 
     @Test
+    fun getToken_errorResponseWithUnparsableBody_loggingDisabled_returnsGenericMessage() = runTest {
+        mockWebServer.enqueue(
+            MockResponse().setStatus("HTTP/1.1 500 Custom Server Error").setBody("Internal Server Error")
+        )
+
+        val result = tokenService.getToken(buildRequest())
+
+        assertThat(result.error.errorCode).isEqualTo("500")
+        assertThat(result.error.errorMessage).isEqualTo("Request failed")
+    }
+
+    @Test
+    fun getToken_errorResponseWithUnparsableBody_loggingEnabled_returnsRawMessage() = runTest {
+        val apiClient = Retrofit.Builder()
+            .baseUrl(mockWebServer.url("/"))
+            .addConverterFactory(NullOnEmptyConverterFactory())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(RecurlyApiClient::class.java)
+        val loggingTokenService = TokenService(apiClient, enableLogging = true)
+        mockWebServer.enqueue(
+            MockResponse().setStatus("HTTP/1.1 500 Custom Server Error").setBody("Internal Server Error")
+        )
+
+        val result = loggingTokenService.getToken(buildRequest())
+
+        assertThat(result.error.errorCode).isEqualTo("500")
+        assertThat(result.error.errorMessage).isEqualTo("Custom Server Error")
+    }
+
+    @Test
     fun getToken_successResponseEmptyBody_returnsEmptyBodyError() = runTest {
         mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(""))
 

@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.recurly.androidsdk.R
-import com.recurly.androidsdk.data.model.CreditCardData
 import com.recurly.androidsdk.databinding.RecurlyExpirationMmyyBinding
 import com.recurly.androidsdk.domain.RecurlyDataFormatter
 import com.recurly.androidsdk.domain.RecurlyInputValidator
@@ -30,6 +29,8 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     private var correctExpirationInput = true
 
     private var previousDateValue = ""
+    private var expirationMonth = 0
+    private var expirationYear = 0
 
     private var binding: RecurlyExpirationMmyyBinding =
         RecurlyExpirationMmyyBinding.inflate(LayoutInflater.from(context), this)
@@ -121,6 +122,20 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     }
 
     /**
+     * Returns the currently validated expiration month entered into this view. Internal
+     * visibility: consumed by [com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams.from]
+     * to build a tokenization snapshot without exposing raw card data publicly.
+     */
+    internal fun getExpirationMonth(): Int = expirationMonth
+
+    /**
+     * Returns the currently validated expiration year entered into this view. Internal
+     * visibility: consumed by [com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams.from]
+     * to build a tokenization snapshot without exposing raw card data publicly.
+     */
+    internal fun getExpirationYear(): Int = expirationYear
+
+    /**
      * This fun changes the text color and the field highlight according at if it is correct or not
      */
     private fun changeColors() {
@@ -181,15 +196,11 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
                             this
                         )
                         changeColors()
-                        CreditCardData.setExpirationMonth(
-                            RecurlyDataFormatter.getExpirationMonth(
-                                s.toString(), correctExpirationInput
-                            )
+                        expirationMonth = RecurlyDataFormatter.getExpirationMonth(
+                            s.toString(), correctExpirationInput
                         )
-                        CreditCardData.setExpirationYear(
-                            RecurlyDataFormatter.getExpirationYear(
-                                s.toString(), correctExpirationInput
-                            )
+                        expirationYear = RecurlyDataFormatter.getExpirationYear(
+                            s.toString(), correctExpirationInput
                         )
                     } else {
                         correctExpirationInput = true
@@ -204,17 +215,13 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
                 correctExpirationInput = RecurlyInputValidator.verifyDate(
                     binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString()
                 ) || binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString().isEmpty()
-                CreditCardData.setExpirationMonth(
-                    RecurlyDataFormatter.getExpirationMonth(
-                        binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString(),
-                        correctExpirationInput
-                    )
+                expirationMonth = RecurlyDataFormatter.getExpirationMonth(
+                    binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString(),
+                    correctExpirationInput
                 )
-                CreditCardData.setExpirationYear(
-                    RecurlyDataFormatter.getExpirationYear(
-                        binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString(),
-                        correctExpirationInput
-                    )
+                expirationYear = RecurlyDataFormatter.getExpirationYear(
+                    binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString(),
+                    correctExpirationInput
                 )
                 changeColors()
             }

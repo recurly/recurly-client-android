@@ -13,7 +13,6 @@ import com.recurly.androidsdk.R
 import com.recurly.androidsdk.databinding.RecurlyUnifiedCreditCardBinding
 import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
-import com.recurly.androidsdk.data.model.CreditCardData
 import com.recurly.androidsdk.data.model.CreditCardsParameters
 import com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams
 import com.recurly.androidsdk.domain.RecurlyDataFormatter
@@ -40,6 +39,10 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
     private var maxCVVLength: Int = 3
 
     private var previousDateValue = ""
+    private var cardNumber = ""
+    private var expirationMonth = 0
+    private var expirationYear = 0
+    private var cvvCode = ""
 
     private var binding: RecurlyUnifiedCreditCardBinding =
         RecurlyUnifiedCreditCardBinding.inflate(LayoutInflater.from(context), this)
@@ -158,7 +161,12 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
      *
      * Call [validateData] first to ensure the entered card data is complete and valid.
      */
-    fun cardParams(): RecurlyCardParams = RecurlyCardParams.currentInputSnapshot()
+    fun cardParams(): RecurlyCardParams = RecurlyCardParams(
+        cardNumber = cardNumber,
+        expirationMonth = expirationMonth,
+        expirationYear = expirationYear,
+        cvvCode = cvvCode
+    )
 
     /**
      * This fun will highlight the Credit Card Number as it have an error, you can use this
@@ -229,10 +237,8 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                                 maxCVVLength =
                                     CreditCardsParameters.valueOf(cardType.uppercase()).cvvLength
                         }
-                        CreditCardData.setCardNumber(
-                            RecurlyDataFormatter.getCardNumber(
-                                s.toString(), correctCardInput
-                            )
+                        cardNumber = RecurlyDataFormatter.getCardNumber(
+                            s.toString(), correctCardInput
                         )
                         validateAndChangeColors(true)
                     } else {
@@ -250,10 +256,8 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                 correctCardInput = RecurlyInputValidator.verifyCardNumber(
                     binding.recurlyTextEditCardNumber.text.toString(), cardType
                 ) || binding.recurlyTextEditCardNumber.text.toString().isEmpty()
-                CreditCardData.setCardNumber(
-                    RecurlyDataFormatter.getCardNumber(
-                        binding.recurlyTextEditCardNumber.text.toString(), correctCardInput
-                    )
+                cardNumber = RecurlyDataFormatter.getCardNumber(
+                    binding.recurlyTextEditCardNumber.text.toString(), correctCardInput
                 )
             }
             validateAndChangeColors(hasFocus)
@@ -298,15 +302,11 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                     binding.recurlyTextEditCardExpiration.removeTextChangedListener(this)
                     s.replace(0, oldValue.length, data.second)
                     binding.recurlyTextEditCardExpiration.addTextChangedListener(this)
-                    CreditCardData.setExpirationMonth(
-                        RecurlyDataFormatter.getExpirationMonth(
-                            s.toString(), data.first
-                        )
+                    expirationMonth = RecurlyDataFormatter.getExpirationMonth(
+                        s.toString(), data.first
                     )
-                    CreditCardData.setExpirationYear(
-                        RecurlyDataFormatter.getExpirationYear(
-                            s.toString(), data.first
-                        )
+                    expirationYear = RecurlyDataFormatter.getExpirationYear(
+                        s.toString(), data.first
                     )
                     correctExpirationInput = data.first || s.toString().isEmpty()
                     validateAndChangeColors(true)
@@ -320,17 +320,13 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                 correctExpirationInput = RecurlyInputValidator.verifyDate(
                     binding.recurlyTextEditCardExpiration.text.toString()
                 ) || binding.recurlyTextEditCardExpiration.text.toString().isEmpty()
-                CreditCardData.setExpirationMonth(
-                    RecurlyDataFormatter.getExpirationMonth(
-                        binding.recurlyTextEditCardExpiration.text.toString(),
-                        correctExpirationInput
-                    )
+                expirationMonth = RecurlyDataFormatter.getExpirationMonth(
+                    binding.recurlyTextEditCardExpiration.text.toString(),
+                    correctExpirationInput
                 )
-                CreditCardData.setExpirationYear(
-                    RecurlyDataFormatter.getExpirationYear(
-                        binding.recurlyTextEditCardExpiration.text.toString(),
-                        correctExpirationInput
-                    )
+                expirationYear = RecurlyDataFormatter.getExpirationYear(
+                    binding.recurlyTextEditCardExpiration.text.toString(),
+                    correctExpirationInput
                 )
             }
             validateAndChangeColors(hasFocus)
@@ -385,10 +381,8 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                     correctCVVInput =
                         formattedCVV.length == maxCVVLength
                                 || formattedCVV.isEmpty()
-                    CreditCardData.setCvvCode(
-                        RecurlyDataFormatter.getCvvCode(
-                            formattedCVV, correctCVVInput
-                        )
+                    cvvCode = RecurlyDataFormatter.getCvvCode(
+                        formattedCVV, correctCVVInput
                     )
                 }
             }
@@ -409,10 +403,8 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                 correctCVVInput = RecurlyInputValidator.verifyCVV(
                     binding.recurlyTextEditCardCvv.text.toString(), cardType
                 ) || binding.recurlyTextEditCardCvv.text.toString().isEmpty()
-                CreditCardData.setCvvCode(
-                    RecurlyDataFormatter.getCvvCode(
-                        binding.recurlyTextEditCardCvv.text.toString(), correctCVVInput
-                    )
+                cvvCode = RecurlyDataFormatter.getCvvCode(
+                    binding.recurlyTextEditCardCvv.text.toString(), correctCVVInput
                 )
                 changeCardIcon()
             }
@@ -457,7 +449,7 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
     }
 
     /**
-     * This fun get as a parameter the card type from CreditCardData to change the credit card icon
+     * This fun get as a parameter the card type from CreditCardsParameters to change the credit card icon
      */
     private fun changeCardIcon() {
         binding.recurlyImageUnifiedCardIcon.setImageDrawable(

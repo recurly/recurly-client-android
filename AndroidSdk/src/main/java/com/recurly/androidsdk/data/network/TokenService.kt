@@ -9,7 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 internal class TokenService(
-    private val apiClient: RecurlyApiClient = RetrofitHelper.getRetrofit().create(RecurlyApiClient::class.java)
+    private val apiClient: RecurlyApiClient = RetrofitHelper.getRetrofit().create(RecurlyApiClient::class.java),
+    private val enableLogging: Boolean = false
 ) {
 
     private val gson = Gson()
@@ -22,6 +23,8 @@ internal class TokenService(
      *
      * If the api call fails, the response error body is parsed into an ErrorRecurly;
      * if it cannot be parsed, a fallback ErrorRecurly built from the HTTP status is returned.
+     * The fallback message is generic unless [enableLogging] is enabled, to avoid leaking raw
+     * transport detail (HTTP reason phrase) to SDK consumers by default.
      */
     suspend fun getToken(request: TokenizationRequest): TokenizationResponse {
         return withContext(Dispatchers.IO) {
@@ -63,7 +66,7 @@ internal class TokenService(
                 parsed?.takeIf { it.error != null } ?: TokenizationResponse(
                     null, null, error = ErrorRecurly(
                         response.code().toString(),
-                        response.message(),
+                        if (enableLogging) response.message() else "Request failed",
                         emptyList(),
                         emptyList()
                     )

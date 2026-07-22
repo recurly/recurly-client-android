@@ -170,7 +170,7 @@ internal object RecurlyInputValidator {
      * have the min or max digits required according to the credit card type
      *
      * @param number the credit card number
-     * @param cardType the type of credit card according to CreditCardData
+     * @param cardType the type of credit card according to CreditCardsParameters
      *
      * @return true if it is a complete and valid credit card number, false if it is not
      */
@@ -193,7 +193,7 @@ internal object RecurlyInputValidator {
      * This fun verifies if the cvv code is correct according to the credit card type
      *
      * @param cvvCode the cvv code from the input
-     * @param cardType the card type according tho CreditCardData
+     * @param cardType the card type according tho CreditCardsParameters
      *
      * @return true if it is a valid cvv code, false if it is not
      */
@@ -273,7 +273,7 @@ internal object RecurlyInputValidator {
      * This fun gets the physical pattern from the credit card and transforms it to a List<Int>
      * to manage the digits from the card in an easier way
      *
-     * @param separatePattern the physical pattern from the credit card according to CreditCardData
+     * @param separatePattern the physical pattern from the credit card according to CreditCardsParameters
      *
      * @return Returns a List of Ints of the pattern
      */
