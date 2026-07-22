@@ -18,6 +18,8 @@ plugins {
 }
 
 nexusPublishing {
+    packageGroup = 'com.recurly'
+
     repositories {
         sonatype {
             // The legacy OSSRH endpoint (oss.sonatype.org) was sunset 2025-06-30
