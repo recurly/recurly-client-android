@@ -70,7 +70,7 @@ class TokenServiceTest {
     }
 
     @Test
-    fun getToken_request_doesNotSendDeviceIdOrSessionId() = runTest {
+    fun getToken_request_sendsDeviceIdAndSessionId() = runTest {
         mockWebServer.enqueue(
             MockResponse().setResponseCode(200)
                 .setBody("""{"id":"tok_abc123","type":"credit_card"}""")
@@ -79,8 +79,8 @@ class TokenServiceTest {
         tokenService.getToken(buildRequest())
 
         val recordedBody = mockWebServer.takeRequest().body.readUtf8()
-        assertThat(recordedBody).doesNotContain("deviceId")
-        assertThat(recordedBody).doesNotContain("sessionId")
+        assertThat(recordedBody).contains("device_id=test-device-id")
+        assertThat(recordedBody).contains("session_id=test-session-id")
     }
 
     @Test
@@ -180,6 +180,8 @@ class TokenServiceTest {
         expirationYear = 2030,
         cvvCode = "123",
         sdkVersion = "3.0.0",
-        publicKey = "test-public-key"
+        publicKey = "test-public-key",
+        deviceId = "test-device-id",
+        sessionId = "test-session-id"
     )
 }

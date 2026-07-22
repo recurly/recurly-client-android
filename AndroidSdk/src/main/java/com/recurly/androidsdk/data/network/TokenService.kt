@@ -48,7 +48,9 @@ internal class TokenService(
                     year = request.expirationYear,
                     cvv = request.cvvCode,
                     version = request.sdkVersion,
-                    key = request.publicKey
+                    key = request.publicKey,
+                    device_id = request.deviceId,
+                    session_id = request.sessionId
                 )
             if (response.isSuccessful) {
                 response.body() ?: TokenizationResponse(

@@ -25,7 +25,7 @@ Add the Recurly Android SDK dependency to the build.gradle file.
 
 ```groovy
 dependencies {
-    implementation 'com.recurly:android-sdk:3.1.1'
+    implementation 'com.recurly:android-sdk:3.2.0'
 }
 ```
 
@@ -164,3 +164,72 @@ lifecycleScope.launch {
     }
 }
 ```
+
+## Google Pay
+
+The SDK supports native Google Pay tokenization (no WebView/`recurly.js` required). See
+[README-GOOGLE-PAY-CONFIG.md](README-GOOGLE-PAY-CONFIG.md) for how to enable a Google Pay-capable
+gateway on your Recurly site and how to register your app for production with Google.
+
+Obtain a `RecurlyGooglePayHandler` from your `RecurlyClient` during your Activity/Fragment's
+`onCreate` (it registers an `ActivityResultLauncher` internally, so it must be created before the
+host Activity reaches the `STARTED` lifecycle state):
+
+```kotlin
+val googlePayHandler = recurlyClient.googlePay(requireActivity())
+```
+
+Describe the transaction with a `RecurlyGooglePayParams`:
+
+```kotlin
+val googlePayParams = RecurlyGooglePayParams(
+    googleMerchantId = "YOUR_GOOGLE_MERCHANT_ID", // ignored in TEST environment
+    googleBusinessName = "Your Business Name",
+    currency = "USD",
+    country = "US",
+    total = "10.00",
+    environment = GooglePayEnvironment.TEST // switch to PRODUCTION when you go live
+)
+```
+
+Fetch the server-driven payment method configuration and use it to configure a
+`RecurlyGooglePayButton` (only show the button once this succeeds — card networks, auth methods,
+and gateway tokenization settings are always driven by your Recurly gateway configuration, never
+hardcoded by the SDK):
+
+```kotlin
+lifecycleScope.launch {
+    val method = googlePayHandler.getPaymentMethod(googlePayParams)
+    if (method != null) {
+        recurlyGooglePayButton.configure(method)
+        recurlyGooglePayButton.visibility = View.VISIBLE
+    }
+}
+```
+
+```xml
+<com.recurly.androidsdk.presentation.view.RecurlyGooglePayButton
+    android:id="@+id/recurly_google_pay_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:visibility="gone" />
+```
+
+When the button is tapped, show the Google Pay sheet and tokenize the result:
+
+```kotlin
+recurlyGooglePayButton.setOnClickListener {
+    lifecycleScope.launch {
+        try {
+            val token = googlePayHandler.requestPayment(googlePayParams, billingInfo)
+            // token.id is the resulting token
+        } catch (e: RecurlyException) {
+            // e.error holds the Recurly error detail (code, message, fields)
+        } catch (e: CancellationException) {
+            // the user dismissed the Google Pay sheet
+        }
+    }
+}
+```
+
+A callback-based overload of `requestPayment` is also available for non-coroutine callers.

@@ -1,6 +1,10 @@
 package com.recurly.androidsdk
 
+import android.content.Context
+import androidx.activity.ComponentActivity
+import com.recurly.androidsdk.data.GooglePayRepository
 import com.recurly.androidsdk.data.TokenRepository
+import com.recurly.androidsdk.data.model.DeviceSessionProvider
 import com.recurly.androidsdk.data.model.RecurlySessionData
 import com.recurly.androidsdk.data.model.tokenization.ErrorRecurly
 import com.recurly.androidsdk.data.model.tokenization.RecurlyBillingInfo
@@ -9,40 +13,45 @@ import com.recurly.androidsdk.data.model.tokenization.RecurlyException
 import com.recurly.androidsdk.data.model.tokenization.RecurlyToken
 import com.recurly.androidsdk.data.model.tokenization.TokenizationRequest
 import com.recurly.androidsdk.data.model.tokenization.toPublic
+import com.recurly.androidsdk.data.network.GooglePayService
 import com.recurly.androidsdk.data.network.RecurlyApiClient
 import com.recurly.androidsdk.data.network.TokenService
 import com.recurly.androidsdk.data.network.core.RetrofitHelper
+import com.recurly.androidsdk.domain.GetGooglePayMerchantInfo
+import com.recurly.androidsdk.domain.GetGooglePayToken
 import com.recurly.androidsdk.domain.GetRecurlyToken
+import com.recurly.androidsdk.presentation.view.RecurlyGooglePayHandler
 import kotlinx.coroutines.CancellationException
 
-/**
- * Entry point for Recurly credit card tokenization.
- *
- * Requests are automatically routed to Recurly's EU data center when [publicKey] is an EU
- * site's public key (prefixed `fra-`); no additional configuration is required.
- *
- * @param publicKey your Recurly site's public key
- * @param enableLogging when `true`, verbose transport failure detail (exception messages, HTTP
- * status text) is surfaced in thrown [RecurlyException]s. Defaults to `false`, which returns a
- * generic client-safe message instead; server-sent validation errors are unaffected either way.
- */
 class RecurlyClient private constructor(
     private val publicKey: String,
     private val getRecurlyToken: GetRecurlyToken,
-    private val enableLogging: Boolean
+    private val googlePayRepository: GooglePayRepository,
+    private val enableLogging: Boolean,
+    private val deviceId: String,
+    private val sessionId: String
 ) {
+
+    private val getGooglePayMerchantInfo = GetGooglePayMerchantInfo(googlePayRepository)
+    private val getGooglePayToken = GetGooglePayToken(googlePayRepository)
 
     constructor(publicKey: String, enableLogging: Boolean = false) : this(
         publicKey,
-        GetRecurlyToken(
-            TokenRepository(
-                TokenService(
-                    RetrofitHelper.getRetrofit(publicKey).create(RecurlyApiClient::class.java),
-                    enableLogging
-                )
-            )
-        ),
-        enableLogging
+        context = null,
+        apiClient = RetrofitHelper.getRetrofit(publicKey).create(RecurlyApiClient::class.java),
+        enableLogging = enableLogging
+    )
+
+    /**
+     * @param context used to persist [deviceId] across app launches (SDK-private storage only;
+     * never `ANDROID_ID` or another hardware/advertising identifier). Without this overload,
+     * [deviceId] is a random value scoped to this [RecurlyClient] instance instead.
+     */
+    constructor(publicKey: String, context: Context, enableLogging: Boolean = false) : this(
+        publicKey,
+        context = context.applicationContext,
+        apiClient = RetrofitHelper.getRetrofit(publicKey).create(RecurlyApiClient::class.java),
+        enableLogging = enableLogging
     )
 
     /**
@@ -51,8 +60,18 @@ class RecurlyClient private constructor(
      */
     internal constructor(publicKey: String, apiClient: RecurlyApiClient, enableLogging: Boolean = false) : this(
         publicKey,
+        context = null,
+        apiClient = apiClient,
+        enableLogging = enableLogging
+    )
+
+    private constructor(publicKey: String, context: Context?, apiClient: RecurlyApiClient, enableLogging: Boolean) : this(
+        publicKey,
         GetRecurlyToken(TokenRepository(TokenService(apiClient, enableLogging))),
-        enableLogging
+        GooglePayRepository(GooglePayService(apiClient, enableLogging)),
+        enableLogging,
+        DeviceSessionProvider.deviceId(context),
+        DeviceSessionProvider.newSessionId()
     )
 
     /**
@@ -83,7 +102,9 @@ class RecurlyClient private constructor(
             expirationYear = card.expirationYear,
             cvvCode = card.cvvCode,
             sdkVersion = RecurlySessionData.versionName,
-            publicKey = publicKey
+            publicKey = publicKey,
+            deviceId = deviceId,
+            sessionId = sessionId
         )
 
         try {
@@ -117,5 +138,28 @@ class RecurlyClient private constructor(
             request.cardNumber = ""
             request.cvvCode = ""
         }
+    }
+
+    /**
+     * Starts a native Google Pay payment flow.
+     *
+     * Must be called before [activity] reaches the `STARTED` lifecycle state (e.g. from
+     * `onCreate`), since the returned [RecurlyGooglePayHandler] registers an
+     * [androidx.activity.result.ActivityResultLauncher] internally.
+     *
+     * @param activity the host activity used to show the Google Pay sheet
+     * @return a [RecurlyGooglePayHandler] to check readiness and request payment
+     */
+    fun googlePay(activity: ComponentActivity): RecurlyGooglePayHandler {
+        return RecurlyGooglePayHandler(
+            activity,
+            getGooglePayMerchantInfo,
+            getGooglePayToken,
+            publicKey,
+            RecurlySessionData.versionName,
+            deviceId,
+            sessionId,
+            enableLogging
+        )
     }
 }
