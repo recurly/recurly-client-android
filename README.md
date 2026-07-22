@@ -25,7 +25,7 @@ Add the Recurly Android SDK dependency to the build.gradle file.
 
 ```groovy
 dependencies {
-    implementation 'com.recurly:android-sdk:3.0.0'
+    implementation 'com.recurly:android-sdk:3.1.0'
 }
 ```
 

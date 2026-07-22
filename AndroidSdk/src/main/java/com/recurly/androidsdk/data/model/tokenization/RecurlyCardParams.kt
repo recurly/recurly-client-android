@@ -1,6 +1,5 @@
 package com.recurly.androidsdk.data.model.tokenization
 
-import com.recurly.androidsdk.data.model.CreditCardData
 import com.recurly.androidsdk.presentation.view.RecurlyCVV
 import com.recurly.androidsdk.presentation.view.RecurlyCreditCardNumber
 import com.recurly.androidsdk.presentation.view.RecurlyExpirationMMYY
@@ -33,13 +32,11 @@ class RecurlyCardParams internal constructor(
             number: RecurlyCreditCardNumber,
             expiration: RecurlyExpirationMMYY,
             cvv: RecurlyCVV
-        ): RecurlyCardParams = currentInputSnapshot()
-
-        internal fun currentInputSnapshot(): RecurlyCardParams = RecurlyCardParams(
-            cardNumber = CreditCardData.getCardNumber(),
-            expirationMonth = CreditCardData.getExpirationMonth(),
-            expirationYear = CreditCardData.getExpirationYear(),
-            cvvCode = CreditCardData.getCvvCode()
+        ): RecurlyCardParams = RecurlyCardParams(
+            cardNumber = number.getCardNumber(),
+            expirationMonth = expiration.getExpirationMonth(),
+            expirationYear = expiration.getExpirationYear(),
+            cvvCode = cvv.getCvvCode()
         )
 
         /**

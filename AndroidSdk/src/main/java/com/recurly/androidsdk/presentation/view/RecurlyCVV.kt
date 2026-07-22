@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.recurly.androidsdk.R
-import com.recurly.androidsdk.data.model.CreditCardData
+import com.recurly.androidsdk.data.model.RecurlyCardMetadata
 import com.recurly.androidsdk.databinding.RecurlyCvvCodeBinding
 import com.recurly.androidsdk.domain.RecurlyDataFormatter
 import com.recurly.androidsdk.domain.RecurlyInputValidator
@@ -29,6 +29,7 @@ class RecurlyCVV @JvmOverloads constructor(
     private var errorBoxColor: Int
     private var focusedBoxColor: Int
     private var correctCVVInput = true
+    private var cvvCode = ""
 
     private val maxCVVLength: Int = 3
 
@@ -121,6 +122,13 @@ class RecurlyCVV @JvmOverloads constructor(
     }
 
     /**
+     * Returns the currently validated CVV entered into this view. Internal visibility:
+     * consumed by [com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams.from] to build
+     * a tokenization snapshot without exposing raw card data publicly.
+     */
+    internal fun getCvvCode(): String = cvvCode
+
+    /**
      * This fun changes the text color and the field highlight according at if it is correct or not
      */
     private fun changeColors() {
@@ -151,7 +159,7 @@ class RecurlyCVV @JvmOverloads constructor(
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 binding.recurlyTextInputEditIndividualCvvCode.filters =
-                    arrayOf<InputFilter>(InputFilter.LengthFilter(CreditCardData.getCvvLength()))
+                    arrayOf<InputFilter>(InputFilter.LengthFilter(RecurlyCardMetadata.getCvvLength()))
                 binding.recurlyTextInputLayoutIndividualCvvCode.error = null
                 binding.recurlyTextInputEditIndividualCvvCode.setTextColor(textColor)
             }
@@ -169,11 +177,9 @@ class RecurlyCVV @JvmOverloads constructor(
                         binding.recurlyTextInputEditIndividualCvvCode.removeTextChangedListener(this)
                         s.replace(0, oldValue.length, formattedCVV)
                         binding.recurlyTextInputEditIndividualCvvCode.addTextChangedListener(this)
-                        correctCVVInput = formattedCVV.length == CreditCardData.getCvvLength()
-                        CreditCardData.setCvvCode(
-                            RecurlyDataFormatter.getCvvCode(
-                                formattedCVV, correctCVVInput
-                            )
+                        correctCVVInput = formattedCVV.length == RecurlyCardMetadata.getCvvLength()
+                        cvvCode = RecurlyDataFormatter.getCvvCode(
+                            formattedCVV, correctCVVInput
                         )
                     } else {
                         correctCVVInput = true
@@ -185,16 +191,14 @@ class RecurlyCVV @JvmOverloads constructor(
 
         binding.recurlyTextInputEditIndividualCvvCode.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
-                CreditCardData.setCvvCode(
-                    RecurlyDataFormatter.getCvvCode(
-                        binding.recurlyTextInputEditIndividualCvvCode.text.toString(),
-                        correctCVVInput
-                    )
+                cvvCode = RecurlyDataFormatter.getCvvCode(
+                    binding.recurlyTextInputEditIndividualCvvCode.text.toString(),
+                    correctCVVInput
                 )
                 changeColors()
             } else {
                 binding.recurlyTextInputEditIndividualCvvCode.filters =
-                    arrayOf<InputFilter>(InputFilter.LengthFilter(CreditCardData.getCvvLength()))
+                    arrayOf<InputFilter>(InputFilter.LengthFilter(RecurlyCardMetadata.getCvvLength()))
             }
         }
     }

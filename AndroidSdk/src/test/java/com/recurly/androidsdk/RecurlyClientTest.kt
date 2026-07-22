@@ -19,6 +19,7 @@ class RecurlyClientTest {
 
     private lateinit var mockWebServer: MockWebServer
     private lateinit var recurlyClient: RecurlyClient
+    private lateinit var loggingRecurlyClient: RecurlyClient
 
     @Before
     fun setUp() {
@@ -31,6 +32,7 @@ class RecurlyClientTest {
             .build()
             .create(RecurlyApiClient::class.java)
         recurlyClient = RecurlyClient("test-public-key", apiClient)
+        loggingRecurlyClient = RecurlyClient("test-public-key", apiClient, enableLogging = true)
     }
 
     @After
@@ -80,6 +82,31 @@ class RecurlyClientTest {
 
         assertThat(exception).isInstanceOf(RecurlyException::class.java)
         assertThat((exception as RecurlyException).error.errorCode).isEqualTo("connection_failed")
+    }
+
+    @Test
+    fun tokenize_networkFailure_loggingDisabled_returnsGenericMessage() = runTest {
+        mockWebServer.shutdown()
+
+        val exception = runCatching {
+            recurlyClient.tokenize(buildCardParams(), buildBillingInfo())
+        }.exceptionOrNull()
+
+        assertThat((exception as RecurlyException).error.errorMessage).isEqualTo("Network request failed")
+    }
+
+    @Test
+    fun tokenize_networkFailure_loggingEnabled_returnsRawExceptionMessage() = runTest {
+        mockWebServer.shutdown()
+
+        val exception = runCatching {
+            loggingRecurlyClient.tokenize(buildCardParams(), buildBillingInfo())
+        }.exceptionOrNull()
+
+        assertThat(exception).isInstanceOf(RecurlyException::class.java)
+        val error = (exception as RecurlyException).error
+        assertThat(error.errorCode).isEqualTo("connection_failed")
+        assertThat(error.errorMessage).isNotEqualTo("Network request failed")
     }
 
     private fun buildBillingInfo() = RecurlyBillingInfo(firstName = "John", lastName = "Doe")
