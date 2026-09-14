@@ -126,6 +126,15 @@ class RecurlyCVV @JvmOverloads constructor(
      */
     internal fun getCvvCode(): String = cvvCode
 
+
+    /** Clears the entered data and the error highlight. */
+    fun clearData() {
+        binding.recurlyTextInputEditIndividualCvvCode.setText("")
+        cvvCode = ""
+        correctCVVInput = true
+        changeColors()
+    }
+
     /**
      * This fun changes the text color and the field highlight according at if it is correct or not
      */

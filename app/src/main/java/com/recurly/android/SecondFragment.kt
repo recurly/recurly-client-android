@@ -70,6 +70,9 @@ class SecondFragment : Fragment() {
                     try {
                         val token = recurlyClient.tokenize(cardParams, billingInfo)
                         binding.textviewSecond.text = " token: ${token.id} \n type: ${token.type}"
+                        binding.recurlyCardNumber.clearData()
+                        binding.recurlyExpirationDate.clearData()
+                        binding.recurlyCvvCode.clearData()
                     } catch (e: RecurlyException) {
                         val gsonPretty = GsonBuilder().setPrettyPrinting().create()
                         binding.textviewSecond.text = gsonPretty.toJson(e.error)

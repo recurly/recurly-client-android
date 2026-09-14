@@ -135,6 +135,17 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
      */
     internal fun getExpirationYear(): Int = expirationYear
 
+
+    /** Clears the entered data and the error highlight. */
+    fun clearData() {
+        binding.recurlyTextInputEditIndividualExpirationMmyy.setText("")
+        expirationMonth = 0
+        expirationYear = 0
+        previousDateValue = ""
+        correctExpirationInput = true
+        changeColors()
+    }
+
     /**
      * This fun changes the text color and the field highlight according at if it is correct or not
      */

@@ -168,6 +168,26 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         cvvCode = cvvCode
     )
 
+
+    /** Clears the entered data and the error highlight. */
+    fun clearData() {
+        binding.recurlyTextEditCardNumber.setText("")
+        binding.recurlyTextEditCardExpiration.setText("")
+        binding.recurlyTextEditCardCvv.setText("")
+        cardNumber = ""
+        expirationMonth = 0
+        expirationYear = 0
+        cvvCode = ""
+        cardType = ""
+        maxCVVLength = 3
+        previousDateValue = ""
+        correctCardInput = true
+        correctExpirationInput = true
+        correctCVVInput = true
+        validateAndChangeColors(false)
+        changeCardIcon()
+    }
+
     /**
      * This fun will highlight the Credit Card Number as it have an error, you can use this
      * for tokenization validations or if you need to highlight this field with an error

@@ -82,6 +82,7 @@ class FirstFragment : Fragment() {
                     try {
                         val token = recurlyClient.tokenize(cardParams, billingInfo)
                         binding.textApiText.text = " token: ${token.id} \n type: ${token.type}"
+                        binding.recurlyUnifiedView.clearData()
                     } catch (e: RecurlyException) {
                         val gsonPretty = GsonBuilder().setPrettyPrinting().create()
                         binding.textApiText.text = gsonPretty.toJson(e.error)
