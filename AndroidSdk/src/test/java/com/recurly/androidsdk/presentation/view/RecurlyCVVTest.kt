@@ -1,7 +1,11 @@
 package com.recurly.androidsdk.presentation.view
 
+import android.app.Activity
 import android.view.ContextThemeWrapper
+import android.widget.EditText
+import android.widget.FrameLayout
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.common.truth.Truth.assertThat
 import com.recurly.androidsdk.R
 import com.recurly.androidsdk.data.model.RecurlyCardMetadata
@@ -10,6 +14,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import java.util.Calendar
@@ -42,6 +47,10 @@ class RecurlyCVVTest {
 
     private fun cvvEditText(cvvView: RecurlyCVV): TextInputEditText =
         cvvView.findViewById(R.id.recurly_text_input_edit_individual_cvv_code)
+
+
+    private fun cvvInputLayout(cvvView: RecurlyCVV): TextInputLayout =
+        cvvView.findViewById(R.id.recurly_text_input_layout_individual_cvv_code)
 
     @Test
     fun validateData_threeDigitCvv_defaultLength_returnsTrue() {
@@ -88,5 +97,83 @@ class RecurlyCVVTest {
         assertThat(params.expirationMonth).isEqualTo(12)
         assertThat(params.expirationYear).isEqualTo(futureTwoDigitYear)
         assertThat(params.cvvCode).isEqualTo("123")
+    }
+
+
+    @Test
+    fun clearData_afterEnteringCvv_resetsTextAndValidation() {
+        val cvvView = RecurlyCVV(themedContext)
+        cvvEditText(cvvView).setText("123")
+        assertThat(cvvView.getCvvCode()).isEqualTo("123")
+
+        cvvView.clearData()
+
+        assertThat(cvvEditText(cvvView).text.toString()).isEmpty()
+        assertThat(cvvView.getCvvCode()).isEmpty()
+        assertThat(cvvView.validateData()).isFalse()
+    }
+
+    @Test
+    fun clearData_onUntouchedView_isNoOp() {
+        val cvvView = RecurlyCVV(themedContext)
+
+        cvvView.clearData()
+
+        assertThat(cvvEditText(cvvView).text.toString()).isEmpty()
+    }
+
+
+    @Test
+    fun clearData_afterSettingError_clearsErrorHighlight() {
+        val cvvView = RecurlyCVV(themedContext)
+        cvvView.setCvvError()
+        assertThat(cvvInputLayout(cvvView).error).isNotNull()
+
+        cvvView.clearData()
+
+        assertThat(cvvInputLayout(cvvView).error).isNull()
+    }
+
+
+    @Test
+    fun watcher_cvvClearedToEmpty_clearsErrorHighlight() {
+        val cvvView = RecurlyCVV(themedContext)
+        cvvView.setCvvError()
+        assertThat(cvvInputLayout(cvvView).error).isNotNull()
+
+        cvvEditText(cvvView).setText("")
+
+        assertThat(cvvInputLayout(cvvView).error).isNull()
+    }
+
+    @Test
+    fun clearData_doesNotStealFocus() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val container = FrameLayout(activity)
+        val otherFocusable = EditText(activity)
+        val cvvView = RecurlyCVV(themedContext)
+        container.addView(otherFocusable)
+        container.addView(cvvView)
+        activity.setContentView(container)
+
+        otherFocusable.requestFocus()
+        cvvEditText(cvvView).setText("123")
+
+        cvvView.clearData()
+
+        assertThat(otherFocusable.isFocused).isTrue()
+        assertThat(cvvEditText(cvvView).isFocused).isFalse()
+    }
+
+    @Test
+    fun clearData_calledTwice_isIdempotent() {
+        val cvvView = RecurlyCVV(themedContext)
+
+        cvvView.clearData()
+        cvvView.clearData()
+
+        assertThat(cvvEditText(cvvView).text.toString()).isEmpty()
+        assertThat(cvvView.getCvvCode()).isEmpty()
+        assertThat(cvvView.validateData()).isFalse()
     }
 }

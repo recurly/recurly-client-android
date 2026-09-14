@@ -130,6 +130,9 @@ recurlyView.setExpirationError()
 
 //With this function you can highlight the cvv code field with an error, this is useful if you find an error with the tokenization
 recurlyView.setCvvError()
+
+// Clears entered data and error highlights
+recurlyView.clearData()
 ```
 
 When you need to call the Tokenization, as a recommendation you should call the `.validateData()` functions of the views you are using first.
@@ -158,6 +161,11 @@ lifecycleScope.launch {
     try {
         val token = recurlyClient.tokenize(cardParams, billingInfo)
         // token.id is the resulting token; token.card exposes brand/lastFour/expMonth/expYear/etc.
+        recurlyUnifiedView.clearData()
+        // or, using the individual views:
+        // recurlyCardNumber.clearData()
+        // recurlyExpirationDate.clearData()
+        // recurlyCvvCode.clearData()
     } catch (e: RecurlyException) {
         // e.error holds the Recurly error detail (code, message, fields). To have a deep look
         // at the error codes checkout https://developers.recurly.com/reference/recurly-js/index.html#validation

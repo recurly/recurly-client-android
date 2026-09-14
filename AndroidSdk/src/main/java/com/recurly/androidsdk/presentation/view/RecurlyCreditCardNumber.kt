@@ -138,6 +138,18 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
      */
     internal fun getCardNumber(): String = cardNumber
 
+
+    /** Clears the entered data and the error highlight. */
+    fun clearData() {
+        binding.recurlyTextInputEditIndividualCardNumber.setText("")
+        cardNumber = ""
+        cardType = ""
+        correctCardInput = true
+        RecurlyCardMetadata.setCvvLength(3)
+        changeColors()
+        changeCardIcon()
+    }
+
     /**
      * This fun changes the text color and the field highlight according at if it is correct or not
      */
