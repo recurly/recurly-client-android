@@ -33,38 +33,18 @@ internal object RecurlyInputValidator {
         return ColorStateList(states, colors)
     }
 
-    /**
-     * This fun takes the number from the input and validates if it follows any credit card pattern
-     * and if it does send the number to format its digits acoding tho the physical patter of
-     * the credit card
-     *
-     * @param number the number from the input
-     * @return Triple<
-     * Boolean - it follows a pattern,
-     * String - Credit Card Type,
-     * String - Credit card number formatted
-     * >
-     */
     fun validateCreditCardNumber(number: String): Triple<Boolean, String, String> {
-        var correct = false
-        var cardType = ""
-        var formattedNumber = regexSpecialCharacters(number, "0-9 ")
-        var physicalPattern = ""
-        CreditCardsParameters.values().forEach {
-            if (Pattern.matches(it.numberPattern, formattedNumber)) {
-                correct = Pattern.matches(it.numberPattern, formattedNumber)
-                cardType = it.cardType
-                physicalPattern = it.physicalPattern
-            }
-        }
+        val digits = regexSpecialCharacters(number, "0-9")
+        // Partial detection must win, or maestro's 12-15 digit group claims truncated 6-prefixed PANs.
+        val partialMatch = detectBrand(digits, partial = true)
+        val detected = if (partialMatch != "unknown") partialMatch else detectBrand(digits, partial = false)
+        val cardType = if (detected == "unknown") "" else detected
+        val brand = CreditCardsParameters.entries.firstOrNull { it.cardType == cardType }
+        val maxDigits = brand?.groups?.flatMap { it.lengths }?.maxOrNull() ?: 19
+        val gaps = brand?.gaps ?: setOf(4, 8, 12)
+        val formattedNumber = formatWithGaps(digits.take(maxDigits), gaps)
 
-        if (cardType.isNotEmpty())
-            formattedNumber = separateStringOnPattern(
-                physicalPattern,
-                regexSpecialCharacters(number, "0-9 ")
-            )
-
-        return Triple(correct, cardType, formattedNumber)
+        return Triple(cardType.isNotEmpty(), cardType, formattedNumber)
     }
 
     /**
@@ -165,28 +145,10 @@ internal object RecurlyInputValidator {
         return formattedDate
     }
 
-    /**
-     * This fun verifies if the credit card number follows a credit card pattern and if it
-     * have the min or max digits required according to the credit card type
-     *
-     * @param number the credit card number
-     * @param cardType the type of credit card according to CreditCardsParameters
-     *
-     * @return true if it is a complete and valid credit card number, false if it is not
-     */
     fun verifyCardNumber(number: String, cardType: String): Boolean {
-        val numberTrim = number.replace(" ", "")
-        if (numberTrim.isNotEmpty() && cardType.isNotEmpty()) {
-            if ((numberTrim.length >= CreditCardsParameters.valueOf(cardType.uppercase()).minLength &&
-                        numberTrim.length <= CreditCardsParameters.valueOf(cardType.uppercase()).maxLength) &&
-                Pattern.matches(
-                    CreditCardsParameters.valueOf(cardType.uppercase()).numberPattern,
-                    numberTrim
-                )
-            )
-                return true
-        }
-        return false
+        val digits = regexSpecialCharacters(number, "0-9")
+        if (digits.isEmpty() || cardType.isEmpty()) return false
+        return detectBrand(digits, partial = false) == cardType && isLuhnValid(digits)
     }
 
     /**
@@ -233,57 +195,69 @@ internal object RecurlyInputValidator {
         return false
     }
 
-    /**
-     * This fun takes the input number and give it the format of the physical pattern according
-     * to the credit card type
-     *
-     * @param separatePattern the pattern in which the number will be formatted
-     * @param cardNumber the number from the credit card input
-     *
-     * @return Returns the credit card number separated according to the pattern
-     */
-    fun separateStringOnPattern(separatePattern: String, cardNumber: String): String {
-        var finalFormattedNumber = ""
-        var oldNumber = cardNumber
+    private fun detectBrand(digits: String, partial: Boolean): String {
+        if (digits.isEmpty()) return "unknown"
+        val compareLength = minOf(digits.length, 6)
+        // Low end pads with 0 and high end with 9 to compare unequal BIN widths.
+        val compareValue = buildCompareValue(digits, compareLength, '0') ?: return "unknown"
 
-        var charPattern: List<Int> = getPatternSeparation(separatePattern)
-
-        charPattern.forEach {
-            if (oldNumber.length > it) {
-                finalFormattedNumber =
-                    if (finalFormattedNumber.isNotEmpty())
-                        "$finalFormattedNumber " + oldNumber.substring(0, it)
-                    else
-                        oldNumber.substring(0, it)
-                oldNumber = oldNumber.drop(it)
-            } else if (oldNumber.isNotEmpty()) {
-                finalFormattedNumber =
-                    if (finalFormattedNumber.isNotEmpty())
-                        "$finalFormattedNumber $oldNumber"
-                    else
-                        oldNumber
-                oldNumber = ""
+        val matches = CreditCardsParameters.entries.filter { brand ->
+            // Maestro's ranges overlap other brands, so it needs the full length.
+            if (partial && brand == CreditCardsParameters.MAESTRO) return@filter false
+            brand.groups.any { group ->
+                (partial || digits.length in group.lengths) &&
+                    group.ranges.any { (start, end) ->
+                        val rangeStart = buildCompareValue(start.toString(), compareLength, '0')
+                        val rangeEnd = buildCompareValue(end.toString(), compareLength, '9')
+                        rangeStart != null && rangeEnd != null && compareValue in rangeStart..rangeEnd
+                    }
             }
         }
 
-        return finalFormattedNumber
+        // Elo BINs sit inside discover's span, so elo wins the overlap.
+        if (matches.size == 2 &&
+            matches.any { it == CreditCardsParameters.ELO } &&
+            matches.any { it == CreditCardsParameters.DISCOVER }
+        ) {
+            return CreditCardsParameters.ELO.cardType
+        }
+
+        return if (matches.size == 1) matches[0].cardType else "unknown"
     }
 
-    /**
-     * This fun gets the physical pattern from the credit card and transforms it to a List<Int>
-     * to manage the digits from the card in an easier way
-     *
-     * @param separatePattern the physical pattern from the credit card according to CreditCardsParameters
-     *
-     * @return Returns a List of Ints of the pattern
-     */
-    private fun getPatternSeparation(separatePattern: String): List<Int> {
-        var patternIndex: MutableList<Int> = ArrayList()
-        val entryPattern: List<String> = separatePattern.split("-")
-        entryPattern.forEach {
-            patternIndex.add(it.toInt())
+    private fun buildCompareValue(source: String, length: Int, terminator: Char): Long? {
+        var result = source.take(length)
+        while (result.length < length) {
+            result += terminator
         }
-        return patternIndex
+        return result.toLongOrNull()
+    }
+
+    private fun isLuhnValid(digits: String): Boolean {
+        if (digits.length !in 12..19 || !digits.all { it in '0'..'9' }) return false
+        var sum = 0
+        var alternate = false
+        for (i in digits.length - 1 downTo 0) {
+            var n = digits[i] - '0'
+            if (alternate) {
+                n *= 2
+                if (n > 9) n -= 9
+            }
+            sum += n
+            alternate = !alternate
+        }
+        // Reject all-zero PANs, whose checksum is trivially valid.
+        return sum % 10 == 0 && sum > 0
+    }
+
+    private fun formatWithGaps(digits: String, gaps: Set<Int>): String {
+        if (digits.isEmpty()) return digits
+        val builder = StringBuilder()
+        digits.forEachIndexed { index, char ->
+            if (index > 0 && index in gaps) builder.append(' ')
+            builder.append(char)
+        }
+        return builder.toString()
     }
 
     fun regexSpecialCharacters(inputData: String, charactersAccepted: String): String {
