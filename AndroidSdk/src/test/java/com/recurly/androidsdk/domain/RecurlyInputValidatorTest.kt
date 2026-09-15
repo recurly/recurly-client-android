@@ -54,15 +54,38 @@ class RecurlyInputValidatorTest{
 
     @Test
     fun validCvvInput(){
-        val verifyData = RecurlyInputValidator.validateCreditCardNumber("4111111111111111")
-        val result = RecurlyInputValidator.verifyCVV("123",verifyData.second)
-        assertThat(result && verifyData.first).isTrue()
+        val result = RecurlyInputValidator.verifyCVV("123")
+        assertThat(result).isTrue()
     }
 
     @Test
     fun invalidCvvInput(){
         val verifyData = RecurlyInputValidator.validateCreditCardNumber("1111111111111111")
         val result = RecurlyInputValidator.verifyCardNumber("123",verifyData.second)
+        assertThat(result).isFalse()
+    }
+
+    @Test
+    fun validFourDigitCvvInput(){
+        val result = RecurlyInputValidator.verifyCVV("1234")
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun shortCvvInput(){
+        val result = RecurlyInputValidator.verifyCVV("12")
+        assertThat(result).isFalse()
+    }
+
+    @Test
+    fun longCvvInput(){
+        val result = RecurlyInputValidator.verifyCVV("12345")
+        assertThat(result).isFalse()
+    }
+
+    @Test
+    fun emptyCvvInput(){
+        val result = RecurlyInputValidator.verifyCVV("")
         assertThat(result).isFalse()
     }
 
