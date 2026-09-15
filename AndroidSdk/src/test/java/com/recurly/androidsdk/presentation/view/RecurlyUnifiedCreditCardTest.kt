@@ -89,6 +89,40 @@ class RecurlyUnifiedCreditCardTest {
         assertThat(view.cardParams().cvvCode).isEmpty()
     }
 
+@Test
+    fun unifiedCvv_fourDigitsWithVisa_isValidAndCached() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        numberEditText(view).setText("4111111111111111")
+        cvvEditText(view).setText("1234")
+
+        val (_, _, cvvValid) = view.validateData()
+
+        assertThat(cvvValid).isTrue()
+        assertThat(view.cardParams().cvvCode).isEqualTo("1234")
+    }
+
+    @Test
+    fun unifiedCvv_threeDigitsWithAmex_isValidAndCached() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        numberEditText(view).setText("378282246310005")
+        cvvEditText(view).setText("123")
+
+        // Pins the 3-or-4 rule: this pair was rejected under the old per-brand length logic.
+        assertThat(view.cardParams().cvvCode).isEqualTo("123")
+    }
+
+    @Test
+    fun unifiedCvv_twoDigits_isInvalidAndNotCached() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        numberEditText(view).setText("4111111111111111")
+        cvvEditText(view).setText("12")
+
+        val (_, _, cvvValid) = view.validateData()
+
+        assertThat(cvvValid).isFalse()
+        assertThat(view.cardParams().cvvCode).isEmpty()
+    }
+
     @Test
     fun clearData_afterSettingErrors_clearsErrorHighlights() {
         val view = RecurlyUnifiedCreditCard(themedContext)

@@ -8,9 +8,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.common.truth.Truth.assertThat
 import com.recurly.androidsdk.R
-import com.recurly.androidsdk.data.model.RecurlyCardMetadata
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -23,16 +20,6 @@ class RecurlyCreditCardNumberTest {
 
     private val themedContext by lazy {
         ContextThemeWrapper(RuntimeEnvironment.getApplication(), R.style.AppTheme)
-    }
-
-    @Before
-    fun setUp() {
-        RecurlyCardMetadata.setCvvLength(3)
-    }
-
-    @After
-    fun tearDown() {
-        RecurlyCardMetadata.setCvvLength(3)
     }
 
     private fun numberEditText(numberView: RecurlyCreditCardNumber): TextInputEditText =
@@ -63,29 +50,6 @@ class RecurlyCreditCardNumberTest {
         numberView.clearData()
 
         assertThat(numberInputLayout(numberView).error).isNull()
-    }
-
-    @Test
-    fun clearData_afterEnteringAmexNumber_resetsCvvMetadataLength() {
-        val numberView = RecurlyCreditCardNumber(themedContext)
-        numberEditText(numberView).setText("378282246310005")
-        assertThat(RecurlyCardMetadata.getCvvLength()).isEqualTo(4)
-
-        numberView.clearData()
-
-        assertThat(RecurlyCardMetadata.getCvvLength()).isEqualTo(3)
-    }
-
-
-    @Test
-    fun watcher_numberClearedToEmpty_resetsCvvMetadataLength() {
-        val numberView = RecurlyCreditCardNumber(themedContext)
-        numberEditText(numberView).setText("378282246310005")
-        assertThat(RecurlyCardMetadata.getCvvLength()).isEqualTo(4)
-
-        numberEditText(numberView).setText("")
-
-        assertThat(RecurlyCardMetadata.getCvvLength()).isEqualTo(3)
     }
 
     @Test

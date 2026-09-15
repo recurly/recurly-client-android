@@ -10,8 +10,6 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.recurly.androidsdk.R
-import com.recurly.androidsdk.data.model.RecurlyCardMetadata
-import com.recurly.androidsdk.data.model.CreditCardsParameters
 import com.recurly.androidsdk.databinding.RecurlyCreditCardNumberBinding
 import com.recurly.androidsdk.domain.RecurlyDataFormatter
 import com.recurly.androidsdk.domain.RecurlyInputValidator
@@ -145,7 +143,6 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
         cardNumber = ""
         cardType = ""
         correctCardInput = true
-        RecurlyCardMetadata.setCvvLength(3)
         changeColors()
         changeCardIcon()
     }
@@ -206,15 +203,8 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
                         cardNumber = RecurlyDataFormatter.getCardNumber(
                             s.toString(), correctCardInput
                         )
-                        if (cardType.isNotEmpty())
-                            RecurlyCardMetadata.setCvvLength(
-                                CreditCardsParameters.valueOf(cardType.uppercase()).cvvLength
-                            )
-                        else
-                            RecurlyCardMetadata.setCvvLength(3)
                     } else {
                         cardType = ""
-                        RecurlyCardMetadata.setCvvLength(3)
                         correctCardInput = true
                     }
                     changeCardIcon()

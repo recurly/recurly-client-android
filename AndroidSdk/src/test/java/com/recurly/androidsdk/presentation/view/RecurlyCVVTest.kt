@@ -8,10 +8,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.common.truth.Truth.assertThat
 import com.recurly.androidsdk.R
-import com.recurly.androidsdk.data.model.RecurlyCardMetadata
 import com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -21,9 +18,9 @@ import java.util.Calendar
 
 /**
  * Regression coverage for the Amex (4-digit) CVV [RecurlyCVV.validateData] bug fixed in v3.1.1:
- * `validateData()` compared the entered CVV length against a hardcoded `maxCVVLength = 3`
- * instead of [RecurlyCardMetadata.getCvvLength], so a valid 4-digit Amex CVV entered into the
- * loose/individual [RecurlyCVV] view always failed validation.
+ * `validateData()` compared the entered CVV length against a hardcoded `maxCVVLength = 3`,
+ * so a valid 4-digit Amex CVV entered into the loose/individual [RecurlyCVV] view always
+ * failed validation. A CVV is valid with 3 or 4 digits for every brand.
  *
  * Also backfills v3.1.0 coverage for [RecurlyCardParams.from], which reads entered data directly
  * from the loose input view instances rather than a shared singleton.
@@ -33,16 +30,6 @@ class RecurlyCVVTest {
 
     private val themedContext by lazy {
         ContextThemeWrapper(RuntimeEnvironment.getApplication(), R.style.AppTheme)
-    }
-
-    @Before
-    fun setUp() {
-        RecurlyCardMetadata.setCvvLength(3)
-    }
-
-    @After
-    fun tearDown() {
-        RecurlyCardMetadata.setCvvLength(3)
     }
 
     private fun cvvEditText(cvvView: RecurlyCVV): TextInputEditText =
@@ -61,8 +48,7 @@ class RecurlyCVVTest {
     }
 
     @Test
-    fun validateData_fourDigitAmexCvv_metadataLengthFour_returnsTrue() {
-        RecurlyCardMetadata.setCvvLength(4)
+    fun validateData_fourDigitCvv_returnsTrue() {
         val cvvView = RecurlyCVV(themedContext)
         cvvEditText(cvvView).setText("1234")
 
@@ -70,7 +56,15 @@ class RecurlyCVVTest {
     }
 
     @Test
-    fun validateData_incompleteCvv_defaultThreeDigitLength_returnsFalse() {
+    fun validateData_threeDigitCvv_returnsTrue() {
+        val cvvView = RecurlyCVV(themedContext)
+        cvvEditText(cvvView).setText("123")
+
+        assertThat(cvvView.validateData()).isTrue()
+    }
+
+    @Test
+    fun validateData_twoDigitCvv_returnsFalse() {
         val cvvView = RecurlyCVV(themedContext)
         cvvEditText(cvvView).setText("12")
 

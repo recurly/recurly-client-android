@@ -10,39 +10,32 @@ internal enum class CreditCardsParameters(
      */
     val cardType: String,
 
-    val cvvLength: Int,
-
     val gaps: Set<Int>,
 
     val groups: List<BinGroup>
 ) {
     MASTER(
         "master",
-        3,
         setOf(4, 8, 12),
         listOf(BinGroup(setOf(16), listOf(2221 to 2720, 51 to 55)))
     ),
     DINERS_CLUB(
         "diners_club",
-        3,
         setOf(4, 10),
         listOf(BinGroup(setOf(14), listOf(300 to 305, 36 to 36, 38 to 38)))
     ),
     AMERICAN_EXPRESS(
         "american_express",
-        4,
         setOf(4, 10),
         listOf(BinGroup(setOf(15), listOf(34 to 34, 37 to 37)))
     ),
     JCB(
         "jcb",
-        3,
         setOf(4, 8, 12),
         listOf(BinGroup(setOf(16), listOf(3528 to 3589)))
     ),
     HIPERCARD(
         "hipercard",
-        3,
         setOf(4, 8, 12),
         listOf(
             BinGroup(setOf(19), listOf(3841 to 3841, 606282 to 606282)),
@@ -51,13 +44,11 @@ internal enum class CreditCardsParameters(
     ),
     VISA(
         "visa",
-        3,
         setOf(4, 8, 12),
         listOf(BinGroup(setOf(13, 16), listOf(400000 to 451415, 451417 to 499999)))
     ),
     ELO(
         "elo",
-        3,
         setOf(4, 8, 12),
         listOf(
             BinGroup(
@@ -78,13 +69,11 @@ internal enum class CreditCardsParameters(
     ),
     TARJETA_NARANJA(
         "tarjeta_naranja",
-        3,
         setOf(4, 8, 12),
         listOf(BinGroup(setOf(16, 17, 18, 19), listOf(589562 to 589562)))
     ),
     DISCOVER(
         "discover",
-        3,
         setOf(4, 8, 12),
         listOf(
             BinGroup(
@@ -102,7 +91,6 @@ internal enum class CreditCardsParameters(
     ),
     UNION_PAY(
         "union_pay",
-        3,
         setOf(4, 8, 12),
         listOf(
             BinGroup(
@@ -117,7 +105,6 @@ internal enum class CreditCardsParameters(
     ),
     MAESTRO(
         "maestro",
-        3,
         setOf(4, 8, 12),
         listOf(
             BinGroup(setOf(12, 13, 14, 15), listOf(50 to 50, 56 to 58, 6 to 6)),

@@ -36,8 +36,6 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
     private var correctCardInput = true
     private var correctExpirationInput = true
     private var correctCVVInput = true
-    private var maxCVVLength: Int = 3
-
     private var previousDateValue = ""
     private var cardNumber = ""
     private var expirationMonth = 0
@@ -147,8 +145,7 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         correctExpirationInput =
             RecurlyInputValidator.verifyDate(binding.recurlyTextEditCardExpiration.text.toString())
         correctCVVInput = RecurlyInputValidator.verifyCVV(
-            binding.recurlyTextEditCardCvv.text.toString(),
-            cardType
+            binding.recurlyTextEditCardCvv.text.toString()
         )
         validateAndChangeColors(false)
         return Triple(correctCardInput, correctExpirationInput, correctCVVInput)
@@ -179,7 +176,6 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         expirationYear = 0
         cvvCode = ""
         cardType = ""
-        maxCVVLength = 3
         previousDateValue = ""
         correctCardInput = true
         correctExpirationInput = true
@@ -254,19 +250,13 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                             s.replace(0, oldValue.length, data.third)
                             binding.recurlyTextEditCardNumber.addTextChangedListener(this)
                         }
-                        // The reformat guard can skip a keystroke, so cvvLength must be
-                        // recomputed unconditionally.
-                        maxCVVLength = if (cardType.isNotEmpty())
-                            CreditCardsParameters.valueOf(cardType.uppercase()).cvvLength
-                        else
-                            3
+
                         cardNumber = RecurlyDataFormatter.getCardNumber(
                             s.toString(), correctCardInput
                         )
                         validateAndChangeColors(true)
                     } else {
                         cardType = ""
-                        maxCVVLength = 3
                         correctCardInput = true
                     }
                     changeCardIcon()
@@ -373,17 +363,9 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         binding.recurlyTextEditCardCvv.addTextChangedListener(object : TextWatcher {
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                //According to the card type we change the max length of the cvv code
-                if (cardType.isEmpty())
-                    binding.recurlyTextEditCardCvv.filters =
-                        arrayOf<InputFilter>(LengthFilter(maxCVVLength))
-                else
-                    binding.recurlyTextEditCardCvv.filters =
-                        arrayOf<InputFilter>(
-                            LengthFilter(
-                                CreditCardsParameters.valueOf(cardType.uppercase()).cvvLength
-                            )
-                        )
+                // Cap input at 4 digits. Validation, not the filter, rejects bad lengths.
+                binding.recurlyTextEditCardCvv.filters =
+                    arrayOf<InputFilter>(LengthFilter(4))
 
             }
 
@@ -402,8 +384,8 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                     binding.recurlyTextEditCardCvv.addTextChangedListener(this)
                     validateAndChangeColors(true)
                     correctCVVInput =
-                        formattedCVV.length == maxCVVLength
-                                || formattedCVV.isEmpty()
+                        formattedCVV.isEmpty() ||
+                            RecurlyInputValidator.verifyCVV(formattedCVV)
                     cvvCode = RecurlyDataFormatter.getCvvCode(
                         formattedCVV, correctCVVInput
                     )
@@ -424,7 +406,7 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                     )
             } else {
                 correctCVVInput = RecurlyInputValidator.verifyCVV(
-                    binding.recurlyTextEditCardCvv.text.toString(), cardType
+                    binding.recurlyTextEditCardCvv.text.toString()
                 ) || binding.recurlyTextEditCardCvv.text.toString().isEmpty()
                 cvvCode = RecurlyDataFormatter.getCvvCode(
                     binding.recurlyTextEditCardCvv.text.toString(), correctCVVInput

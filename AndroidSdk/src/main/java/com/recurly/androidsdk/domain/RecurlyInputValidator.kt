@@ -152,18 +152,15 @@ internal object RecurlyInputValidator {
     }
 
     /**
-     * This fun verifies if the cvv code is correct according to the credit card type
+     * Verifies if the cvv code has a valid length. Brand-agnostic: recurly-js
+     * accepts 3 or 4 digits for every brand.
      *
      * @param cvvCode the cvv code from the input
-     * @param cardType the card type according tho CreditCardsParameters
      *
      * @return true if it is a valid cvv code, false if it is not
      */
-    fun verifyCVV(cvvCode: String, cardType: String): Boolean {
-        if (cvvCode.isNotEmpty() && cardType.isNotEmpty()) {
-            return cvvCode.length == CreditCardsParameters.valueOf(cardType.uppercase()).cvvLength
-        }
-        return false
+    fun verifyCVV(cvvCode: String): Boolean {
+        return cvvCode.length in 3..4
     }
 
     /**
