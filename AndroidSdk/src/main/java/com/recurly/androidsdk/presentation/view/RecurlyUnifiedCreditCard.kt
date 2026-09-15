@@ -253,10 +253,13 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                             binding.recurlyTextEditCardNumber.removeTextChangedListener(this)
                             s.replace(0, oldValue.length, data.third)
                             binding.recurlyTextEditCardNumber.addTextChangedListener(this)
-                            if (cardType.isNotEmpty())
-                                maxCVVLength =
-                                    CreditCardsParameters.valueOf(cardType.uppercase()).cvvLength
                         }
+                        // The reformat guard can skip a keystroke, so cvvLength must be
+                        // recomputed unconditionally.
+                        maxCVVLength = if (cardType.isNotEmpty())
+                            CreditCardsParameters.valueOf(cardType.uppercase()).cvvLength
+                        else
+                            3
                         cardNumber = RecurlyDataFormatter.getCardNumber(
                             s.toString(), correctCardInput
                         )
