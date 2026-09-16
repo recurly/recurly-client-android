@@ -99,12 +99,12 @@ CVV code view
 
 You can use `binding view` to access the methods of the views.
 
-These methods can be used on every Recurly view and are the same for all of them
+The unified view sets all three placeholders together; each individual view sets one placeholder for its single field
 
 ```kotlin
 
 //With this method you can change the placeholders of the different views
-recurlyView.setPlaceholders("YOUR_NEW_PLACEHOLDERS")
+recurlyView.setPlaceholders("YOUR_NEW_NUMBER_PLACEHOLDER", "YOUR_NEW_EXPIRATION_PLACEHOLDER", "YOUR_NEW_CVV_PLACEHOLDER")
 
 //Changes the placeholders color
 recurlyView.setPlaceholderColor(ContextCompat.getColor(context, R.color.your_color))

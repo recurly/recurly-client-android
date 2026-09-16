@@ -190,6 +190,7 @@ class RecurlyCVV @JvmOverloads constructor(
                         cvvCode = RecurlyDataFormatter.getCvvCode(
                             formattedCVV, correctCVVInput
                         )
+                        changeColors()
                     } else {
                         correctCVVInput = true
                         changeColors()

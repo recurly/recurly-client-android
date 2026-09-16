@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.common.truth.Truth.assertThat
 import com.recurly.androidsdk.R
 import org.junit.Test
@@ -32,6 +33,15 @@ class RecurlyUnifiedCreditCardTest {
 
     private fun cvvEditText(view: RecurlyUnifiedCreditCard): TextInputEditText =
         view.findViewById(R.id.recurly_text_edit_card_cvv)
+
+    private fun numberInputLayout(view: RecurlyUnifiedCreditCard): TextInputLayout =
+        view.findViewById(R.id.recurly_text_input_card_number)
+
+    private fun expirationInputLayout(view: RecurlyUnifiedCreditCard): TextInputLayout =
+        view.findViewById(R.id.recurly_text_input_card_expiration)
+
+    private fun cvvInputLayout(view: RecurlyUnifiedCreditCard): TextInputLayout =
+        view.findViewById(R.id.recurly_text_input_card_cvv)
 
     private fun cardIcon(view: RecurlyUnifiedCreditCard): ImageView =
         view.findViewById(R.id.recurly_image_unified_card_icon)
@@ -89,7 +99,7 @@ class RecurlyUnifiedCreditCardTest {
         assertThat(view.cardParams().cvvCode).isEmpty()
     }
 
-@Test
+    @Test
     fun unifiedCvv_fourDigitsWithVisa_isValidAndCached() {
         val view = RecurlyUnifiedCreditCard(themedContext)
         numberEditText(view).setText("4111111111111111")
@@ -121,6 +131,63 @@ class RecurlyUnifiedCreditCardTest {
 
         assertThat(cvvValid).isFalse()
         assertThat(view.cardParams().cvvCode).isEmpty()
+    }
+
+    @Test
+    fun setPlaceholders_appliesDistinctHintsPerField() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        view.setPlaceholders("NumberHint", "ExpiryHint", "CvvHint")
+
+        assertThat(numberInputLayout(view).hint.toString()).isEqualTo("NumberHint")
+        assertThat(expirationInputLayout(view).hint.toString()).isEqualTo("ExpiryHint")
+        assertThat(cvvInputLayout(view).hint.toString()).isEqualTo("CvvHint")
+    }
+
+    @Test
+    fun setPlaceholders_blankParams_keepDefaultHints() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        view.setPlaceholders("", " ", "")
+
+        assertThat(numberInputLayout(view).hint.toString())
+            .isEqualTo(themedContext.getString(R.string.hint_card_number))
+        assertThat(expirationInputLayout(view).hint.toString())
+            .isEqualTo(themedContext.getString(R.string.hint_month_and_year))
+        assertThat(cvvInputLayout(view).hint.toString())
+            .isEqualTo(themedContext.getString(R.string.hint_cvv_code))
+    }
+
+@Test
+    fun setPlaceholders_blankExpirationAmongCustomParams_keepsDefaultForThatFieldOnly() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        view.setPlaceholders("NumberHint", "", "CvvHint")
+
+        assertThat(numberInputLayout(view).hint.toString()).isEqualTo("NumberHint")
+        assertThat(expirationInputLayout(view).hint.toString())
+            .isEqualTo(themedContext.getString(R.string.hint_month_and_year))
+        assertThat(cvvInputLayout(view).hint.toString()).isEqualTo("CvvHint")
+    }
+
+    @Test
+    fun unifiedWatcher_invalidPartialCvv_showsErrorStrokeImmediately() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        cvvEditText(view).setText("12")
+
+        val stroke = view.findViewById<ImageView>(R.id.recurly_image_view_stroke_background)
+        assertThat(shadowOf(stroke.drawable).createdFromResId)
+            .isEqualTo(R.drawable.unified_stroke_error)
+    }
+
+@Test
+    fun unifiedWatcher_partialCvvThenValidCvv_clearsErrorStroke() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        cvvEditText(view).setText("12")
+        cvvEditText(view).setText("1234")
+
+        val stroke = view.findViewById<ImageView>(R.id.recurly_image_view_stroke_background)
+        assertThat(shadowOf(stroke.drawable).createdFromResId)
+            .isEqualTo(R.drawable.unified_stroke_focused)
+        assertThat(cvvEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
     }
 
     @Test

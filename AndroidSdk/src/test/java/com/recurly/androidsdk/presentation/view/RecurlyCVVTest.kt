@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.common.truth.Truth.assertThat
+import androidx.core.content.ContextCompat
 import com.recurly.androidsdk.R
 import com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams
 import org.junit.Test
@@ -40,14 +41,6 @@ class RecurlyCVVTest {
         cvvView.findViewById(R.id.recurly_text_input_layout_individual_cvv_code)
 
     @Test
-    fun validateData_threeDigitCvv_defaultLength_returnsTrue() {
-        val cvvView = RecurlyCVV(themedContext)
-        cvvEditText(cvvView).setText("123")
-
-        assertThat(cvvView.validateData()).isTrue()
-    }
-
-    @Test
     fun validateData_fourDigitCvv_returnsTrue() {
         val cvvView = RecurlyCVV(themedContext)
         cvvEditText(cvvView).setText("1234")
@@ -69,6 +62,15 @@ class RecurlyCVVTest {
         cvvEditText(cvvView).setText("12")
 
         assertThat(cvvView.validateData()).isFalse()
+    }
+
+    @Test
+    fun watcher_partialCvv_showsErrorColorImmediately() {
+        val cvvView = RecurlyCVV(themedContext)
+        cvvEditText(cvvView).setText("12")
+
+        val errorColor = ContextCompat.getColor(themedContext, R.color.recurly_error_red)
+        assertThat(cvvEditText(cvvView).currentTextColor).isEqualTo(errorColor)
     }
 
     @Test

@@ -59,7 +59,7 @@ class RecurlyInputValidatorTest{
     }
 
     @Test
-    fun invalidCvvInput(){
+    fun invalidCardNumberInput(){
         val verifyData = RecurlyInputValidator.validateCreditCardNumber("1111111111111111")
         val result = RecurlyInputValidator.verifyCardNumber("123",verifyData.second)
         assertThat(result).isFalse()
