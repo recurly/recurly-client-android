@@ -1,10 +1,12 @@
 package com.recurly.androidsdk.data.network
 
-import com.google.gson.Gson
+
 import com.recurly.androidsdk.data.model.googlepay.GooglePayInfoResponse
 import com.recurly.androidsdk.data.model.googlepay.GooglePayTokenRequest
 import com.recurly.androidsdk.data.model.tokenization.ErrorRecurly
+
 import com.recurly.androidsdk.data.model.tokenization.TokenizationResponse
+import com.recurly.androidsdk.data.model.tokenization.errorSafeGson
 import com.recurly.androidsdk.data.network.core.RetrofitHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,7 +23,7 @@ internal class GooglePayService(
     private val enableLogging: Boolean = false
 ) {
 
-    private val gson = Gson()
+    private val gson = errorSafeGson()
 
     /**
      * Fetches the server-driven Google Pay configuration for the given gateway/currency/country.

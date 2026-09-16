@@ -49,9 +49,15 @@ internal object GooglePayRequestBuilder {
      * Builds the JSON array Google Pay's `ButtonOptions.setAllowedPaymentMethods` and the
      * `allowedPaymentMethods` field of `IsReadyToPayRequest`/`PaymentDataRequest` expect.
      */
-    fun buildAllowedPaymentMethodsJson(method: GooglePayPaymentMethod, includeTokenizationSpecification: Boolean): String {
+    fun buildAllowedPaymentMethodsJson(
+        method: GooglePayPaymentMethod,
+        includeTokenizationSpecification: Boolean,
+        requireBillingAddress: Boolean = false
+    ): String {
         assertCardNetworkSupported(method)
-        return JsonArray().apply { add(cardPaymentMethod(method, includeTokenizationSpecification)) }.toString()
+        return JsonArray().apply {
+            add(cardPaymentMethod(method, includeTokenizationSpecification, requireBillingAddress))
+        }.toString()
     }
 
     /**
@@ -82,7 +88,16 @@ internal object GooglePayRequestBuilder {
         return JsonObject().apply {
             addProperty("apiVersion", 2)
             addProperty("apiVersionMinor", 0)
-            add("allowedPaymentMethods", JsonParser.parseString(buildAllowedPaymentMethodsJson(method, includeTokenizationSpecification = true)))
+            add(
+                "allowedPaymentMethods",
+                JsonParser.parseString(
+                    buildAllowedPaymentMethodsJson(
+                        method,
+                        includeTokenizationSpecification = true,
+                        requireBillingAddress = params.requireBillingAddress
+                    )
+                )
+            )
             add("merchantInfo", JsonObject().apply {
                 addProperty("merchantId", params.googleMerchantId)
                 addProperty("merchantName", params.googleBusinessName)
@@ -106,7 +121,11 @@ internal object GooglePayRequestBuilder {
         GooglePayEnvironment.PRODUCTION -> 1
     }
 
-    private fun cardPaymentMethod(method: GooglePayPaymentMethod, includeTokenizationSpecification: Boolean): JsonObject {
+    private fun cardPaymentMethod(
+        method: GooglePayPaymentMethod,
+        includeTokenizationSpecification: Boolean,
+        requireBillingAddress: Boolean = false
+    ): JsonObject {
         val tokenizationSpec: Pair<String, Map<String, String>>? = if (includeTokenizationSpecification) {
             when {
                 method.paymentGateway != null -> "PAYMENT_GATEWAY" to method.paymentGateway
@@ -116,13 +135,14 @@ internal object GooglePayRequestBuilder {
         } else {
             null
         }
-        return cardPaymentMethodJson(method.cardNetworks, method.authMethods, tokenizationSpec)
+        return cardPaymentMethodJson(method.cardNetworks, method.authMethods, tokenizationSpec, requireBillingAddress)
     }
 
     private fun cardPaymentMethodJson(
         cardNetworks: List<String>,
         authMethods: List<String>,
-        tokenizationSpec: Pair<String, Map<String, String>>?
+        tokenizationSpec: Pair<String, Map<String, String>>?,
+        requireBillingAddress: Boolean = false
     ): JsonObject {
         return JsonObject().apply {
             addProperty("type", "CARD")
@@ -131,6 +151,12 @@ internal object GooglePayRequestBuilder {
                 add("allowedCardNetworks", JsonArray().apply {
                     cardNetworks.filter { it.uppercase() in SUPPORTED_CARD_NETWORKS }.forEach { add(it) }
                 })
+                if (requireBillingAddress) {
+                    addProperty("billingAddressRequired", true)
+                    add("billingAddressParameters", JsonObject().apply {
+                        addProperty("format", "FULL")
+                    })
+                }
             })
             if (tokenizationSpec != null) {
                 val (specType, specParams) = tokenizationSpec

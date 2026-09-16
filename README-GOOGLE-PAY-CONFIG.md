@@ -25,6 +25,11 @@ site.
 
 Without a Google Pay-enabled gateway, `GET /js/v1/google_pay/info` returns no payment methods and
 `RecurlyGooglePayHandler.getPaymentMethod`/`isReadyToPay` will report Google Pay as unavailable.
+`getPaymentMethod` returns `null` in that case. When the configuration request itself fails, it
+throws `RecurlyException`; `isReadyToPay` returns `false` on any failure.
+
+`RecurlyGooglePayParams.requireBillingAddress` optionally requests the full billing address on the
+Google Pay sheet; see README.md.
 
 ## 2. TEST vs PRODUCTION environment
 

@@ -2,6 +2,7 @@ package com.recurly.androidsdk.data.network.core
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import com.recurly.androidsdk.data.model.tokenization.errorSafeGson
 import retrofit2.converter.gson.GsonConverterFactory
 
 internal object RetrofitHelper {
@@ -26,7 +27,7 @@ internal object RetrofitHelper {
             .client(OkHttpHelper.getOkHttpClient())
             .baseUrl(baseUrl)
             .addConverterFactory(NullOnEmptyConverterFactory())
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(errorSafeGson()))
             .build()
     }
 }

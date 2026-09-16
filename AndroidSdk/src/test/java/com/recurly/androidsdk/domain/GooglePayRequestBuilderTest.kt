@@ -140,6 +140,43 @@ class GooglePayRequestBuilderTest {
         assertThat(GooglePayRequestBuilder.walletEnvironmentConstant(GooglePayEnvironment.PRODUCTION)).isEqualTo(1)
     }
 
+    @Test
+    fun buildPaymentDataRequestJson_requireBillingAddress_includesBillingAddressParametersFull() {
+        val method = buildMethod(cardNetworks = listOf("VISA"), paymentGateway = mapOf("gateway" to "example"))
+        val params = RecurlyGooglePayParams(
+            googleMerchantId = "merchant-id",
+            googleBusinessName = "Acme Co",
+            currency = "USD",
+            country = "US",
+            total = "10.00",
+            requireBillingAddress = true
+        )
+
+        val json = JsonParser.parseString(GooglePayRequestBuilder.buildPaymentDataRequestJson(method, params)).asJsonObject
+
+        val parameters = json.getAsJsonArray("allowedPaymentMethods")[0].asJsonObject.getAsJsonObject("parameters")
+        assertThat(parameters.get("billingAddressRequired").asBoolean).isTrue()
+        assertThat(parameters.getAsJsonObject("billingAddressParameters").get("format").asString).isEqualTo("FULL")
+    }
+
+    @Test
+    fun buildPaymentDataRequestJson_defaultOmitsBillingAddressRequired() {
+        val method = buildMethod(cardNetworks = listOf("VISA"), paymentGateway = mapOf("gateway" to "example"))
+        val params = RecurlyGooglePayParams(
+            googleMerchantId = "merchant-id",
+            googleBusinessName = "Acme Co",
+            currency = "USD",
+            country = "US",
+            total = "10.00"
+        )
+
+        val json = JsonParser.parseString(GooglePayRequestBuilder.buildPaymentDataRequestJson(method, params)).asJsonObject
+
+        val parameters = json.getAsJsonArray("allowedPaymentMethods")[0].asJsonObject.getAsJsonObject("parameters")
+        assertThat(parameters.has("billingAddressRequired")).isFalse()
+        assertThat(parameters.has("billingAddressParameters")).isFalse()
+    }
+
     private fun buildMethod(
         cardNetworks: List<String>,
         authMethods: List<String> = listOf("PAN_ONLY"),

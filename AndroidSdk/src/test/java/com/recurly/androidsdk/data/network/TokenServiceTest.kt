@@ -113,6 +113,22 @@ class TokenServiceTest {
     }
 
     @Test
+    fun getToken_errorResponseWithPartialBody_errorListsDefaultToEmpty() = runTest {
+        mockWebServer.enqueue(
+            MockResponse().setResponseCode(422).setBody(
+                """{"error":{"code":"invalid-card-number","message":"Card number is invalid"}}"""
+            )
+        )
+
+        val result = tokenService.getToken(buildRequest())
+
+        assertThat(result.token).isNull()
+        assertThat(result.error.errorCode).isEqualTo("invalid-card-number")
+        assertThat(result.error.fields).isEmpty()
+        assertThat(result.error.details).isEmpty()
+    }
+
+    @Test
     fun getToken_errorResponseWithUnparsableBody_returnsFallbackError() = runTest {
         mockWebServer.enqueue(
             MockResponse().setResponseCode(500).setBody("Internal Server Error")
