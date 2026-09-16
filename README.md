@@ -190,6 +190,7 @@ val googlePayParams = RecurlyGooglePayParams(
     currency = "USD",
     country = "US",
     total = "10.00",
+    requireBillingAddress = false, // optional: request the full billing address on the Google Pay sheet
     environment = GooglePayEnvironment.TEST // switch to PRODUCTION when you go live
 )
 ```
@@ -197,14 +198,20 @@ val googlePayParams = RecurlyGooglePayParams(
 Fetch the server-driven payment method configuration and use it to configure a
 `RecurlyGooglePayButton` (only show the button once this succeeds — card networks, auth methods,
 and gateway tokenization settings are always driven by your Recurly gateway configuration, never
-hardcoded by the SDK):
+hardcoded by the SDK). `getPaymentMethod` returns `null` when Google Pay is not configured for
+your gateway/currency/country, and throws `RecurlyException` when the configuration request
+itself fails:
 
 ```kotlin
 lifecycleScope.launch {
-    val method = googlePayHandler.getPaymentMethod(googlePayParams)
-    if (method != null) {
-        recurlyGooglePayButton.configure(method)
-        recurlyGooglePayButton.visibility = View.VISIBLE
+    try {
+        val method = googlePayHandler.getPaymentMethod(googlePayParams)
+        if (method != null) {
+            recurlyGooglePayButton.configure(method)
+            recurlyGooglePayButton.visibility = View.VISIBLE
+        }
+    } catch (e: RecurlyException) {
+        // e.error holds the Recurly error detail (code, message, fields)
     }
 }
 ```

@@ -26,6 +26,7 @@ import com.recurly.androidsdk.data.model.tokenization.toPublic
 import com.recurly.androidsdk.domain.GetGooglePayMerchantInfo
 import com.recurly.androidsdk.domain.GetGooglePayToken
 import com.recurly.androidsdk.domain.GooglePayRequestBuilder
+import java.util.concurrent.atomic.AtomicReference
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -52,12 +53,11 @@ class RecurlyGooglePayHandler internal constructor(
     private val enableLogging: Boolean
 ) {
 
-    private var pendingContinuation: Continuation<PaymentData>? = null
+    private val pendingContinuation = AtomicReference<Continuation<PaymentData>?>(null)
 
     private val resolutionLauncher: ActivityResultLauncher<IntentSenderRequest> =
         activity.registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-            val continuation = pendingContinuation
-            pendingContinuation = null
+            val continuation = pendingContinuation.getAndSet(null)
             if (continuation == null) return@registerForActivityResult
             when {
                 result.resultCode == Activity.RESULT_OK && result.data != null -> {
@@ -80,7 +80,7 @@ class RecurlyGooglePayHandler internal constructor(
      * configure a [RecurlyGooglePayButton] with, or `null` if Google Pay is not configured for
      * this gateway/currency/country.
      *
-     * @throws RecurlyException if fetching the configuration fails (network failure)
+     * @throws RecurlyException if the configuration request fails (network failure or an error reported by the server)
      */
     suspend fun getPaymentMethod(params: RecurlyGooglePayParams): RecurlyGooglePayMethod? {
         return fetchMethod(params)?.toPublic()
@@ -189,6 +189,7 @@ class RecurlyGooglePayHandler internal constructor(
         } catch (e: Exception) {
             throw RecurlyException(connectionFailure(e.message ?: "Network request failed"))
         }
+        info.error?.let { throw RecurlyException(it) }
         return info.paymentMethods.firstOrNull()
     }
 
@@ -209,32 +210,27 @@ class RecurlyGooglePayHandler internal constructor(
         }
     }
 
-    /**
-     * @throws RecurlyException if another Google Pay request is already awaiting the payment
-     * sheet's result on this handler; only one [requestPayment] can be in flight at a time since
-     * [pendingContinuation] and [resolutionLauncher] are shared per-handler state.
-     */
     private suspend fun loadPaymentData(client: PaymentsClient, request: PaymentDataRequest): PaymentData {
-        if (pendingContinuation != null) {
-            throw RecurlyException(connectionFailure("A Google Pay request is already in progress"))
-        }
         return suspendCancellableCoroutine { continuation ->
-            pendingContinuation = continuation
+            if (!pendingContinuation.compareAndSet(null, continuation)) {
+                continuation.resumeWithException(
+                    RecurlyException(connectionFailure("A Google Pay request is already in progress"))
+                )
+                return@suspendCancellableCoroutine
+            }
             continuation.invokeOnCancellation {
-                if (pendingContinuation === continuation) {
-                    pendingContinuation = null
-                }
+                pendingContinuation.compareAndSet(continuation, null)
             }
             client.loadPaymentData(request).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    pendingContinuation = null
-                    continuation.resume(task.result)
+                    pendingContinuation.compareAndSet(continuation, null)
+                    continuation.resume(task.result, onCancellation = null)
                 } else {
                     val exception = task.exception
                     if (exception is ResolvableApiException) {
                         resolutionLauncher.launch(IntentSenderRequest.Builder(exception.resolution).build())
                     } else {
-                        pendingContinuation = null
+                        pendingContinuation.compareAndSet(continuation, null)
                         continuation.resumeWithException(
                             RecurlyException(connectionFailure(exception?.message ?: "Google Pay sheet failed"))
                         )

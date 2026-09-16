@@ -60,7 +60,7 @@
         app:layout_constraintStart_toEndOf="@+id/test_button"
         app:layout_constraintTop_toBottomOf="@+id/text_api_text"/>
 
-    <!-- TEST-environment Google Pay button; only shown when isReadyToPay() succeeds. -->
+    <!-- TEST-environment Google Pay button; shown only after getPaymentMethod() returns a method. -->
     <com.recurly.androidsdk.presentation.view.RecurlyGooglePayButton
         android:id="@+id/recurly_google_pay_button"
         android:layout_width="wrap_content"

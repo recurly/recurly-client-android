@@ -113,10 +113,15 @@ class FirstFragment : Fragment() {
         // Only show the Google Pay button once the gateway confirms it supports native card
         // tokenization for this configuration (server-driven, never assumed).
         viewLifecycleOwner.lifecycleScope.launch {
-            val method = googlePayHandler.getPaymentMethod(googlePayParams)
-            if (method != null) {
-                binding.recurlyGooglePayButton?.configure(method)
-                binding.recurlyGooglePayButton?.visibility = View.VISIBLE
+            try {
+                val method = googlePayHandler.getPaymentMethod(googlePayParams)
+                if (method != null) {
+                    binding.recurlyGooglePayButton?.configure(method)
+                    binding.recurlyGooglePayButton?.visibility = View.VISIBLE
+                }
+            } catch (e: RecurlyException) {
+                val gsonPretty = GsonBuilder().setPrettyPrinting().create()
+                binding.textApiText.text = gsonPretty.toJson(e.error)
             }
         }
 

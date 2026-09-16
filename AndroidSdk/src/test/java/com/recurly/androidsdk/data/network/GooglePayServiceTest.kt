@@ -95,6 +95,21 @@ class GooglePayServiceTest {
     }
 
     @Test
+    fun getMerchantInfo_errorResponseWithPartialBody_errorListsDefaultToEmpty() = runTest {
+        mockWebServer.enqueue(
+            MockResponse().setResponseCode(422).setBody(
+                """{"error":{"code":"google-pay-not-configured","message":"Google Pay is not configured"}}"""
+            )
+        )
+
+        val result = googlePayService.getMerchantInfo("gw_123", "USD", "US")
+
+        assertThat(result.error?.errorCode).isEqualTo("google-pay-not-configured")
+        assertThat(result.error?.fields).isEmpty()
+        assertThat(result.error?.details).isEmpty()
+    }
+
+    @Test
     fun getMerchantInfo_errorResponseWithUnparsableBody_loggingDisabled_returnsGenericMessage() = runTest {
         mockWebServer.enqueue(
             MockResponse().setStatus("HTTP/1.1 500 Custom Server Error").setBody("Internal Server Error")

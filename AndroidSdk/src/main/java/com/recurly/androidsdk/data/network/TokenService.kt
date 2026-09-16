@@ -1,9 +1,9 @@
 package com.recurly.androidsdk.data.network
 
-import com.google.gson.Gson
 import com.recurly.androidsdk.data.model.tokenization.ErrorRecurly
 import com.recurly.androidsdk.data.model.tokenization.TokenizationRequest
 import com.recurly.androidsdk.data.model.tokenization.TokenizationResponse
+import com.recurly.androidsdk.data.model.tokenization.errorSafeGson
 import com.recurly.androidsdk.data.network.core.RetrofitHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,7 +13,7 @@ internal class TokenService(
     private val enableLogging: Boolean = false
 ) {
 
-    private val gson = Gson()
+    private val gson = errorSafeGson()
 
     /**
      * @param request TokenizationRequest
