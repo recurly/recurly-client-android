@@ -192,6 +192,7 @@ class RecurlyCVV @JvmOverloads constructor(
                         )
                         changeColors()
                     } else {
+                        cvvCode = ""
                         correctCVVInput = true
                         changeColors()
                     }

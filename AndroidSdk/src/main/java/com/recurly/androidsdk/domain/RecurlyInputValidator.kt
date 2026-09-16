@@ -72,6 +72,8 @@ internal object RecurlyInputValidator {
                         if (splitDate[0].isEmpty() || splitDate[1].isEmpty())
                             false
                         else {
+                            if (splitDate[0].length == 1)
+                                formattedDate = "0$formattedDate"
                             return Pair(verifyDate(formattedDate), formattedDate)
                         }
                     } else {

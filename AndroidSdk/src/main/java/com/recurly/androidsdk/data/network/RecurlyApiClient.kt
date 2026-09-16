@@ -20,27 +20,27 @@ internal interface RecurlyApiClient {
     @FormUrlEncoded
     @POST("js/v1/tokens")
     suspend fun recurlyTokenization(
-        @Field(value = "first_name", encoded = true) first_name: String,
-        @Field(value = "last_name", encoded = true) last_name: String,
-        @Field(value = "company", encoded = true) company: String,
-        @Field(value = "address1", encoded = true) address1: String,
-        @Field(value = "address2", encoded = true) address2: String,
-        @Field(value = "city", encoded = true) city: String,
-        @Field(value = "state", encoded = true) state: String,
-        @Field(value = "postal_code", encoded = true) postal_code: String,
-        @Field(value = "country", encoded = true) country: String,
-        @Field(value = "phone", encoded = true) phone: String,
-        @Field(value = "vat_number", encoded = true) vat_number: String,
-        @Field(value = "tax_identifier", encoded = true) tax_identifier: String,
-        @Field(value = "tax_identifier_type", encoded = true) tax_identifier_type: String,
-        @Field(value = "number", encoded = true) number: String,
-        @Field(value = "month", encoded = true) month: Int,
-        @Field(value = "year", encoded = true) year: Int,
-        @Field(value = "cvv", encoded = true) cvv: String,
-        @Field(value = "version", encoded = true) version: String,
-        @Field(value = "key", encoded = true) key: String,
-        @Field(value = "device_id", encoded = true) device_id: String,
-        @Field(value = "session_id", encoded = true) session_id: String
+        @Field(value = "first_name") first_name: String,
+        @Field(value = "last_name") last_name: String,
+        @Field(value = "company") company: String,
+        @Field(value = "address1") address1: String,
+        @Field(value = "address2") address2: String,
+        @Field(value = "city") city: String,
+        @Field(value = "state") state: String,
+        @Field(value = "postal_code") postal_code: String,
+        @Field(value = "country") country: String,
+        @Field(value = "phone") phone: String,
+        @Field(value = "vat_number") vat_number: String,
+        @Field(value = "tax_identifier") tax_identifier: String,
+        @Field(value = "tax_identifier_type") tax_identifier_type: String,
+        @Field(value = "number") number: String,
+        @Field(value = "month") month: Int,
+        @Field(value = "year") year: Int,
+        @Field(value = "cvv") cvv: String,
+        @Field(value = "version") version: String,
+        @Field(value = "key") key: String,
+        @Field(value = "device_id") device_id: String,
+        @Field(value = "session_id") session_id: String
     ): Response<TokenizationResponse>
 
     /**

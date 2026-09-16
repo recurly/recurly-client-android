@@ -96,4 +96,18 @@ class RecurlyExpirationMMYYTest {
 
         assertThat(expirationEditText(expirationView).text.toString()).isEmpty()
     }
+
+    @Test
+    fun watcher_expirationClearedToEmpty_zeroesCachedExpiry() {
+        val futureTwoDigitYear = (Calendar.getInstance().get(Calendar.YEAR) % 100) + 1
+        val expirationView = RecurlyExpirationMMYY(themedContext)
+        expirationEditText(expirationView).setText("12/$futureTwoDigitYear")
+        assertThat(expirationView.getExpirationMonth()).isEqualTo(12)
+        assertThat(expirationView.getExpirationYear()).isEqualTo(futureTwoDigitYear)
+
+        expirationEditText(expirationView).setText("")
+
+        assertThat(expirationView.getExpirationMonth()).isEqualTo(0)
+        assertThat(expirationView.getExpirationYear()).isEqualTo(0)
+    }
 }

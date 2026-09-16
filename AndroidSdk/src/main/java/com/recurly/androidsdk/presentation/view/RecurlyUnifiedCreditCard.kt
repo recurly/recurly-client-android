@@ -181,7 +181,10 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         correctExpirationInput = true
         correctCVVInput = true
         validateAndChangeColors(false)
-        changeCardIcon()
+        if (binding.recurlyTextEditCardCvv.hasFocus())
+            changeCvvIcon()
+        else
+            changeCardIcon()
     }
 
     /**
@@ -257,7 +260,9 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                         validateAndChangeColors(true)
                     } else {
                         cardType = ""
+                        cardNumber = ""
                         correctCardInput = true
+                        validateAndChangeColors(true)
                     }
                     changeCardIcon()
                 }
@@ -396,14 +401,7 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         binding.recurlyTextEditCardCvv.setOnFocusChangeListener { v, hasFocus ->
             //Changes the cvv icon according to the card type
             if (hasFocus) {
-                if (cardType == CreditCardsParameters.AMERICAN_EXPRESS.cardType)
-                    binding.recurlyImageUnifiedCardIcon.setImageDrawable(
-                        ContextCompat.getDrawable(context, R.drawable.ic_amex_cvv)
-                    )
-                else
-                    binding.recurlyImageUnifiedCardIcon.setImageDrawable(
-                        ContextCompat.getDrawable(context, R.drawable.ic_generic_cvv)
-                    )
+                changeCvvIcon()
             } else {
                 correctCVVInput = RecurlyInputValidator.verifyCVV(
                     binding.recurlyTextEditCardCvv.text.toString()
@@ -460,5 +458,19 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         binding.recurlyImageUnifiedCardIcon.setImageDrawable(
             RecurlyDataFormatter.changeCardIcon(context, cardType)
         )
+    }
+
+    /**
+     * This fun changes the unified icon to the CVV icon according to the card type
+     */
+    private fun changeCvvIcon() {
+        if (cardType == CreditCardsParameters.AMERICAN_EXPRESS.cardType)
+            binding.recurlyImageUnifiedCardIcon.setImageDrawable(
+                ContextCompat.getDrawable(context, R.drawable.ic_amex_cvv)
+            )
+        else
+            binding.recurlyImageUnifiedCardIcon.setImageDrawable(
+                ContextCompat.getDrawable(context, R.drawable.ic_generic_cvv)
+            )
     }
 }

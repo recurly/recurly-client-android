@@ -61,7 +61,7 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
      */
     fun setPlaceholder(creditCardNumber: String) {
         if (!creditCardNumber.trim().isEmpty())
-            binding.recurlyTextInputEditIndividualCardNumber.hint = creditCardNumber
+            binding.recurlyTextInputLayoutIndividualCardNumber.hint = creditCardNumber
     }
 
     /**
@@ -205,6 +205,7 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
                         )
                     } else {
                         cardType = ""
+                        cardNumber = ""
                         correctCardInput = true
                     }
                     changeCardIcon()

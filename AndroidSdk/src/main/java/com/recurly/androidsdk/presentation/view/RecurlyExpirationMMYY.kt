@@ -214,6 +214,8 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
                             s.toString(), correctExpirationInput
                         )
                     } else {
+                        expirationMonth = 0
+                        expirationYear = 0
                         correctExpirationInput = true
                         changeColors()
                     }

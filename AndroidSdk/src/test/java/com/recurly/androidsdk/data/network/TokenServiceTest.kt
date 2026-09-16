@@ -84,6 +84,20 @@ class TokenServiceTest {
     }
 
     @Test
+    fun getToken_request_percentEncodesSpecialCharacters() = runTest {
+        mockWebServer.enqueue(
+            MockResponse().setResponseCode(200)
+                .setBody("""{"id":"tok_abc123","type":"credit_card"}""")
+        )
+
+        tokenService.getToken(buildRequest().copy(phone = "+15551234567"))
+
+        val recordedBody = mockWebServer.takeRequest().body.readUtf8()
+        assertThat(recordedBody).contains("phone=%2B15551234567")
+        assertThat(recordedBody).contains("address1=123%20Main%20St")
+    }
+
+    @Test
     fun getToken_errorResponseWithParsableBody_returnsParsedError() = runTest {
         mockWebServer.enqueue(
             MockResponse().setResponseCode(422).setBody(
