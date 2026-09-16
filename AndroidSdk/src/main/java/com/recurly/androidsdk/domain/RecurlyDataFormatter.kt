@@ -20,7 +20,7 @@ internal object RecurlyDataFormatter {
     /**
      * @param expiration expiration date as string
      * @param validInput if it is a valid expiration date
-     * @return Returns the month as an Int
+     * @return the month as an Int
      */
     internal fun getExpirationMonth(expiration: String, validInput: Boolean): Int {
         val expirationDate =
@@ -37,7 +37,7 @@ internal object RecurlyDataFormatter {
     /**
      * @param expiration expiration date as string
      * @param validInput if it is a valid expiration date
-     * @return Returns the year as an Int
+     * @return the year as an Int
      */
     internal fun getExpirationYear(expiration: String, validInput: Boolean): Int {
         val expirationDate =
@@ -59,10 +59,10 @@ internal object RecurlyDataFormatter {
     }
 
     /**
-     * This fun get as a parameter the card type from CreditCardsParameters to change the credit card icon
+     * Returns the credit card icon for the given card type.
      * @param context Context
      * @param cardType the card type according to CreditCardsParameters
-     * @return Returns the icon of the credit card
+     * @return the credit card icon
      */
     internal fun changeCardIcon(context: Context, cardType: String): Drawable {
         when (cardType) {

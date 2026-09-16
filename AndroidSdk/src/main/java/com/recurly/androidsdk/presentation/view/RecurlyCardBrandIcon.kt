@@ -24,8 +24,8 @@ class RecurlyCardBrandIcon @JvmOverloads constructor(
     }
 
     /**
-     * This fun get as a parameter the card type from CreditCardsParameters to change the credit card icon
-     * @param cardType credit card type according to CreditCardsParameters
+     * Sets the credit card icon for the given card type.
+     * @param cardType the card type according to CreditCardsParameters
      */
     private fun setCardIcon(cardType: String) {
         binding.imageRecurlyCardBrand.setImageDrawable(

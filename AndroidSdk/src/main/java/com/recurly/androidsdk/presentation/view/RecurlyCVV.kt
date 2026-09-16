@@ -27,14 +27,15 @@ class RecurlyCVV @JvmOverloads constructor(
     private var boxColor: Int
     private var errorBoxColor: Int
     private var focusedBoxColor: Int
-    private var correctCVVInput = true
-    private var cvvCode = ""
+
+    // Server-error highlights are external facts: keep them until the text changes.
+    private var forcedError = false
 
     private var binding: RecurlyCvvCodeBinding =
         RecurlyCvvCodeBinding.inflate(LayoutInflater.from(context), this)
 
     /**
-     * All the color are initialized as Int, this is to make ir easier to handle the texts colors change
+     * All colors are stored as Int values to simplify the color changes
      */
     init {
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
@@ -48,7 +49,7 @@ class RecurlyCVV @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the placeholder text according to the parameter received
+     * Sets the placeholder text
      * @param cvvPlaceholder Placeholder text for cvv code field
      */
     fun setPlaceholder(cvvPlaceholder: String) {
@@ -57,8 +58,8 @@ class RecurlyCVV @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the placeholder color according to the parameter received
-     * @param color you should sent the color like ContextCompat.getColor(context, R.color.your-color)
+     * Sets the placeholder color
+     * @param color the color as an Int, for example ContextCompat.getColor(context, R.color.your-color)
      */
     fun setPlaceholderColor(color: Int) {
         if (RecurlyInputValidator.validateColor(color)) {
@@ -69,8 +70,8 @@ class RecurlyCVV @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the text color according to the parameter received
-     * @param color you should sent the color like ContextCompat.getColor(context, R.color.your-color)
+     * Sets the text color
+     * @param color the color as an Int, for example ContextCompat.getColor(context, R.color.your-color)
      */
     fun setTextColor(color: Int) {
         if (RecurlyInputValidator.validateColor(color)) {
@@ -80,8 +81,8 @@ class RecurlyCVV @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the text color according to the parameter received
-     * @param color you should sent the color like ContextCompat.getColor(context, R.color.your-color)
+     * Sets the error text color
+     * @param color the color as an Int, for example ContextCompat.getColor(context, R.color.your-color)
      */
     fun setTextErrorColor(color: Int) {
         if (RecurlyInputValidator.validateColor(color))
@@ -89,7 +90,7 @@ class RecurlyCVV @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the font of the input field according to the parameter received
+     * Sets the input font
      * @param newFont non null Typeface
      * @param style style as int
      */
@@ -99,25 +100,23 @@ class RecurlyCVV @JvmOverloads constructor(
     }
 
     /**
-     * This fun validates if the input is complete and is valid, this means it follows a cvv code digits length
-     * @return true if the input is correctly filled, false if it is not
+     * Validates the entered CVV code
+     * @return true if the input is valid, false if it is not
      */
     fun validateData(): Boolean {
-        correctCVVInput =
-            RecurlyInputValidator.verifyCVV(
-                binding.recurlyTextInputEditIndividualCvvCode.text.toString()
-            )
-        changeColors()
-        return correctCVVInput
+        forcedError = false
+        val valid = RecurlyInputValidator.verifyCVV(currentCvvText())
+        changeColors(valid)
+        return valid
     }
 
     /**
-     * This fun will highlight the CVV as it have an error, you can use this
-     * for tokenization validations or if you need to highlight this field with an error
+     * Marks the CVV field with an error highlight. Use it for server tokenization errors or custom error states.
+     * The highlight persists until the text changes, [validateData] runs, or [clearData] is called.
      */
     fun setCvvError(){
-        correctCVVInput = false
-        changeColors()
+        forcedError = true
+        changeColors(false)
     }
 
     /**
@@ -125,22 +124,32 @@ class RecurlyCVV @JvmOverloads constructor(
      * consumed by [com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams.from] to build
      * a tokenization snapshot without exposing raw card data publicly.
      */
-    internal fun getCvvCode(): String = cvvCode
+    internal fun getCvvCode(): String {
+        val text = currentCvvText()
+        return RecurlyDataFormatter.getCvvCode(text, RecurlyInputValidator.verifyCVV(text))
+    }
 
 
     /** Clears the entered data and the error highlight. */
     fun clearData() {
+        forcedError = false
         binding.recurlyTextInputEditIndividualCvvCode.setText("")
-        cvvCode = ""
-        correctCVVInput = true
         changeColors()
     }
 
+    private fun currentCvvText(): String =
+        binding.recurlyTextInputEditIndividualCvvCode.text.toString()
+
+    private fun lenientCvv(): Boolean {
+        val text = currentCvvText()
+        return RecurlyInputValidator.verifyCVV(text) || text.isEmpty()
+    }
+
     /**
-     * This fun changes the text color and the field highlight according at if it is correct or not
+     * Sets the text color and the field highlight according to the current validity
      */
-    private fun changeColors() {
-        if (correctCVVInput) {
+    private fun changeColors(ok: Boolean = lenientCvv() && !forcedError) {
+        if (ok) {
             binding.recurlyTextInputLayoutIndividualCvvCode.error = null
             binding.recurlyTextInputEditIndividualCvvCode.setTextColor(textColor)
         } else {
@@ -152,20 +161,19 @@ class RecurlyCVV @JvmOverloads constructor(
     }
 
     /**
-     *This is an internal fun that validates the input as it is introduced, it is separated in two parts:
-     * If it is focused or not, and if it has text changes.
+     * Validates the input as the user types and when the focus changes.
      *
-     * When it has text changes calls to different input validators from RecurlyInputValidator
-     * and according to the response of the input validator it replaces the text and
-     * changes text color according if has errors or not
+     * Text changes run the input validators, replace the text with the formatted
+     * result, and repaint the colors according to the result.
      *
-     * When it changes the focus of the view it validates if the field is correctly filled, and then
-     * saves the input data
+     * When the field loses focus it re-derives validity from the current text and repaints.
+     * A [setCvvError] highlight survives repaints until the text changes or [clearData] is called.
      */
     private fun cvvInputValidator() {
         binding.recurlyTextInputEditIndividualCvvCode.addTextChangedListener(object : TextWatcher {
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                forcedError = false
                 // Cap input at 4 digits. Validation, not the filter, rejects bad lengths.
                 binding.recurlyTextInputEditIndividualCvvCode.filters =
                     arrayOf<InputFilter>(InputFilter.LengthFilter(4))
@@ -186,26 +194,14 @@ class RecurlyCVV @JvmOverloads constructor(
                         binding.recurlyTextInputEditIndividualCvvCode.removeTextChangedListener(this)
                         s.replace(0, oldValue.length, formattedCVV)
                         binding.recurlyTextInputEditIndividualCvvCode.addTextChangedListener(this)
-                        correctCVVInput = RecurlyInputValidator.verifyCVV(formattedCVV)
-                        cvvCode = RecurlyDataFormatter.getCvvCode(
-                            formattedCVV, correctCVVInput
-                        )
-                        changeColors()
-                    } else {
-                        cvvCode = ""
-                        correctCVVInput = true
-                        changeColors()
                     }
+                    changeColors()
                 }
             }
         })
 
         binding.recurlyTextInputEditIndividualCvvCode.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
-                cvvCode = RecurlyDataFormatter.getCvvCode(
-                    binding.recurlyTextInputEditIndividualCvvCode.text.toString(),
-                    correctCVVInput
-                )
                 changeColors()
             } else {
                 binding.recurlyTextInputEditIndividualCvvCode.filters =
