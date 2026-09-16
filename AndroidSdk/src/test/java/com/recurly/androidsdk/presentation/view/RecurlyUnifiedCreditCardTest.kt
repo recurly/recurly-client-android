@@ -100,6 +100,33 @@ class RecurlyUnifiedCreditCardTest {
     }
 
     @Test
+    fun unifiedWatcher_numberClearedToEmpty_resetsCardNumberAndRepaints() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        numberEditText(view).setText("1111111111111111")
+        val stroke = view.findViewById<ImageView>(R.id.recurly_image_view_stroke_background)
+        assertThat(shadowOf(stroke.drawable).createdFromResId)
+            .isEqualTo(R.drawable.unified_stroke_error)
+
+        numberEditText(view).setText("")
+
+        assertThat(view.cardParams().cardNumber).isEmpty()
+        assertThat(shadowOf(stroke.drawable).createdFromResId)
+            .isEqualTo(R.drawable.unified_stroke_focused)
+        assertThat(numberEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
+    }
+
+    @Test
+    fun unifiedWatcher_validNumberClearedToEmpty_clearsCachedCardNumber() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        numberEditText(view).setText("4111111111111111")
+        assertThat(view.cardParams().cardNumber).isEqualTo("4111111111111111")
+
+        numberEditText(view).setText("")
+
+        assertThat(view.cardParams().cardNumber).isEmpty()
+    }
+    @Test
     fun unifiedCvv_fourDigitsWithVisa_isValidAndCached() {
         val view = RecurlyUnifiedCreditCard(themedContext)
         numberEditText(view).setText("4111111111111111")
@@ -117,7 +144,7 @@ class RecurlyUnifiedCreditCardTest {
         numberEditText(view).setText("378282246310005")
         cvvEditText(view).setText("123")
 
-        // Pins the 3-or-4 rule: this pair was rejected under the old per-brand length logic.
+        // Pins the 3-or-4 rule: a CVV is valid with 3 or 4 digits for every brand.
         assertThat(view.cardParams().cvvCode).isEqualTo("123")
     }
 
@@ -225,6 +252,38 @@ class RecurlyUnifiedCreditCardTest {
             .isEqualTo(R.drawable.ic_generic_valid_card)
     }
 
+    @Test
+    fun clearData_whileCvvFocused_showsCvvIcon() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val container = FrameLayout(activity)
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        container.addView(view)
+        activity.setContentView(container)
+
+        numberEditText(view).setText("4111111111111111")
+        cvvEditText(view).requestFocus()
+
+        view.clearData()
+
+        assertThat(cvvEditText(view).isFocused).isTrue()
+        assertThat(shadowOf(cardIcon(view).drawable).createdFromResId)
+            .isEqualTo(R.drawable.ic_generic_cvv)
+    }
+
+    @Test
+    fun cvvFocus_amexBrand_showsAmexCvvIcon() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val container = FrameLayout(activity)
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        container.addView(view)
+        activity.setContentView(container)
+
+        numberEditText(view).setText("378282246310005")
+        cvvEditText(view).requestFocus()
+
+        assertThat(shadowOf(cardIcon(view).drawable).createdFromResId)
+            .isEqualTo(R.drawable.ic_amex_cvv)
+    }
     @Test
     fun clearData_doesNotStealFocus() {
         val activity = Robolectric.buildActivity(Activity::class.java).setup().get()

@@ -37,13 +37,7 @@ You'll need to have your API public key (yes public, not private) on hand for th
 
 ## 3.2 Integrate SDK
 
-Declare the necessary permissions for your Android Project by adding the following lines to `app/src/AndroidManifest.xml`, inside the `<application>` tags.
-
-```xml
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-```
+The SDK declares the network permissions it needs in its own manifest, and they merge into your app at build time. No manifest changes are required.
 
 You need a `RecurlyClient` instance, configured with your public key, before you can tokenize a card
 
@@ -118,8 +112,8 @@ recurlyView.setTextErrorColor(ContextCompat.getColor(context, R.color.your_color
 //Changes the font of the input fields with a typeface
 recurlyView.setFont(Typeface , Style)
 
-// This fun validates if all the inputs are complete, returns a boolean 
-// true if the inputs are correctly filled, false if they are not
+// validateData checks that every field is complete and valid. The unified view
+// returns a Triple (number, expiration date, CVV); each individual view returns a Boolean.
 recurlyView.validateData()
 
 //With this function you can highlight the number field with an error, this is useful if you find an error with the tokenization

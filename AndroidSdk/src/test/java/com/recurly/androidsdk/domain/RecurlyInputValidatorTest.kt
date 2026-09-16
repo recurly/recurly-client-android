@@ -53,6 +53,14 @@ class RecurlyInputValidatorTest{
     }
 
     @Test
+    fun pastedExpirationDateSingleDigitMonthIsZeroPaddedAndValid(){
+        val futureYear = (Calendar.getInstance().get(Calendar.YEAR) % 100) + 1
+        val result = RecurlyInputValidator.validateExpirationDate("8/$futureYear", "")
+        assertThat(result.first).isTrue()
+        assertThat(result.second).isEqualTo("08/$futureYear")
+    }
+
+    @Test
     fun validCvvInput(){
         val result = RecurlyInputValidator.verifyCVV("123")
         assertThat(result).isTrue()
@@ -104,7 +112,7 @@ class RecurlyInputValidatorTest{
 
     @Test
     fun mastercard2SeriesIsDetected(){
-        // Live since 2016 (canon range 2221-2720), unmatched by the old ^5[1-5] regex
+        // Mastercard 2-series (canon range 2221-2720) has been live since 2016
         val result = RecurlyInputValidator.validateCreditCardNumber("2221000000000009")
         assertThat(result.second).isEqualTo("master")
     }

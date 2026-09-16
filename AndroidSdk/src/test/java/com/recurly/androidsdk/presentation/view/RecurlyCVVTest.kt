@@ -143,6 +143,17 @@ class RecurlyCVVTest {
     }
 
     @Test
+    fun watcher_cvvClearedToEmpty_resetsCachedCvv() {
+        val cvvView = RecurlyCVV(themedContext)
+        cvvEditText(cvvView).setText("123")
+        assertThat(cvvView.getCvvCode()).isEqualTo("123")
+
+        cvvEditText(cvvView).setText("")
+
+        assertThat(cvvView.getCvvCode()).isEmpty()
+    }
+
+    @Test
     fun clearData_doesNotStealFocus() {
         val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
         val container = FrameLayout(activity)
