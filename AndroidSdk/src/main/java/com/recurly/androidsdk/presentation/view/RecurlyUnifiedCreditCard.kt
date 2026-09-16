@@ -69,11 +69,11 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
      */
     fun setPlaceholders(creditCardNumber: String, monthAndYear: String, cvv: String) {
         if (creditCardNumber.trim().isNotEmpty())
-            binding.recurlyTextEditCardNumber.hint = creditCardNumber
+            binding.recurlyTextInputCardNumber.hint = creditCardNumber
         if (monthAndYear.trim().isNotEmpty())
-            binding.recurlyTextEditCardExpiration.hint = creditCardNumber
+            binding.recurlyTextInputCardExpiration.hint = monthAndYear
         if (cvv.trim().isNotEmpty())
-            binding.recurlyTextEditCardCvv.hint = creditCardNumber
+            binding.recurlyTextInputCardCvv.hint = cvv
     }
 
 
@@ -382,10 +382,10 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                     binding.recurlyTextEditCardCvv.removeTextChangedListener(this)
                     s.replace(0, oldValue.length, formattedCVV)
                     binding.recurlyTextEditCardCvv.addTextChangedListener(this)
-                    validateAndChangeColors(true)
                     correctCVVInput =
                         formattedCVV.isEmpty() ||
                             RecurlyInputValidator.verifyCVV(formattedCVV)
+                    validateAndChangeColors(true)
                     cvvCode = RecurlyDataFormatter.getCvvCode(
                         formattedCVV, correctCVVInput
                     )
