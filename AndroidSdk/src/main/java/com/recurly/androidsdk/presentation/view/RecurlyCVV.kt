@@ -28,7 +28,7 @@ class RecurlyCVV @JvmOverloads constructor(
     private var errorBoxColor: Int
     private var focusedBoxColor: Int
 
-    // Server-error highlights are external facts: keep them until the text changes.
+    // A server error comes from outside this view. Keep it until the text changes, a validateData call, or clearData.
     private var forcedError = false
 
     private var binding: RecurlyCvvCodeBinding =

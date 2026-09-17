@@ -52,6 +52,29 @@ class RecurlyInputValidatorTest{
         assertThat(result).isFalse()
     }
 
+@Test
+    fun nonNumericExpirationPartsFailClosed(){
+        assertThat(RecurlyInputValidator.verifyDate("1x/26")).isFalse()
+        assertThat(RecurlyInputValidator.verifyDate("12/2x")).isFalse()
+    }
+
+    @Test
+    fun oversizedExpirationPartsFailClosed(){
+        // A 20-digit year part overflows Int: toIntOrNull rejects it instead of throwing.
+        assertThat(RecurlyInputValidator.verifyDate("12/99999999999999999999")).isFalse()
+    }
+
+@Test
+    fun nonNumericMonthPartFailsClosed(){
+        val result = RecurlyInputValidator.validateExpirationDate("1x", "")
+        assertThat(result.first).isFalse()
+        assertThat(result.second).isEqualTo("1x")
+
+        val leading = RecurlyInputValidator.validateExpirationDate("x1", "")
+        assertThat(leading.first).isFalse()
+        assertThat(leading.second).isEqualTo("x1")
+    }
+
     @Test
     fun pastedExpirationDateSingleDigitMonthIsZeroPaddedAndValid(){
         val futureYear = (Calendar.getInstance().get(Calendar.YEAR) % 100) + 1

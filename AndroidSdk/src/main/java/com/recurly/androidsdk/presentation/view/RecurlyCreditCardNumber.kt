@@ -28,6 +28,9 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
     private var focusedBoxColor: Int
     private var iconEnabled = true
 
+    // A server error comes from outside this view. Keep it until the text changes, a validateData call, or clearData.
+    private var forcedError = false
+
     private var binding: RecurlyCreditCardNumberBinding =
         RecurlyCreditCardNumberBinding.inflate(LayoutInflater.from(context), this)
 
@@ -108,15 +111,18 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
      * @return true if the input is valid, false if it is not
      */
     fun validateData(): Boolean {
+        forcedError = false
         val valid = validCardNumber(currentNumberText())
         changeColors(valid)
         return valid
     }
 
     /**
-     * Marks the card number field with an error highlight. Use it for server tokenization errors or custom error states
+     * Marks the card number field with an error highlight. Use it for server tokenization errors or custom error states.
+     * The highlight persists until the text changes, [validateData] runs, or [clearData] is called.
      */
     fun setCreditCardNumberError() {
+        forcedError = true
         changeColors(false)
     }
 
@@ -133,6 +139,7 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
 
     /** Clears the entered data and the error highlight. */
     fun clearData() {
+        forcedError = false
         binding.recurlyTextInputEditIndividualCardNumber.setText("")
         changeColors()
         changeCardIcon()
@@ -155,7 +162,7 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
     /**
      * Sets the text color and the field highlight according to the current validity
      */
-    private fun changeColors(ok: Boolean = lenientCardNumber()) {
+    private fun changeColors(ok: Boolean = lenientCardNumber() && !forcedError) {
         if (ok) {
             binding.recurlyTextInputLayoutIndividualCardNumber.error = null
             binding.recurlyTextInputEditIndividualCardNumber.setTextColor(textColor)
@@ -178,6 +185,7 @@ class RecurlyCreditCardNumber @JvmOverloads constructor(
             TextWatcher {
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                forcedError = false
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {

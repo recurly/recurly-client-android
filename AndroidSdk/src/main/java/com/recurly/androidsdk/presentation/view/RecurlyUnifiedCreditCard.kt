@@ -32,6 +32,11 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
     private var errorBoxColor: Int
     private var focusedBoxColor: Int
 
+    // A server error comes from outside this view. Keep each highlight until its field's text changes, a validateData call, or clearData.
+    private var forcedNumberError = false
+    private var forcedExpiryError = false
+    private var forcedCvvError = false
+
     private var binding: RecurlyUnifiedCreditCardBinding =
         RecurlyUnifiedCreditCardBinding.inflate(LayoutInflater.from(context), this)
 
@@ -126,6 +131,9 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
      * @return a Triple of validation results for the card number, expiration date, and CVV code. Each element is true when its field is valid
      */
     fun validateData(): Triple<Boolean, Boolean, Boolean> {
+        forcedNumberError = false
+        forcedExpiryError = false
+        forcedCvvError = false
         val cardOk = validCardNumber(numberText())
         val expiryOk = RecurlyInputValidator.verifyDate(expirationText())
         val cvvOk = RecurlyInputValidator.verifyCVV(cvvText())
@@ -159,6 +167,9 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
 
     /** Clears the entered data and the error highlight. */
     fun clearData() {
+        forcedNumberError = false
+        forcedExpiryError = false
+        forcedCvvError = false
         binding.recurlyTextEditCardNumber.setText("")
         binding.recurlyTextEditCardExpiration.setText("")
         binding.recurlyTextEditCardCvv.setText("")
@@ -170,23 +181,29 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
     }
 
     /**
-     * Marks the card number field with an error highlight. Use it for server tokenization errors or custom error states
+     * Marks the card number field with an error highlight. Use it for server tokenization errors or custom error states.
+     * The highlight persists until that field's text changes, [validateData] runs, or [clearData] is called.
      */
     fun setCreditCardNumberError() {
+        forcedNumberError = true
         validateAndChangeColors(false, cardOk = false)
     }
 
     /**
-     * Marks the CVV field with an error highlight. Use it for server tokenization errors or custom error states
+     * Marks the CVV field with an error highlight. Use it for server tokenization errors or custom error states.
+     * The highlight persists until that field's text changes, [validateData] runs, or [clearData] is called.
      */
     fun setCvvError() {
+        forcedCvvError = true
         validateAndChangeColors(false, cvvOk = false)
     }
 
     /**
-     * Marks the expiration date field with an error highlight. Use it for server tokenization errors or custom error states
+     * Marks the expiration date field with an error highlight. Use it for server tokenization errors or custom error states.
+     * The highlight persists until that field's text changes, [validateData] runs, or [clearData] is called.
      */
     fun setExpirationError() {
+        forcedExpiryError = true
         validateAndChangeColors(false, expiryOk = false)
     }
 
@@ -202,6 +219,7 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         binding.recurlyTextEditCardNumber.addTextChangedListener(object : TextWatcher {
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                forcedNumberError = false
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -252,6 +270,7 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
             private var previousDateValue = ""
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                forcedExpiryError = false
                 // The validator detects insertions by comparing lengths with the previous text
                 if (s != null)
                     previousDateValue = s.toString()
@@ -297,6 +316,7 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         binding.recurlyTextEditCardCvv.addTextChangedListener(object : TextWatcher {
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                forcedCvvError = false
                 // Cap input at 4 digits. Validation, not the filter, rejects bad lengths.
                 binding.recurlyTextEditCardCvv.filters =
                     arrayOf<InputFilter>(LengthFilter(4))
@@ -366,9 +386,9 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
      */
     private fun validateAndChangeColors(
         focused: Boolean,
-        cardOk: Boolean = lenientCardNumber(),
-        expiryOk: Boolean = lenientExpiration(),
-        cvvOk: Boolean = lenientCvv()
+        cardOk: Boolean = lenientCardNumber() && !forcedNumberError,
+        expiryOk: Boolean = lenientExpiration() && !forcedExpiryError,
+        cvvOk: Boolean = lenientCvv() && !forcedCvvError
     ) {
 
         if (!cardOk || !expiryOk || !cvvOk) {

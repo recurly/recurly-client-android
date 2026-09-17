@@ -184,12 +184,14 @@ class RecurlyCVVTest {
 
         cvvEditText(cvvView).setText("123")
         cvvEditText(cvvView).requestFocus()
+        assertThat(cvvEditText(cvvView).isFocused).isTrue()
         cvvView.setCvvError()
         val errorColor = ContextCompat.getColor(themedContext, R.color.recurly_error_red)
         assertThat(cvvInputLayout(cvvView).error).isNotNull()
         assertThat(cvvEditText(cvvView).currentTextColor).isEqualTo(errorColor)
 
         otherFocusable.requestFocus()
+        assertThat(cvvEditText(cvvView).isFocused).isFalse()
 
         assertThat(cvvInputLayout(cvvView).error).isNotNull()
         assertThat(cvvEditText(cvvView).currentTextColor).isEqualTo(errorColor)
@@ -206,6 +208,8 @@ class RecurlyCVVTest {
         activity.setContentView(container)
 
         cvvEditText(cvvView).setText("123")
+        cvvEditText(cvvView).requestFocus()
+        assertThat(cvvEditText(cvvView).isFocused).isTrue()
         cvvView.setCvvError()
         assertThat(cvvInputLayout(cvvView).error).isNotNull()
 
@@ -213,6 +217,7 @@ class RecurlyCVVTest {
         assertThat(cvvInputLayout(cvvView).error).isNull()
 
         otherFocusable.requestFocus()
+        assertThat(cvvEditText(cvvView).isFocused).isFalse()
 
         assertThat(cvvInputLayout(cvvView).error).isNull()
     }
