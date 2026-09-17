@@ -26,6 +26,10 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     private var boxColor: Int
     private var errorBoxColor: Int
     private var focusedBoxColor: Int
+
+    // A server error comes from outside this view. Keep it until the text changes, a validateData call, or clearData.
+    private var forcedError = false
+
     private var binding: RecurlyExpirationMmyyBinding =
         RecurlyExpirationMmyyBinding.inflate(LayoutInflater.from(context), this)
 
@@ -99,15 +103,18 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
      * @return true if the input is valid, false if it is not
      */
     fun validateData(): Boolean {
+        forcedError = false
         val valid = RecurlyInputValidator.verifyDate(currentExpirationText())
         changeColors(valid)
         return valid
     }
 
     /**
-     * Marks the expiration date field with an error highlight. Use it for server tokenization errors or custom error states
+     * Marks the expiration date field with an error highlight. Use it for server tokenization errors or custom error states.
+     * The highlight persists until the text changes, [validateData] runs, or [clearData] is called.
      */
     fun setExpirationError() {
+        forcedError = true
         changeColors(false)
     }
 
@@ -134,6 +141,7 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
 
     /** Clears the entered data and the error highlight. */
     fun clearData() {
+        forcedError = false
         binding.recurlyTextInputEditIndividualExpirationMmyy.setText("")
         changeColors()
     }
@@ -149,7 +157,7 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     /**
      * Sets the text color and the field highlight according to the current validity
      */
-    private fun changeColors(ok: Boolean = lenientExpiration()) {
+    private fun changeColors(ok: Boolean = lenientExpiration() && !forcedError) {
         if (ok) {
             binding.recurlyTextInputLayoutIndividualExpirationMmyy.error = null
             binding.recurlyTextInputEditIndividualExpirationMmyy.setTextColor(
@@ -178,6 +186,7 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
             private var previousDateValue = ""
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                forcedError = false
                 if (s != null)
                     previousDateValue = s.toString()
             }

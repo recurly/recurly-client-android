@@ -206,15 +206,147 @@ class RecurlyUnifiedCreditCardTest {
     }
 
     @Test
-    fun unifiedWatcher_errorOnEmptyCvv_clearsWhenTypingElsewhere() {
+    fun setCvvError_errorHighlightPersistsWhileTypingInOtherField() {
+        // A server-reported error stays until ITS field's text changes: edits in other
+        // fields repaint, but must not retire the CVV highlight.
         val view = RecurlyUnifiedCreditCard(themedContext)
         view.setCvvError()
         assertThat(cvvEditText(view).currentTextColor)
             .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
 
-        numberEditText(view).setText("4")
+        numberEditText(view).setText("411111")
 
         assertThat(cvvEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
+        assertThat(numberEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
+    }
+
+    @Test
+    fun setCvvError_errorHighlightClearsWhenCvvTextChanges() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        view.setCvvError()
+        assertThat(cvvEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
+
+        cvvEditText(view).setText("1234")
+
+        assertThat(cvvEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
+    }
+
+    @Test
+    fun validateData_afterSetCvvError_retiresErrorHighlight() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        numberEditText(view).setText("4111111111111111")
+        cvvEditText(view).setText("123")
+        view.setCvvError()
+        assertThat(cvvEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
+
+        val (numberValid, expirationValid, cvvValid) = view.validateData()
+
+        assertThat(numberValid).isTrue()
+        assertThat(expirationValid).isFalse()
+        assertThat(cvvValid).isTrue()
+        assertThat(cvvEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
+    }
+
+@Test
+    fun validateData_afterSettingAllErrors_retiresAllHighlights() {
+        val futureTwoDigitYear = (Calendar.getInstance().get(Calendar.YEAR) % 100) + 1
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        numberEditText(view).setText("4111111111111111")
+        expirationEditText(view).setText("12/$futureTwoDigitYear")
+        cvvEditText(view).setText("123")
+        view.setCreditCardNumberError()
+        view.setExpirationError()
+        view.setCvvError()
+
+        val (numberValid, expirationValid, cvvValid) = view.validateData()
+
+        assertThat(numberValid).isTrue()
+        assertThat(expirationValid).isTrue()
+        assertThat(cvvValid).isTrue()
+        val normalColor = ContextCompat.getColor(themedContext, R.color.recurly_black)
+        assertThat(numberEditText(view).currentTextColor).isEqualTo(normalColor)
+        assertThat(expirationEditText(view).currentTextColor).isEqualTo(normalColor)
+        assertThat(cvvEditText(view).currentTextColor).isEqualTo(normalColor)
+
+        // Cross-field edits repaint with all-default args, proving validateData retired
+        // the forced-error flags instead of only repainting over them.
+        cvvEditText(view).setText("1234")
+        assertThat(numberEditText(view).currentTextColor).isEqualTo(normalColor)
+        assertThat(expirationEditText(view).currentTextColor).isEqualTo(normalColor)
+
+        numberEditText(view).setText("411111111111111")
+        assertThat(expirationEditText(view).currentTextColor).isEqualTo(normalColor)
+        assertThat(cvvEditText(view).currentTextColor).isEqualTo(normalColor)
+    }
+
+    @Test
+    fun setCreditCardNumberError_errorHighlightClearsWhenNumberThenOtherFieldChanges() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        view.setCreditCardNumberError()
+        assertThat(numberEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
+
+        numberEditText(view).setText("4111111111111111")
+        assertThat(numberEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
+
+        cvvEditText(view).setText("1234")
+
+        // The cross-field repaint consults the flag state again: the error must stay retired.
+        assertThat(numberEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
+    }
+
+    @Test
+    fun setExpirationError_errorHighlightClearsWhenExpirationThenOtherFieldChanges() {
+        val futureTwoDigitYear = (Calendar.getInstance().get(Calendar.YEAR) % 100) + 1
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        view.setExpirationError()
+        assertThat(expirationEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
+
+        expirationEditText(view).setText("12/$futureTwoDigitYear")
+        assertThat(expirationEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
+
+        cvvEditText(view).setText("1234")
+
+        // The cross-field repaint consults the flag state again: the error must stay retired.
+        assertThat(expirationEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
+    }
+
+    @Test
+    fun setCreditCardNumberError_errorHighlightPersistsWhileTypingInOtherField() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        view.setCreditCardNumberError()
+        assertThat(numberEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
+
+        cvvEditText(view).setText("1234")
+
+        assertThat(numberEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
+    }
+
+    @Test
+    fun setExpirationError_errorHighlightPersistsWhileTypingInOtherField() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        view.setExpirationError()
+        assertThat(expirationEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
+
+        numberEditText(view).setText("4111111111111111")
+
+        assertThat(expirationEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
+        assertThat(numberEditText(view).currentTextColor)
             .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
     }
 

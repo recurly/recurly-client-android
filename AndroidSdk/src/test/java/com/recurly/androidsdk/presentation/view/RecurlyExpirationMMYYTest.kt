@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.ContextThemeWrapper
 import android.widget.EditText
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.common.truth.Truth.assertThat
@@ -95,5 +96,80 @@ class RecurlyExpirationMMYYTest {
         expirationView.clearData()
 
         assertThat(expirationEditText(expirationView).text.toString()).isEmpty()
+    }
+
+@Test
+    fun setExpirationError_errorHighlightPersistsThroughFocusChange() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val container = FrameLayout(activity)
+        val otherFocusable = EditText(activity)
+        val expirationView = RecurlyExpirationMMYY(themedContext)
+        container.addView(otherFocusable)
+        container.addView(expirationView)
+        activity.setContentView(container)
+
+        val futureTwoDigitYear = (Calendar.getInstance().get(Calendar.YEAR) % 100) + 1
+        expirationEditText(expirationView).setText("12/$futureTwoDigitYear")
+        expirationEditText(expirationView).requestFocus()
+        assertThat(expirationEditText(expirationView).isFocused).isTrue()
+        expirationView.setExpirationError()
+        val errorColor = ContextCompat.getColor(themedContext, R.color.recurly_error_red)
+        assertThat(expirationInputLayout(expirationView).error).isNotNull()
+        assertThat(expirationEditText(expirationView).currentTextColor).isEqualTo(errorColor)
+
+        otherFocusable.requestFocus()
+        assertThat(expirationEditText(expirationView).isFocused).isFalse()
+
+        assertThat(expirationInputLayout(expirationView).error).isNotNull()
+        assertThat(expirationEditText(expirationView).currentTextColor).isEqualTo(errorColor)
+    }
+
+    @Test
+    fun validateData_afterSetExpirationError_retiresErrorHighlight() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val container = FrameLayout(activity)
+        val otherFocusable = EditText(activity)
+        val expirationView = RecurlyExpirationMMYY(themedContext)
+        container.addView(otherFocusable)
+        container.addView(expirationView)
+        activity.setContentView(container)
+
+        val futureTwoDigitYear = (Calendar.getInstance().get(Calendar.YEAR) % 100) + 1
+        expirationEditText(expirationView).setText("12/$futureTwoDigitYear")
+        expirationEditText(expirationView).requestFocus()
+        assertThat(expirationEditText(expirationView).isFocused).isTrue()
+        expirationView.setExpirationError()
+        assertThat(expirationInputLayout(expirationView).error).isNotNull()
+
+        assertThat(expirationView.validateData()).isTrue()
+        assertThat(expirationInputLayout(expirationView).error).isNull()
+
+        otherFocusable.requestFocus()
+        assertThat(expirationEditText(expirationView).isFocused).isFalse()
+
+        assertThat(expirationInputLayout(expirationView).error).isNull()
+    }
+
+    @Test
+    fun setExpirationError_errorHighlightClearsWhenTextChanges() {
+        val expirationView = RecurlyExpirationMMYY(themedContext)
+        expirationView.setExpirationError()
+        assertThat(expirationInputLayout(expirationView).error).isNotNull()
+
+        val futureTwoDigitYear = (Calendar.getInstance().get(Calendar.YEAR) % 100) + 1
+        expirationEditText(expirationView).setText("12/$futureTwoDigitYear")
+
+        assertThat(expirationInputLayout(expirationView).error).isNull()
+    }
+
+@Test
+    fun setExpirationError_errorHighlightClearsWhenTextClearedToEmpty() {
+        val expirationView = RecurlyExpirationMMYY(themedContext)
+        expirationView.setExpirationError()
+        assertThat(expirationInputLayout(expirationView).error).isNotNull()
+
+        expirationEditText(expirationView).setText("")
+
+        assertThat(expirationInputLayout(expirationView).error).isNull()
     }
 }

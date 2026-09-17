@@ -84,13 +84,15 @@ internal object RecurlyInputValidator {
                     if (formattedDate == "0" || formattedDate == "1") {
                         correct = true
                     } else {
-                        if (formattedDate.toInt() in 2..9) {
+                        // toIntOrNull keeps non-numeric parts from crashing the host.
+                        val monthValue = formattedDate.toIntOrNull()
+                        if (monthValue != null && monthValue in 2..9) {
                             correct = true
                             if (formattedDate.contains("0"))
                                 formattedDate = "$formattedDate/"
                             else
                                 formattedDate = "0$formattedDate/"
-                        } else if (formattedDate.toInt() in 10..12 || formattedDate == "01") {
+                        } else if (monthValue != null && (monthValue in 10..12 || formattedDate == "01")) {
                             correct = true
                             formattedDate = "$formattedDate/"
                         }
@@ -180,13 +182,17 @@ internal object RecurlyInputValidator {
                 val splitDate = dateMMYY.split("/")
                 if (splitDate.size == 2) {
                     if(splitDate[0].isNotEmpty() && splitDate[1].isNotEmpty()){
+                        // toIntOrNull keeps non-numeric or oversized parts from crashing the host.
+                        val monthInput = splitDate[0].toIntOrNull()
+                        val yearInput = splitDate[1].toIntOrNull()
+                        if (monthInput == null || yearInput == null) return false
                         val year = Calendar.getInstance().get(Calendar.YEAR) % 100
                         val month = Calendar.getInstance().get(Calendar.MONTH) + 1
-                        val monthVerify = (splitDate[0].toInt() in 10..12) ||
-                                (splitDate[0].toInt() in 1..9 && splitDate[0].contains("0") )
-                        val verifyYear = (splitDate[1].toInt() >= year) && (splitDate[1].toInt() < 100)
-                        if (splitDate[1].toInt() == year)
-                            if (splitDate[0].toInt() < month)
+                        val monthVerify = (monthInput in 10..12) ||
+                                (monthInput in 1..9 && splitDate[0].contains("0") )
+                        val verifyYear = (yearInput >= year) && (yearInput < 100)
+                        if (yearInput == year)
+                            if (monthInput < month)
                                 return false
                         return monthVerify && verifyYear
                     }

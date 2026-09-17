@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.ContextThemeWrapper
 import android.widget.EditText
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.common.truth.Truth.assertThat
@@ -112,5 +113,88 @@ class RecurlyCreditCardNumberTest {
         assertThat(numberEditText(numberView).text.toString()).isEmpty()
         assertThat(numberView.getCardNumber()).isEmpty()
         assertThat(numberView.validateData()).isFalse()
+    }
+
+@Test
+    fun setCreditCardNumberError_errorHighlightPersistsThroughFocusChange() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val container = FrameLayout(activity)
+        val otherFocusable = EditText(activity)
+        val numberView = RecurlyCreditCardNumber(themedContext)
+        container.addView(otherFocusable)
+        container.addView(numberView)
+        activity.setContentView(container)
+
+        numberEditText(numberView).setText("4111111111111111")
+        numberEditText(numberView).requestFocus()
+        assertThat(numberEditText(numberView).isFocused).isTrue()
+        numberView.setCreditCardNumberError()
+        val errorColor = ContextCompat.getColor(themedContext, R.color.recurly_error_red)
+        assertThat(numberInputLayout(numberView).error).isNotNull()
+        assertThat(numberEditText(numberView).currentTextColor).isEqualTo(errorColor)
+
+        otherFocusable.requestFocus()
+        assertThat(numberEditText(numberView).isFocused).isFalse()
+
+        assertThat(numberInputLayout(numberView).error).isNotNull()
+        assertThat(numberEditText(numberView).currentTextColor).isEqualTo(errorColor)
+    }
+
+    @Test
+    fun validateData_afterSetCreditCardNumberError_retiresErrorHighlight() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val container = FrameLayout(activity)
+        val otherFocusable = EditText(activity)
+        val numberView = RecurlyCreditCardNumber(themedContext)
+        container.addView(otherFocusable)
+        container.addView(numberView)
+        activity.setContentView(container)
+
+        numberEditText(numberView).setText("4111111111111111")
+        numberEditText(numberView).requestFocus()
+        assertThat(numberEditText(numberView).isFocused).isTrue()
+        numberView.setCreditCardNumberError()
+        assertThat(numberInputLayout(numberView).error).isNotNull()
+
+        assertThat(numberView.validateData()).isTrue()
+        assertThat(numberInputLayout(numberView).error).isNull()
+
+        otherFocusable.requestFocus()
+        assertThat(numberEditText(numberView).isFocused).isFalse()
+
+        assertThat(numberInputLayout(numberView).error).isNull()
+    }
+
+    @Test
+    fun setCreditCardNumberError_errorHighlightClearsWhenTextChanges() {
+        val numberView = RecurlyCreditCardNumber(themedContext)
+        numberView.setCreditCardNumberError()
+        assertThat(numberInputLayout(numberView).error).isNotNull()
+
+        numberEditText(numberView).setText("4111111111111111")
+
+        assertThat(numberInputLayout(numberView).error).isNull()
+    }
+
+@Test
+    fun setCreditCardNumberError_errorHighlightClearsWhenTextClearedToEmpty() {
+        val numberView = RecurlyCreditCardNumber(themedContext)
+        numberView.setCreditCardNumberError()
+        assertThat(numberInputLayout(numberView).error).isNotNull()
+
+        numberEditText(numberView).setText("")
+
+        assertThat(numberInputLayout(numberView).error).isNull()
+    }
+
+    @Test
+    fun watcher_partialCardNumber_showsNormalColorUntilValidation() {
+        // Pins the watcher's explicit changeColors(data.first) repaint: a brand-detected
+        // partial number stays black while typing even though full validation would fail.
+        val numberView = RecurlyCreditCardNumber(themedContext)
+        numberEditText(numberView).setText("411111111111111")
+
+        assertThat(numberEditText(numberView).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
     }
 }
