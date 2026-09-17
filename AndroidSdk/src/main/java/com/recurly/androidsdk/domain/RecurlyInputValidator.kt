@@ -13,7 +13,7 @@ internal object RecurlyInputValidator {
      * Validates the color that has been sent from the app
      *
      * @param color the color as int that has been received
-     * @return true if it is a correct int color value, false if it isn´t
+     * @return true if it is a correct int color value, false if it is not
      */
     fun validateColor(color: Int): Boolean {
         val hexColor = java.lang.String.format("#%06X", 0x00FFFFFF and color)
@@ -48,13 +48,14 @@ internal object RecurlyInputValidator {
     }
 
     /**
-     * This fun takes the input from the expiration date field and its previous value to validate
-     * if it has changed, if it follow the pattern MM/YY
+     * Validates the expiration input against its previous value.
      *
-     * @param expirationDate the actual input from the text input field
-     * @param previousValue the previous value to the change of the input field
+     * The validator detects insertions by length comparison and formats the MM/YY result.
      *
-     * @return Pair< Boolean - if the input follows a correct MM/YY pattern, String - expiration date formatted >
+     * @param expirationDate the current expiration input
+     * @param previousValue the text before the change
+     *
+     * @return a Pair of the MM/YY validity and the formatted date
      */
     fun validateExpirationDate(
         expirationDate: String,
@@ -102,12 +103,13 @@ internal object RecurlyInputValidator {
     }
 
     /**
-     * This function was created to validate correct MM/YY digits distribution and not allow the
-     * final user to write a date with 3 digits on the month or the year
+     * Restructures the expiration input to keep the MM/YY layout.
      *
-     * @param expirationDate the actual input from the text input field
+     * Prevents a three-digit month or year.
      *
-     * @return expiration date formatted if it applies
+     * @param expirationDate the current expiration input
+     *
+     * @return the formatted date
      */
     private fun verifyCharactersExpirationDate(expirationDate: String):String{
         var formattedDate: String  = expirationDate
@@ -166,11 +168,11 @@ internal object RecurlyInputValidator {
     }
 
     /**
-     * This fun validates if the input follows the pattern MM/YY and is a valid date
+     * Validates the MM/YY pattern and the date.
      *
      * @param dateMMYY the input data in MM/YY format
      *
-     * @return true if it is valid MM/YY date, false if it is not
+     * @return true if it is a valid MM/YY date, false if it is not
      */
     fun verifyDate(dateMMYY: String): Boolean {
         if (dateMMYY.isNotEmpty()) {

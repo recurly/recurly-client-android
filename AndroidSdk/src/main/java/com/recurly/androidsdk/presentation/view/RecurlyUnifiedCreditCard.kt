@@ -32,21 +32,11 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
     private var errorBoxColor: Int
     private var focusedBoxColor: Int
 
-    private var cardType: String = ""
-    private var correctCardInput = true
-    private var correctExpirationInput = true
-    private var correctCVVInput = true
-    private var previousDateValue = ""
-    private var cardNumber = ""
-    private var expirationMonth = 0
-    private var expirationYear = 0
-    private var cvvCode = ""
-
     private var binding: RecurlyUnifiedCreditCardBinding =
         RecurlyUnifiedCreditCardBinding.inflate(LayoutInflater.from(context), this)
 
     /**
-     * All the color are initialized as Int, this is to make ir easier to handle the texts colors change
+     * All colors are stored as Int values to simplify the color changes
      */
     init {
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
@@ -62,7 +52,7 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the placeholders texts according to the parameters received
+     * Sets the placeholder texts
      * @param creditCardNumber Placeholder text for Credit Card Number field
      * @param monthAndYear Placeholder text for MM/YY field
      * @param cvv Placeholder text for CVV field
@@ -78,8 +68,8 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
 
 
     /**
-     * This fun changes the placeholder color according to the parameter received
-     * @param color you should sent the color like ContextCompat.getColor(context, R.color.your-color)
+     * Sets the placeholder color
+     * @param color the color as an Int, for example ContextCompat.getColor(context, R.color.your-color)
      */
     fun setPlaceholderColor(color: Int) {
         if (RecurlyInputValidator.validateColor(color)) {
@@ -93,8 +83,8 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
 
 
     /**
-     * This fun changes the text color according to the parameter received
-     * @param color you should sent the color like ContextCompat.getColor(context, R.color.your-color)
+     * Sets the text color
+     * @param color the color as an Int, for example ContextCompat.getColor(context, R.color.your-color)
      */
     fun setTextColor(color: Int) {
         if (RecurlyInputValidator.validateColor(color)) {
@@ -107,8 +97,8 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
 
 
     /**
-     * This fun changes the error text color according to the parameter received
-     * @param color you should sent the color like ContextCompat.getColor(context, R.color.your-color)
+     * Sets the error text color
+     * @param color the color as an Int, for example ContextCompat.getColor(context, R.color.your-color)
      */
     fun setTextErrorColor(color: Int) {
         if (RecurlyInputValidator.validateColor(color))
@@ -116,7 +106,7 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the font of the input fields according to the parameter received
+     * Sets the input fonts
      * @param newFont non null Typeface
      * @param style style as int
      */
@@ -131,24 +121,16 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
     }
 
     /**
-     * This fun validates if all the input are complete and are valid, this means it follows a credit card
-     * patter and respect the min and max digits value, it follows a MM/YY
-     * valid date pattern, and it follows a cvv code digits length, if there are any errors the fields
-     * will be highlighted red
-     * @return Triple<Boolean = number validation,Boolean = expiration validation,Boolean = cvv validation>true if the inputs are correctly filled, false if they are not
+     * Validates the card number, expiration date, and CVV code.
+     *
+     * @return a Triple of validation results for the card number, expiration date, and CVV code. Each element is true when its field is valid
      */
     fun validateData(): Triple<Boolean, Boolean, Boolean> {
-        correctCardInput = RecurlyInputValidator.verifyCardNumber(
-            binding.recurlyTextEditCardNumber.text.toString(),
-            cardType
-        )
-        correctExpirationInput =
-            RecurlyInputValidator.verifyDate(binding.recurlyTextEditCardExpiration.text.toString())
-        correctCVVInput = RecurlyInputValidator.verifyCVV(
-            binding.recurlyTextEditCardCvv.text.toString()
-        )
-        validateAndChangeColors(false)
-        return Triple(correctCardInput, correctExpirationInput, correctCVVInput)
+        val cardOk = validCardNumber(numberText())
+        val expiryOk = RecurlyInputValidator.verifyDate(expirationText())
+        val cvvOk = RecurlyInputValidator.verifyCVV(cvvText())
+        validateAndChangeColors(false, cardOk, expiryOk, cvvOk)
+        return Triple(cardOk, expiryOk, cvvOk)
     }
 
 
@@ -158,12 +140,21 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
      *
      * Call [validateData] first to ensure the entered card data is complete and valid.
      */
-    fun cardParams(): RecurlyCardParams = RecurlyCardParams(
-        cardNumber = cardNumber,
-        expirationMonth = expirationMonth,
-        expirationYear = expirationYear,
-        cvvCode = cvvCode
-    )
+    fun cardParams(): RecurlyCardParams {
+        val number = numberText()
+        val expiration = expirationText()
+        val cvv = cvvText()
+        return RecurlyCardParams(
+            cardNumber = RecurlyDataFormatter.getCardNumber(number, validCardNumber(number)),
+            expirationMonth = RecurlyDataFormatter.getExpirationMonth(
+                expiration, RecurlyInputValidator.verifyDate(expiration)
+            ),
+            expirationYear = RecurlyDataFormatter.getExpirationYear(
+                expiration, RecurlyInputValidator.verifyDate(expiration)
+            ),
+            cvvCode = RecurlyDataFormatter.getCvvCode(cvv, RecurlyInputValidator.verifyCVV(cvv))
+        )
+    }
 
 
     /** Clears the entered data and the error highlight. */
@@ -171,15 +162,6 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         binding.recurlyTextEditCardNumber.setText("")
         binding.recurlyTextEditCardExpiration.setText("")
         binding.recurlyTextEditCardCvv.setText("")
-        cardNumber = ""
-        expirationMonth = 0
-        expirationYear = 0
-        cvvCode = ""
-        cardType = ""
-        previousDateValue = ""
-        correctCardInput = true
-        correctExpirationInput = true
-        correctCVVInput = true
         validateAndChangeColors(false)
         if (binding.recurlyTextEditCardCvv.hasFocus())
             changeCvvIcon()
@@ -188,43 +170,33 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
     }
 
     /**
-     * This fun will highlight the Credit Card Number as it have an error, you can use this
-     * for tokenization validations or if you need to highlight this field with an error
+     * Marks the card number field with an error highlight. Use it for server tokenization errors or custom error states
      */
     fun setCreditCardNumberError() {
-        correctCardInput = false
-        validateAndChangeColors(false)
+        validateAndChangeColors(false, cardOk = false)
     }
 
     /**
-     * This fun will highlight the CVV as it have an error, you can use this
-     * for tokenization validations or if you need to highlight this field with an error
+     * Marks the CVV field with an error highlight. Use it for server tokenization errors or custom error states
      */
     fun setCvvError() {
-        correctCVVInput = false
-        validateAndChangeColors(false)
+        validateAndChangeColors(false, cvvOk = false)
     }
 
     /**
-     * This fun will highlight the Expiration Date MM/YY as it have an error, you can use this
-     * for tokenization validations or if you need to highlight this field with an error
+     * Marks the expiration date field with an error highlight. Use it for server tokenization errors or custom error states
      */
     fun setExpirationError() {
-        correctExpirationInput = false
-        validateAndChangeColors(false)
+        validateAndChangeColors(false, expiryOk = false)
     }
 
     /**
-     *This is an internal fun that validates the input as it is introduced for credit car number field,
-     * it is separated in two parts:
-     * If it is focused or not, and if it has text changes.
+     * Validates the card number input as the user types and when the focus changes.
      *
-     * When it has text changes calls to different input validators from RecurlyInputValidator
-     * and according to the response of the input validator it replaces the text and
-     * changes text color according if has errors or not
+     * Text changes run the input validators, replace the text with the formatted
+     * result, and repaint the colors according to the result.
      *
-     * When it changes the focus of the view it validates if the field is correctly filled, and then
-     * saves the input data
+     * When focus changes it re-derives validity from the current text and repaints
      */
     private fun cardNumberInputValidator() {
         binding.recurlyTextEditCardNumber.addTextChangedListener(object : TextWatcher {
@@ -243,25 +215,17 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                             RecurlyInputValidator.validateCreditCardNumber(
                                 s.toString().replace(" ", "")
                             )
-                        correctCardInput = data.first
-                        cardType = data.second
-                        // We validate if the return info is not empty and if it is different from what
-                        // we send to the input validator so this way we make secure if the text is
-                        // a valid and has changed
+                        // Replace the text only when the validator reformatted it
                         if (oldValue != data.third) {
                             binding.recurlyTextEditCardNumber.removeTextChangedListener(this)
                             s.replace(0, oldValue.length, data.third)
                             binding.recurlyTextEditCardNumber.addTextChangedListener(this)
                         }
 
-                        cardNumber = RecurlyDataFormatter.getCardNumber(
-                            s.toString(), correctCardInput
-                        )
-                        validateAndChangeColors(true)
+                        // Partial brand detection, not full Luhn verification, matches the
+                        // while-typing state of the field.
+                        validateAndChangeColors(true, cardOk = data.first)
                     } else {
-                        cardType = ""
-                        cardNumber = ""
-                        correctCardInput = true
                         validateAndChangeColors(true)
                     }
                     changeCardIcon()
@@ -270,35 +234,25 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
         })
 
         binding.recurlyTextEditCardNumber.setOnFocusChangeListener { v, hasFocus ->
-            if (!hasFocus) {//We only save the value of the field if it is valid and complete
-                correctCardInput = RecurlyInputValidator.verifyCardNumber(
-                    binding.recurlyTextEditCardNumber.text.toString(), cardType
-                ) || binding.recurlyTextEditCardNumber.text.toString().isEmpty()
-                cardNumber = RecurlyDataFormatter.getCardNumber(
-                    binding.recurlyTextEditCardNumber.text.toString(), correctCardInput
-                )
-            }
             validateAndChangeColors(hasFocus)
         }
     }
 
     /**
-     * This is an internal fun that validates the input as it is introduced for the expiration date field,
-     * it is separated in two parts:
-     * If it is focused or not, and if it has text changes.
+     * Validates the expiration date input as the user types and when the focus changes.
      *
-     * When it has text changes calls to different input validators from RecurlyInputValidator
-     * and according to the response of the input validator it replaces the text and
-     * changes text color according if has errors or not
+     * Text changes run the input validators, replace the text with the formatted
+     * result, and repaint the colors according to the result.
      *
-     * When it changes the focus of the view it validates if the field is correctly filled, and then
-     * saves the input data
+     * When focus changes it re-derives validity from the current text and repaints
      */
     private fun monthAndYearInputValidator() {
         binding.recurlyTextEditCardExpiration.addTextChangedListener(object : TextWatcher {
 
+            private var previousDateValue = ""
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // we save the previous input to validate if it has changed and if it is correct
+                // The validator detects insertions by comparing lengths with the previous text
                 if (s != null)
                     previousDateValue = s.toString()
             }
@@ -320,49 +274,24 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
                     binding.recurlyTextEditCardExpiration.removeTextChangedListener(this)
                     s.replace(0, oldValue.length, data.second)
                     binding.recurlyTextEditCardExpiration.addTextChangedListener(this)
-                    expirationMonth = RecurlyDataFormatter.getExpirationMonth(
-                        s.toString(), data.first
-                    )
-                    expirationYear = RecurlyDataFormatter.getExpirationYear(
-                        s.toString(), data.first
-                    )
-                    correctExpirationInput = data.first || s.toString().isEmpty()
-                    validateAndChangeColors(true)
+                    validateAndChangeColors(true, expiryOk = data.first || s.toString().isEmpty())
                 }
             }
         })
 
         binding.recurlyTextEditCardExpiration.setOnFocusChangeListener { v, hasFocus ->
-            if (!hasFocus) {
-                // We save the data from month and year separately
-                correctExpirationInput = RecurlyInputValidator.verifyDate(
-                    binding.recurlyTextEditCardExpiration.text.toString()
-                ) || binding.recurlyTextEditCardExpiration.text.toString().isEmpty()
-                expirationMonth = RecurlyDataFormatter.getExpirationMonth(
-                    binding.recurlyTextEditCardExpiration.text.toString(),
-                    correctExpirationInput
-                )
-                expirationYear = RecurlyDataFormatter.getExpirationYear(
-                    binding.recurlyTextEditCardExpiration.text.toString(),
-                    correctExpirationInput
-                )
-            }
             validateAndChangeColors(hasFocus)
         }
 
     }
 
     /**
-     * This is an internal fun that validates the input as it is introduced in CVV code field,
-     * it is separated in two parts:
-     * If it is focused or not, and if it has text changes.
+     * Validates the CVV input as the user types and when the focus changes.
      *
-     * When it has text changes calls to different input validators from RecurlyInputValidator
-     * and according to the response of the input validator it replaces the text and
-     * changes text color according if has errors or not
+     * Text changes run the input validators, replace the text with the formatted
+     * result, and repaint the colors according to the result.
      *
-     * When it changes the focus of the view it validates if the field is correctly filled, and then
-     * saves the input data
+     * When focus changes it re-derives validity from the current text and repaints
      */
     private fun cvvInputValidator() {
         binding.recurlyTextEditCardCvv.addTextChangedListener(object : TextWatcher {
@@ -380,20 +309,13 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
             override fun afterTextChanged(s: Editable?) {
                 if (s != null) {
                     val oldValue = s.toString()
-                    correctCVVInput = true
                     val formattedCVV = RecurlyInputValidator.regexSpecialCharacters(
                         s.toString(), "0-9"
                     )
                     binding.recurlyTextEditCardCvv.removeTextChangedListener(this)
                     s.replace(0, oldValue.length, formattedCVV)
                     binding.recurlyTextEditCardCvv.addTextChangedListener(this)
-                    correctCVVInput =
-                        formattedCVV.isEmpty() ||
-                            RecurlyInputValidator.verifyCVV(formattedCVV)
                     validateAndChangeColors(true)
-                    cvvCode = RecurlyDataFormatter.getCvvCode(
-                        formattedCVV, correctCVVInput
-                    )
                 }
             }
         })
@@ -403,25 +325,53 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
             if (hasFocus) {
                 changeCvvIcon()
             } else {
-                correctCVVInput = RecurlyInputValidator.verifyCVV(
-                    binding.recurlyTextEditCardCvv.text.toString()
-                ) || binding.recurlyTextEditCardCvv.text.toString().isEmpty()
-                cvvCode = RecurlyDataFormatter.getCvvCode(
-                    binding.recurlyTextEditCardCvv.text.toString(), correctCVVInput
-                )
                 changeCardIcon()
             }
             validateAndChangeColors(hasFocus)
         }
     }
 
-    /**
-     * This fun changes the colors of the text input field or the background according to if there
-     * are some kind of error or not
-     */
-    private fun validateAndChangeColors(focused: Boolean) {
+    private fun numberText(): String =
+        binding.recurlyTextEditCardNumber.text.toString()
 
-        if (!correctCardInput || !correctExpirationInput || !correctCVVInput) {
+    private fun expirationText(): String =
+        binding.recurlyTextEditCardExpiration.text.toString()
+
+    private fun cvvText(): String =
+        binding.recurlyTextEditCardCvv.text.toString()
+
+    private fun detectCardType(text: String): String =
+        RecurlyInputValidator.validateCreditCardNumber(text).second
+
+    private fun validCardNumber(text: String): Boolean =
+        RecurlyInputValidator.verifyCardNumber(text, detectCardType(text))
+
+    private fun lenientCardNumber(): Boolean {
+        val text = numberText()
+        return validCardNumber(text) || text.isEmpty()
+    }
+
+    private fun lenientExpiration(): Boolean {
+        val text = expirationText()
+        return RecurlyInputValidator.verifyDate(text) || text.isEmpty()
+    }
+
+    private fun lenientCvv(): Boolean {
+        val text = cvvText()
+        return RecurlyInputValidator.verifyCVV(text) || text.isEmpty()
+    }
+
+    /**
+     * Sets the text colors and the container stroke according to the current validity
+     */
+    private fun validateAndChangeColors(
+        focused: Boolean,
+        cardOk: Boolean = lenientCardNumber(),
+        expiryOk: Boolean = lenientExpiration(),
+        cvvOk: Boolean = lenientCvv()
+    ) {
+
+        if (!cardOk || !expiryOk || !cvvOk) {
             binding.recurlyImageViewStrokeBackground.setImageDrawable(
                 ContextCompat.getDrawable(context, R.drawable.unified_stroke_error)
             )
@@ -435,36 +385,36 @@ class RecurlyUnifiedCreditCard @JvmOverloads constructor(
             )
         }
 
-        if (correctCardInput)
+        if (cardOk)
             binding.recurlyTextEditCardNumber.setTextColor(textColor)
         else
             binding.recurlyTextEditCardNumber.setTextColor(errorTextColor)
 
-        if (correctExpirationInput)
+        if (expiryOk)
             binding.recurlyTextEditCardExpiration.setTextColor(textColor)
         else
             binding.recurlyTextEditCardExpiration.setTextColor(errorTextColor)
 
-        if (correctCVVInput)
+        if (cvvOk)
             binding.recurlyTextEditCardCvv.setTextColor(textColor)
         else
             binding.recurlyTextEditCardCvv.setTextColor(errorTextColor)
     }
 
     /**
-     * This fun get as a parameter the card type from CreditCardsParameters to change the credit card icon
+     * Derives the card brand from the current number text and sets the credit card icon
      */
     private fun changeCardIcon() {
         binding.recurlyImageUnifiedCardIcon.setImageDrawable(
-            RecurlyDataFormatter.changeCardIcon(context, cardType)
+            RecurlyDataFormatter.changeCardIcon(context, detectCardType(numberText()))
         )
     }
 
     /**
-     * This fun changes the unified icon to the CVV icon according to the card type
+     * Sets the unified icon to the CVV icon for the detected card brand
      */
     private fun changeCvvIcon() {
-        if (cardType == CreditCardsParameters.AMERICAN_EXPRESS.cardType)
+        if (detectCardType(numberText()) == CreditCardsParameters.AMERICAN_EXPRESS.cardType)
             binding.recurlyImageUnifiedCardIcon.setImageDrawable(
                 ContextCompat.getDrawable(context, R.drawable.ic_amex_cvv)
             )

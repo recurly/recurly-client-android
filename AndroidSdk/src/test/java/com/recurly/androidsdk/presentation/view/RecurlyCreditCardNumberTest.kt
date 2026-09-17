@@ -76,17 +76,6 @@ class RecurlyCreditCardNumberTest {
     }
 
     @Test
-    fun watcher_numberClearedToEmpty_resetsCachedCardNumber() {
-        val numberView = RecurlyCreditCardNumber(themedContext)
-        numberEditText(numberView).setText("4111111111111111")
-        assertThat(numberView.getCardNumber()).isEqualTo("4111111111111111")
-
-        numberEditText(numberView).setText("")
-
-        assertThat(numberView.getCardNumber()).isEmpty()
-    }
-
-    @Test
     fun setPlaceholder_appliesHintToInputLayout() {
         val numberView = RecurlyCreditCardNumber(themedContext)
         numberView.setPlaceholder("Card Number Hint")

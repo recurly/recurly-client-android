@@ -26,17 +26,11 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     private var boxColor: Int
     private var errorBoxColor: Int
     private var focusedBoxColor: Int
-    private var correctExpirationInput = true
-
-    private var previousDateValue = ""
-    private var expirationMonth = 0
-    private var expirationYear = 0
-
     private var binding: RecurlyExpirationMmyyBinding =
         RecurlyExpirationMmyyBinding.inflate(LayoutInflater.from(context), this)
 
     /**
-     * All the color are initialized as Int, this is to make ir easier to handle the texts colors change
+     * All colors are stored as Int values to simplify the color changes
      */
     init {
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
@@ -50,7 +44,7 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the placeholder text according to the parameter received
+     * Sets the placeholder text
      * @param expirationDatePlaceholder Placeholder text for MM/YY field
      */
     fun setPlaceholder(expirationDatePlaceholder: String) {
@@ -59,8 +53,8 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the placeholder color according to the parameter received
-     * @param color you should sent the color like ContextCompat.getColor(context, R.color.your-color)
+     * Sets the placeholder color
+     * @param color the color as an Int, for example ContextCompat.getColor(context, R.color.your-color)
      */
     fun setPlaceholderColor(color: Int) {
         if (RecurlyInputValidator.validateColor(color)) {
@@ -71,8 +65,8 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the text color according to the parameter received
-     * @param color you should sent the color like ContextCompat.getColor(context, R.color.your-color)
+     * Sets the text color
+     * @param color the color as an Int, for example ContextCompat.getColor(context, R.color.your-color)
      */
     fun setTextColor(color: Int) {
         if (RecurlyInputValidator.validateColor(color)) {
@@ -82,8 +76,8 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the error text color according to the parameter received
-     * @param color you should sent the color like ContextCompat.getColor(context, R.color.your-color)
+     * Sets the error text color
+     * @param color the color as an Int, for example ContextCompat.getColor(context, R.color.your-color)
      */
     fun setTextErrorColor(color: Int) {
         if (RecurlyInputValidator.validateColor(color))
@@ -91,7 +85,7 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     }
 
     /**
-     * This fun changes the font of the input field according to the parameter received
+     * Sets the input font
      * @param newFont non null Typeface
      * @param style style as int
      */
@@ -101,24 +95,20 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     }
 
     /**
-     * This fun validates if the input is complete and is valid, this means it follows a MM/YY
-     * valid date pattern
-     * @return true if the input is correctly filled, false if it is not
+     * Validates the entered expiration date
+     * @return true if the input is valid, false if it is not
      */
     fun validateData(): Boolean {
-        correctExpirationInput =
-            RecurlyInputValidator.verifyDate(binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString())
-        changeColors()
-        return correctExpirationInput
+        val valid = RecurlyInputValidator.verifyDate(currentExpirationText())
+        changeColors(valid)
+        return valid
     }
 
     /**
-     * This fun will highlight the Expiration Date MM/YY as it have an error, you can use this
-     * for tokenization validations or if you need to highlight this field with an error
+     * Marks the expiration date field with an error highlight. Use it for server tokenization errors or custom error states
      */
     fun setExpirationError() {
-        correctExpirationInput = false
-        changeColors()
+        changeColors(false)
     }
 
     /**
@@ -126,31 +116,41 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
      * visibility: consumed by [com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams.from]
      * to build a tokenization snapshot without exposing raw card data publicly.
      */
-    internal fun getExpirationMonth(): Int = expirationMonth
+    internal fun getExpirationMonth(): Int =
+        RecurlyDataFormatter.getExpirationMonth(
+            currentExpirationText(), RecurlyInputValidator.verifyDate(currentExpirationText())
+        )
 
     /**
      * Returns the currently validated expiration year entered into this view. Internal
      * visibility: consumed by [com.recurly.androidsdk.data.model.tokenization.RecurlyCardParams.from]
      * to build a tokenization snapshot without exposing raw card data publicly.
      */
-    internal fun getExpirationYear(): Int = expirationYear
+    internal fun getExpirationYear(): Int =
+        RecurlyDataFormatter.getExpirationYear(
+            currentExpirationText(), RecurlyInputValidator.verifyDate(currentExpirationText())
+        )
 
 
     /** Clears the entered data and the error highlight. */
     fun clearData() {
         binding.recurlyTextInputEditIndividualExpirationMmyy.setText("")
-        expirationMonth = 0
-        expirationYear = 0
-        previousDateValue = ""
-        correctExpirationInput = true
         changeColors()
     }
 
+    private fun currentExpirationText(): String =
+        binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString()
+
+    private fun lenientExpiration(): Boolean {
+        val text = currentExpirationText()
+        return RecurlyInputValidator.verifyDate(text) || text.isEmpty()
+    }
+
     /**
-     * This fun changes the text color and the field highlight according at if it is correct or not
+     * Sets the text color and the field highlight according to the current validity
      */
-    private fun changeColors() {
-        if (correctExpirationInput) {
+    private fun changeColors(ok: Boolean = lenientExpiration()) {
+        if (ok) {
             binding.recurlyTextInputLayoutIndividualExpirationMmyy.error = null
             binding.recurlyTextInputEditIndividualExpirationMmyy.setTextColor(
                 textColor
@@ -164,19 +164,18 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
     }
 
     /**
-     *This is an internal fun that validates the input as it is introduced, it is separated in two parts:
-     * If it is focused or not, and if it has text changes.
+     * Validates the input as the user types and when the focus changes.
      *
-     * When it has text changes calls to different input validators from RecurlyInputValidator
-     * and according to the response of the input validator it replaces the text and
-     * changes text color according if has errors or not
+     * Text changes run the input validators, replace the text with the formatted
+     * result, and repaint the colors according to the result.
      *
-     * When it changes the focus of the view it validates if the field is correctly filled, and then
-     * saves the input data
+     * When the field loses focus it re-derives validity from the current text and repaints
      */
     private fun monthAndYearInputValidator() {
         binding.recurlyTextInputEditIndividualExpirationMmyy.addTextChangedListener(object :
             TextWatcher {
+
+            private var previousDateValue = ""
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 if (s != null)
@@ -198,7 +197,6 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
                                 ),
                                 previousDateValue
                             )
-                        correctExpirationInput = data.first
                         binding.recurlyTextInputEditIndividualExpirationMmyy.removeTextChangedListener(
                             this
                         )
@@ -206,17 +204,8 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
                         binding.recurlyTextInputEditIndividualExpirationMmyy.addTextChangedListener(
                             this
                         )
-                        changeColors()
-                        expirationMonth = RecurlyDataFormatter.getExpirationMonth(
-                            s.toString(), correctExpirationInput
-                        )
-                        expirationYear = RecurlyDataFormatter.getExpirationYear(
-                            s.toString(), correctExpirationInput
-                        )
+                        changeColors(data.first)
                     } else {
-                        expirationMonth = 0
-                        expirationYear = 0
-                        correctExpirationInput = true
                         changeColors()
                     }
                 }
@@ -225,17 +214,6 @@ class RecurlyExpirationMMYY @JvmOverloads constructor(
 
         binding.recurlyTextInputEditIndividualExpirationMmyy.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
-                correctExpirationInput = RecurlyInputValidator.verifyDate(
-                    binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString()
-                ) || binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString().isEmpty()
-                expirationMonth = RecurlyDataFormatter.getExpirationMonth(
-                    binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString(),
-                    correctExpirationInput
-                )
-                expirationYear = RecurlyDataFormatter.getExpirationYear(
-                    binding.recurlyTextInputEditIndividualExpirationMmyy.text.toString(),
-                    correctExpirationInput
-                )
                 changeColors()
             }
         }

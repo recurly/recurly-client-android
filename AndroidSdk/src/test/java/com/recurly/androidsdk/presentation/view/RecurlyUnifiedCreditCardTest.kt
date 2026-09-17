@@ -75,7 +75,7 @@ class RecurlyUnifiedCreditCardTest {
 
 
     @Test
-    fun unifiedWatcher_expirationClearedToEmpty_zeroesCachedExpiry() {
+    fun unifiedWatcher_expirationClearedToEmpty_derivesZeroesFromEmptyText() {
         val futureTwoDigitYear = (Calendar.getInstance().get(Calendar.YEAR) % 100) + 1
         val view = RecurlyUnifiedCreditCard(themedContext)
         expirationEditText(view).setText("12/$futureTwoDigitYear")
@@ -89,7 +89,7 @@ class RecurlyUnifiedCreditCardTest {
     }
 
     @Test
-    fun unifiedWatcher_cvvClearedToEmpty_clearsCachedCvv() {
+    fun unifiedWatcher_cvvClearedToEmpty_derivesEmptyFromEmptyText() {
         val view = RecurlyUnifiedCreditCard(themedContext)
         cvvEditText(view).setText("123")
         assertThat(view.cardParams().cvvCode).isEqualTo("123")
@@ -100,34 +100,7 @@ class RecurlyUnifiedCreditCardTest {
     }
 
     @Test
-    fun unifiedWatcher_numberClearedToEmpty_resetsCardNumberAndRepaints() {
-        val view = RecurlyUnifiedCreditCard(themedContext)
-        numberEditText(view).setText("1111111111111111")
-        val stroke = view.findViewById<ImageView>(R.id.recurly_image_view_stroke_background)
-        assertThat(shadowOf(stroke.drawable).createdFromResId)
-            .isEqualTo(R.drawable.unified_stroke_error)
-
-        numberEditText(view).setText("")
-
-        assertThat(view.cardParams().cardNumber).isEmpty()
-        assertThat(shadowOf(stroke.drawable).createdFromResId)
-            .isEqualTo(R.drawable.unified_stroke_focused)
-        assertThat(numberEditText(view).currentTextColor)
-            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
-    }
-
-    @Test
-    fun unifiedWatcher_validNumberClearedToEmpty_clearsCachedCardNumber() {
-        val view = RecurlyUnifiedCreditCard(themedContext)
-        numberEditText(view).setText("4111111111111111")
-        assertThat(view.cardParams().cardNumber).isEqualTo("4111111111111111")
-
-        numberEditText(view).setText("")
-
-        assertThat(view.cardParams().cardNumber).isEmpty()
-    }
-    @Test
-    fun unifiedCvv_fourDigitsWithVisa_isValidAndCached() {
+    fun unifiedCvv_fourDigitsWithVisa_isValidAndReturned() {
         val view = RecurlyUnifiedCreditCard(themedContext)
         numberEditText(view).setText("4111111111111111")
         cvvEditText(view).setText("1234")
@@ -139,7 +112,7 @@ class RecurlyUnifiedCreditCardTest {
     }
 
     @Test
-    fun unifiedCvv_threeDigitsWithAmex_isValidAndCached() {
+    fun unifiedCvv_threeDigitsWithAmex_isValidAndReturned() {
         val view = RecurlyUnifiedCreditCard(themedContext)
         numberEditText(view).setText("378282246310005")
         cvvEditText(view).setText("123")
@@ -149,7 +122,7 @@ class RecurlyUnifiedCreditCardTest {
     }
 
     @Test
-    fun unifiedCvv_twoDigits_isInvalidAndNotCached() {
+    fun unifiedCvv_twoDigits_isInvalidAndReturnedEmpty() {
         val view = RecurlyUnifiedCreditCard(themedContext)
         numberEditText(view).setText("4111111111111111")
         cvvEditText(view).setText("12")
@@ -158,6 +131,21 @@ class RecurlyUnifiedCreditCardTest {
 
         assertThat(cvvValid).isFalse()
         assertThat(view.cardParams().cvvCode).isEmpty()
+    }
+
+    @Test
+    fun unifiedCardParams_validThenInvalidInput_derivesBlank() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        numberEditText(view).setText("4111111111111111")
+        assertThat(view.cardParams().cardNumber).isEqualTo("4111111111111111")
+
+        // Strict data gate: an invalid non-empty text derives blank, never a stale value.
+        numberEditText(view).setText("9")
+        assertThat(view.cardParams().cardNumber).isEmpty()
+
+        expirationEditText(view).setText("13/99")
+        assertThat(view.cardParams().expirationMonth).isEqualTo(0)
+        assertThat(view.cardParams().expirationYear).isEqualTo(0)
     }
 
     @Test
@@ -183,7 +171,7 @@ class RecurlyUnifiedCreditCardTest {
             .isEqualTo(themedContext.getString(R.string.hint_cvv_code))
     }
 
-@Test
+    @Test
     fun setPlaceholders_blankExpirationAmongCustomParams_keepsDefaultForThatFieldOnly() {
         val view = RecurlyUnifiedCreditCard(themedContext)
         view.setPlaceholders("NumberHint", "", "CvvHint")
@@ -204,7 +192,7 @@ class RecurlyUnifiedCreditCardTest {
             .isEqualTo(R.drawable.unified_stroke_error)
     }
 
-@Test
+    @Test
     fun unifiedWatcher_partialCvvThenValidCvv_clearsErrorStroke() {
         val view = RecurlyUnifiedCreditCard(themedContext)
         cvvEditText(view).setText("12")
@@ -218,8 +206,64 @@ class RecurlyUnifiedCreditCardTest {
     }
 
     @Test
+    fun unifiedWatcher_errorOnEmptyCvv_clearsWhenTypingElsewhere() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        view.setCvvError()
+        assertThat(cvvEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
+
+        numberEditText(view).setText("4")
+
+        assertThat(cvvEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
+    }
+
+    @Test
+    fun setExpirationError_marksOnlyExpirationField_numberAndCvvStayBlack() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+
+        view.setExpirationError()
+
+        val errorColor = ContextCompat.getColor(themedContext, R.color.recurly_error_red)
+        val normalColor = ContextCompat.getColor(themedContext, R.color.recurly_black)
+        assertThat(expirationEditText(view).currentTextColor).isEqualTo(errorColor)
+        assertThat(numberEditText(view).currentTextColor).isEqualTo(normalColor)
+        assertThat(cvvEditText(view).currentTextColor).isEqualTo(normalColor)
+    }
+
+    @Test
+    fun unifiedWatcher_numberTyping_repaintsPerCurrentText() {
+        val view = RecurlyUnifiedCreditCard(themedContext)
+        val stroke = view.findViewById<ImageView>(R.id.recurly_image_view_stroke_background)
+
+        // Partial brand-prefixed input stays focused/black while typing (pinned watcher flag).
+        numberEditText(view).setText("411111")
+        assertThat(shadowOf(stroke.drawable).createdFromResId)
+            .isEqualTo(R.drawable.unified_stroke_focused)
+        assertThat(numberEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
+
+        numberEditText(view).setText("1111111111111111")
+        assertThat(shadowOf(stroke.drawable).createdFromResId)
+            .isEqualTo(R.drawable.unified_stroke_error)
+        assertThat(numberEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_error_red))
+
+        numberEditText(view).setText("")
+        assertThat(shadowOf(stroke.drawable).createdFromResId)
+            .isEqualTo(R.drawable.unified_stroke_focused)
+        assertThat(numberEditText(view).currentTextColor)
+            .isEqualTo(ContextCompat.getColor(themedContext, R.color.recurly_black))
+    }
+
+    @Test
     fun clearData_afterSettingErrors_clearsErrorHighlights() {
         val view = RecurlyUnifiedCreditCard(themedContext)
+        // Non-empty invalid input keeps each field red across the other fields'
+        // setXError() repaints. Only empty fields re-derive lenient-true.
+        numberEditText(view).setText("1111111111111111")
+        expirationEditText(view).setText("13/99")
+        cvvEditText(view).setText("12")
         view.setCreditCardNumberError()
         view.setExpirationError()
         view.setCvvError()

@@ -95,6 +95,36 @@ class RecurlyCVVTest {
         assertThat(params.cvvCode).isEqualTo("123")
     }
 
+    @Test
+    fun from_inputsBecomingInvalid_deriveBlankParams() {
+        val futureTwoDigitYear = (Calendar.getInstance().get(Calendar.YEAR) % 100) + 1
+
+        val numberView = RecurlyCreditCardNumber(themedContext)
+        val expirationView = RecurlyExpirationMMYY(themedContext)
+        val cvvView = RecurlyCVV(themedContext)
+
+        numberView.findViewById<TextInputEditText>(R.id.recurly_text_input_edit_individual_card_number)
+            .setText("4111111111111111")
+        expirationView.findViewById<TextInputEditText>(R.id.recurly_text_input_edit_individual_expiration_mmyy)
+            .setText("12/$futureTwoDigitYear")
+        cvvEditText(cvvView).setText("123")
+        assertThat(RecurlyCardParams.from(numberView, expirationView, cvvView).cardNumber)
+            .isEqualTo("4111111111111111")
+
+        numberView.findViewById<TextInputEditText>(R.id.recurly_text_input_edit_individual_card_number)
+            .setText("9")
+        expirationView.findViewById<TextInputEditText>(R.id.recurly_text_input_edit_individual_expiration_mmyy)
+            .setText("13/99")
+        cvvEditText(cvvView).setText("12")
+
+        val params = RecurlyCardParams.from(numberView, expirationView, cvvView)
+
+        assertThat(params.cardNumber).isEmpty()
+        assertThat(params.expirationMonth).isEqualTo(0)
+        assertThat(params.expirationYear).isEqualTo(0)
+        assertThat(params.cvvCode).isEmpty()
+    }
+
 
     @Test
     fun clearData_afterEnteringCvv_resetsTextAndValidation() {
@@ -142,15 +172,49 @@ class RecurlyCVVTest {
         assertThat(cvvInputLayout(cvvView).error).isNull()
     }
 
-    @Test
-    fun watcher_cvvClearedToEmpty_resetsCachedCvv() {
+@Test
+    fun setCvvError_errorHighlightPersistsThroughFocusChange() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val container = FrameLayout(activity)
+        val otherFocusable = EditText(activity)
         val cvvView = RecurlyCVV(themedContext)
+        container.addView(otherFocusable)
+        container.addView(cvvView)
+        activity.setContentView(container)
+
         cvvEditText(cvvView).setText("123")
-        assertThat(cvvView.getCvvCode()).isEqualTo("123")
+        cvvEditText(cvvView).requestFocus()
+        cvvView.setCvvError()
+        val errorColor = ContextCompat.getColor(themedContext, R.color.recurly_error_red)
+        assertThat(cvvInputLayout(cvvView).error).isNotNull()
+        assertThat(cvvEditText(cvvView).currentTextColor).isEqualTo(errorColor)
 
-        cvvEditText(cvvView).setText("")
+        otherFocusable.requestFocus()
 
-        assertThat(cvvView.getCvvCode()).isEmpty()
+        assertThat(cvvInputLayout(cvvView).error).isNotNull()
+        assertThat(cvvEditText(cvvView).currentTextColor).isEqualTo(errorColor)
+    }
+
+    @Test
+    fun validateData_afterSetCvvError_retiresErrorHighlight() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val container = FrameLayout(activity)
+        val otherFocusable = EditText(activity)
+        val cvvView = RecurlyCVV(themedContext)
+        container.addView(otherFocusable)
+        container.addView(cvvView)
+        activity.setContentView(container)
+
+        cvvEditText(cvvView).setText("123")
+        cvvView.setCvvError()
+        assertThat(cvvInputLayout(cvvView).error).isNotNull()
+
+        assertThat(cvvView.validateData()).isTrue()
+        assertThat(cvvInputLayout(cvvView).error).isNull()
+
+        otherFocusable.requestFocus()
+
+        assertThat(cvvInputLayout(cvvView).error).isNull()
     }
 
     @Test
